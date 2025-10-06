@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>smpc_engineering_app</RootNamespace>
+    <AssemblyName>smpc_engineering_app</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>smpc_engineering_app.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>download.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog, Version=4.3.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.4.3.0\lib\net471\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=7.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.7.0.0\lib\net471\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
+    <Reference Include="smpc_sales_system">
+      <HintPath>..\..\..\Downloads\Sales\smpc_sales_system\smpc_sales_system\bin\Debug\smpc_sales_system.exe</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Management" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Channels, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.8.0.0\lib\net462\System.Threading.Channels.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\ComponentModel.cs" />
+    <Compile Include="Models\CurrentUserModel.cs" />
+    <Compile Include="Models\JobOrderRedboxListModel.cs" />
+    <Compile Include="Models\QuotationRedboxListModel.cs" />
+    <Compile Include="Models\EngrUsersModel.cs" />
+    <Compile Include="Models\JobOrderSODModel.cs" />
+    <Compile Include="Models\JobOrderSOModel.cs" />
+    <Compile Include="Models\JobOrderModel.cs" />
+    <Compile Include="Pages\Components\RedBoxJobOrderItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\RedBoxJobOrderItem.Designer.cs">
+      <DependentUpon>RedBoxJobOrderItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Components\RedBoxQuotationItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\RedBoxQuotationItem.Designer.cs">
+      <DependentUpon>RedBoxQuotationItem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Components\Login.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Components\MaterialsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\MaterialsForm.Designer.cs">
+      <DependentUpon>MaterialsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Transactions\SalesOrder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\Transactions\SalesOrder.Designer.cs">
+      <DependentUpon>SalesOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Transactions\JobOrder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\Transactions\JobOrder.Designer.cs">
+      <DependentUpon>JobOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Transactions\SalesQuotationList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\Transactions\SalesQuotationList.Designer.cs">
+      <DependentUpon>SalesQuotationList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Services\AuthServices.cs" />
+    <Compile Include="Services\Helpers\ApiService.cs" />
+    <Compile Include="Services\Helpers\WebsocketServices.cs" />
+    <Compile Include="Services\ServiceBase.cs" />
+    <Compile Include="Services\Setup\ComponentService.cs" />
+    <Compile Include="Services\Setup\EngrUsersService.cs" />
+    <Compile Include="Services\Transaction\JobOrderService.cs" />
+    <Compile Include="Services\Transaction\JobOrderSODService.cs" />
+    <Compile Include="Services\Transaction\JobOrderSOService.cs" />
+    <Compile Include="Shared\ApiEndPoints.cs" />
+    <Compile Include="Shared\CacheData.cs" />
+    <Compile Include="Shared\ChartType.cs" />
+    <Compile Include="Pages\Layout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Layout.Designer.cs">
+      <DependentUpon>Layout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\Helpers\ApiResponseModel.cs" />
+    <Compile Include="Services\Helpers\AppService.cs" />
+    <Compile Include="Services\Helpers\DbServices.cs" />
+    <Compile Include="Services\Helpers\DbTransactionServices.cs" />
+    <Compile Include="Services\Helpers\Helpers.cs" />
+    <Compile Include="Services\Helpers\JsonHelper.cs" />
+    <Compile Include="Services\Helpers\LogsServices.cs" />
+    <Compile Include="Services\RoutesService.cs" />
+    <Compile Include="Shared\ENUM_TAX_CODE.cs" />
+    <EmbeddedResource Include="Pages\Components\RedBoxJobOrderItem.resx">
+      <DependentUpon>RedBoxJobOrderItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Components\RedBoxQuotationItem.resx">
+      <DependentUpon>RedBoxQuotationItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Layout.resx">
+      <DependentUpon>Layout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Components\Login.resx">
+      <DependentUpon>Login.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Components\MaterialsForm.resx">
+      <DependentUpon>MaterialsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Transactions\SalesOrder.resx">
+      <DependentUpon>SalesOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Transactions\JobOrder.resx">
+      <DependentUpon>JobOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\Transactions\SalesQuotationList.resx">
+      <DependentUpon>SalesQuotationList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="download.ico" />
+    <None Include="Resources\pdf.png" />
+    <None Include="Resources\word.png" />
+    <None Include="Resources\excel.png" />
+    <None Include="Resources\img.png" />
+    <None Include="Resources\file.png" />
+    <None Include="Resources\Image1.png" />
+    <None Include="Resources\search.png" />
+    <None Include="Resources\FolderIcon.png" />
+    <None Include="Resources\loading.gif" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Serilog.4.3.0\build\Serilog.targets" Condition="Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Serilog.4.3.0\build\Serilog.targets'))" />
+  </Target>
+</Project>

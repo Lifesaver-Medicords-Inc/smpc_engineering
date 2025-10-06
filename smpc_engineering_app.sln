@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35425.106
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "smpc_engineering_app", "smpc_engineering_app\smpc_engineering_app.csproj", "{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCAB4C44-CB74-4711-AACE-4B3309AFBCB8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {03923AE0-22C0-4673-B478-1AF190FAA96F}
+	EndGlobalSection
+EndGlobal
