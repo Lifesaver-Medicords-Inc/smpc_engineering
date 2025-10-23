@@ -125,6 +125,12 @@
     <Compile Include="Pages\Components\MaterialsForm.Designer.cs">
       <DependentUpon>MaterialsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequest.Designer.cs">
+      <DependentUpon>ItemRequest.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Transactions\SalesOrder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -177,6 +183,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Components\RedBoxQuotationItem.resx">
       <DependentUpon>RedBoxQuotationItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\ItemRequest\ItemRequest.resx">
+      <DependentUpon>ItemRequest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Layout.resx">
       <DependentUpon>Layout.cs</DependentUpon>

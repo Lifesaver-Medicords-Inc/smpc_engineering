@@ -1,5 +1,6 @@
 ﻿using smpc_engineering_app.Pages;
 using smpc_engineering_app.Pages.Transactions;
+using smpc_engineering_app.Pages.ItemRequest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,10 +18,8 @@ namespace smpc_engineering_app.Services
             // TRANSACTIONS   
             {"Job Orders", new JobOrder() },
             { "Sales Order", new SalesOrder() },
-             
-            //========================================================================
-            // TRANSACTIONS 
             { "Sales Quotation List", new SalesQuotationList() },
+            { "Item Request", new ItemRequest() },
         };
 
         private string _selectedRoute;
