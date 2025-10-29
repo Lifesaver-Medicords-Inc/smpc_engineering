@@ -51,6 +51,9 @@ namespace smpc_engineering_app.Shared
         public const string JOB_ORDER_SOD = "/setup/job/sales_details";
         public const string COMPONENTS = "/setup/job/components";
 
+        //Item Request Setup
+        public const string ITEM_REQUEST = "/setup/item/request";
+
 
         //Engr. Users
         public const string ENGR_USERS = "/employee_users/Admin";

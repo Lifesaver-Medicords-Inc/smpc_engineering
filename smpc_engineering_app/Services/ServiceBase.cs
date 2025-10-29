@@ -35,6 +35,36 @@ namespace smpc_engineering_app.Services
             }
         }
 
+        public virtual async Task<List<T>> GetAsList()
+        {
+            try
+            {
+                var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);
+
+                return response.data ?? new List<T>();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public virtual async Task<T> GetAsModel()
+        {
+            try
+            {
+                var response = await ApiService<ApiResponseModel<T>>.Get(url);
+
+                return response.data;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public   virtual async Task<DataTable> GetAsDatatable(Func<DataTable, DataTable> filter)
         {
             var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);

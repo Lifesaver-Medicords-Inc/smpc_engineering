@@ -20,6 +20,205 @@ namespace smpc_engineering_app.Services.Helpers
 {
     public static class Helpers
     {
+        public static TextBox CreateSearchBox(string placeholderText, EventHandler onTextChanged)
+        {
+            TextBox txtSearch = new TextBox
+            {
+                Name = "txt_search",
+                Dock = DockStyle.Top,
+                ForeColor = Color.Gray,
+                Text = placeholderText
+            };
+
+            // Event handlers
+            txtSearch.Enter += (s, e) =>
+            {
+                if (txtSearch.Text == placeholderText)
+                {
+                    txtSearch.Text = "";
+                    txtSearch.ForeColor = Color.Black;
+                }
+            };
+
+            txtSearch.Leave += (s, e) =>
+            {
+                if (string.IsNullOrEmpty(txtSearch.Text))
+                {
+                    txtSearch.Text = placeholderText;
+                    txtSearch.ForeColor = Color.Gray;
+                }
+            };
+
+            if (onTextChanged != null)
+                txtSearch.TextChanged += onTextChanged;
+
+            return txtSearch;
+        }
+
+        public static void SetButtonVisibility(ToolStrip toolStrip, IEnumerable<string> visibleButtons, IEnumerable<string> hiddenButtons)
+        {
+            if (toolStrip == null) return;
+
+            // Make visible buttons visible
+            foreach (var buttonName in visibleButtons ?? Enumerable.Empty<string>())
+            {
+                var btn = toolStrip.Items
+                                   .OfType<ToolStripButton>()
+                                   .FirstOrDefault(b => b.Name == buttonName);
+                if (btn != null)
+                    btn.Visible = true;
+            }
+
+            // Make hidden buttons invisible
+            foreach (var buttonName in hiddenButtons ?? Enumerable.Empty<string>())
+            {
+                var btn = toolStrip.Items
+                                   .OfType<ToolStripButton>()
+                                   .FirstOrDefault(b => b.Name == buttonName);
+                if (btn != null)
+                    btn.Visible = false;
+            }
+        }
+
+        public static void ResetControls(Panel[] pnls)
+        {
+            foreach(Panel pnl in pnls)
+            {
+                foreach (Control control in pnl.Controls)
+                {
+                    // Check if the control is a TextBox
+                    if (control is TextBox textBox)
+                    {
+                        // Reset the TextBox's text
+                        textBox.Text = "";
+                    }
+                }
+            }
+        }
+
+        public static void SetChildControlsEnabled(Control[] parents, bool enable, string[] excludeNames)
+        {
+            foreach (Control parent in parents)
+            {
+                foreach (Control control in parent.Controls)
+                {
+                    // Skip excluded controls
+                    if (excludeNames != null && excludeNames.Contains(control.Name))
+                        continue;
+
+                    // Affect controls of these types
+                    if (control is TextBox || control is ComboBox || control is CheckBox)
+                        control.Enabled = enable;
+
+                    // Recurse into child containers
+                    if (control.HasChildren)
+                        SetChildControlsEnabled(new Control[] { control }, enable, excludeNames);
+                }
+            }
+        }
+
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            var dataTable = new DataTable(typeof(T).Name);
+
+            // Get all properties of T
+            var props = typeof(T).GetProperties();
+
+            foreach (var prop in props)
+            {
+                dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+            }
+
+            foreach (var item in items)
+            {
+                var values = new object[props.Length];
+                for (int i = 0; i < props.Length; i++)
+                {
+                    values[i] = props[i].GetValue(item, null);
+                }
+                dataTable.Rows.Add(values);
+            }
+
+            return dataTable;
+        }
+
+        public static void EnableGroupHeaders(DataGridView dgv, Dictionary<string, string[]> columnGroups)
+        {
+            if (dgv == null || columnGroups == null || columnGroups.Count == 0)
+                return;
+
+            // Double buffer to reduce flickering
+            typeof(DataGridView).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.NonPublic |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.SetProperty,
+                null, dgv, new object[] { true });
+
+            // Redraw on scroll/resize
+            dgv.Scroll += (s, e) => dgv.Invalidate();
+            dgv.ColumnWidthChanged += (s, e) => dgv.Invalidate();
+
+            // Paint group headers
+            dgv.Paint += (s, e) => DrawGroupHeaders(dgv, e, columnGroups);
+
+            // Override column header painting
+            dgv.CellPainting += (s, e) => DrawGroupedHeaderCells(dgv, e);
+        }
+
+        private static void DrawGroupHeaders(DataGridView dgv, PaintEventArgs e, Dictionary<string, string[]> groups)
+        {
+            foreach (var group in groups)
+            {
+                string groupName = group.Key;
+                string[] cols = group.Value;
+
+                if (!cols.All(c => dgv.Columns.Contains(c)))
+                    continue;
+
+                DataGridViewColumn firstCol = dgv.Columns[cols.First()];
+                DataGridViewColumn lastCol = dgv.Columns[cols.Last()];
+
+                Rectangle r1 = dgv.GetCellDisplayRectangle(firstCol.Index, -1, true);
+                Rectangle r2 = dgv.GetCellDisplayRectangle(lastCol.Index, -1, true);
+
+                if (r1.IsEmpty || r2.IsEmpty) continue;
+
+                Rectangle headerRect = new Rectangle(r1.X, r1.Y, r2.Right - r1.X, r1.Height / 2);
+
+                using (Brush b = new SolidBrush(SystemColors.Control))
+                    e.Graphics.FillRectangle(b, headerRect);
+
+                e.Graphics.DrawRectangle(Pens.Gray, headerRect);
+
+                TextRenderer.DrawText(e.Graphics, groupName,
+                    dgv.ColumnHeadersDefaultCellStyle.Font,
+                    headerRect, Color.Black,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+            }
+        }
+
+        private static void DrawGroupedHeaderCells(DataGridView dgv, DataGridViewCellPaintingEventArgs e)
+        {
+            if (e.RowIndex == -1 && e.ColumnIndex >= 0)
+            {
+                e.PaintBackground(e.CellBounds, true);
+
+                Rectangle fullRect = e.CellBounds;
+
+                // Bottom half for column text
+                Rectangle textRect = fullRect;
+                textRect.Y += textRect.Height / 2;
+                textRect.Height /= 2;
+
+                TextRenderer.DrawText(e.Graphics,
+                    e.FormattedValue?.ToString() ?? "",
+                    e.CellStyle.Font, textRect,
+                    e.CellStyle.ForeColor,
+                    TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter);
+
+                e.Handled = true;
+            }
+        }
 
         public static class RandomNumber
         {
@@ -455,20 +654,7 @@ namespace smpc_engineering_app.Services.Helpers
             }
 
             return string.Empty;
-        }
-
-        public static void ResetControls(Panel pnl)
-        {
-            foreach (Control control in pnl.Controls)
-            {
-                // Check if the control is a TextBox
-                if (control is TextBox textBox)
-                {
-                    // Reset the TextBox's text
-                    textBox.Text = "";
-                }
-            }
-        }
+        }       
 
         public static Dictionary<string, dynamic> GetControlsValues(Panel pnl)
         {
@@ -788,6 +974,7 @@ namespace smpc_engineering_app.Services.Helpers
             } 
             return isError;
         }
+
         public static void BindControls(Panel[] pnl_list, DataTable dt, int selectedIndex = 0)
         {
             Dictionary<string, dynamic> values = new Dictionary<string, dynamic>();

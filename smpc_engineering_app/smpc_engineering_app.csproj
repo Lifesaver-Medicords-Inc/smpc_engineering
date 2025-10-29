@@ -95,12 +95,19 @@
   <ItemGroup>
     <Compile Include="Models\ComponentModel.cs" />
     <Compile Include="Models\CurrentUserModel.cs" />
+    <Compile Include="Models\ItemRequestModel.cs" />
     <Compile Include="Models\JobOrderRedboxListModel.cs" />
     <Compile Include="Models\QuotationRedboxListModel.cs" />
     <Compile Include="Models\EngrUsersModel.cs" />
     <Compile Include="Models\JobOrderSODModel.cs" />
     <Compile Include="Models\JobOrderSOModel.cs" />
     <Compile Include="Models\JobOrderModel.cs" />
+    <Compile Include="Pages\Components\PickQtyModal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\PickQtyModal.Designer.cs">
+      <DependentUpon>PickQtyModal.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Components\RedBoxJobOrderItem.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -131,6 +138,18 @@
     <Compile Include="Pages\ItemRequest\ItemRequest.Designer.cs">
       <DependentUpon>ItemRequest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.Designer.cs">
+      <DependentUpon>ItemRequestItems.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestSearch.Designer.cs">
+      <DependentUpon>ItemRequestSearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Transactions\SalesOrder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -155,6 +174,7 @@
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\Setup\ComponentService.cs" />
     <Compile Include="Services\Setup\EngrUsersService.cs" />
+    <Compile Include="Services\Transaction\ItemRequestService.cs" />
     <Compile Include="Services\Transaction\JobOrderService.cs" />
     <Compile Include="Services\Transaction\JobOrderSODService.cs" />
     <Compile Include="Services\Transaction\JobOrderSOService.cs" />
@@ -186,6 +206,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\ItemRequest\ItemRequest.resx">
       <DependentUpon>ItemRequest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\ItemRequest\ItemRequestModals\ItemRequestSearch.resx">
+      <DependentUpon>ItemRequestSearch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Layout.resx">
       <DependentUpon>Layout.cs</DependentUpon>
