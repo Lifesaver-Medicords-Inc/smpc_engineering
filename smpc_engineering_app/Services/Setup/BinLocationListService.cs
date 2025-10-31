@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using smpc_engineering_app.Models;
 using smpc_engineering_app.Shared;
 
-namespace smpc_engineering_app.Services.Transaction
+namespace smpc_engineering_app.Services.Setup
 {
-    class ItemRequestService : ServiceBase<ItemRequestList>
+    class BinLocationListService : ServiceBase<BinLocationModel>
     {
-        public ItemRequestService() : base(ApiEndPoints.ITEM_REQUEST) { }
+        public BinLocationListService() : base(ApiEndPoints.BIN_LOCATION) { }
     }
 }

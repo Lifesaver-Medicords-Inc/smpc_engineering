@@ -30,7 +30,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemRequest));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
             this.txt_id = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -123,6 +123,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_id.Name = "txt_id";
             this.txt_id.Size = new System.Drawing.Size(200, 20);
             this.txt_id.TabIndex = 29;
+            this.txt_id.Tag = "";
             this.txt_id.Visible = false;
             // 
             // label13
@@ -160,6 +161,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_doc_no.Name = "txt_doc_no";
             this.txt_doc_no.Size = new System.Drawing.Size(200, 20);
             this.txt_doc_no.TabIndex = 25;
+            this.txt_doc_no.Tag = "";
             // 
             // label7
             // 
@@ -176,6 +178,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_issue_date.Name = "txt_issue_date";
             this.txt_issue_date.Size = new System.Drawing.Size(200, 20);
             this.txt_issue_date.TabIndex = 23;
+            this.txt_issue_date.Tag = "REQUIRED";
             // 
             // label6
             // 
@@ -192,6 +195,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_required_date.Name = "txt_required_date";
             this.txt_required_date.Size = new System.Drawing.Size(200, 20);
             this.txt_required_date.TabIndex = 21;
+            this.txt_required_date.Tag = "REQUIRED";
             // 
             // label5
             // 
@@ -208,6 +212,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_req_date.Name = "txt_req_date";
             this.txt_req_date.Size = new System.Drawing.Size(200, 20);
             this.txt_req_date.TabIndex = 19;
+            this.txt_req_date.Tag = "";
             // 
             // label4
             // 
@@ -233,6 +238,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.cmb_req_dept.Name = "cmb_req_dept";
             this.cmb_req_dept.Size = new System.Drawing.Size(200, 21);
             this.cmb_req_dept.TabIndex = 17;
+            this.cmb_req_dept.Tag = "REQUIRED";
             // 
             // txt_purpose
             // 
@@ -240,6 +246,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_purpose.Name = "txt_purpose";
             this.txt_purpose.Size = new System.Drawing.Size(200, 20);
             this.txt_purpose.TabIndex = 15;
+            this.txt_purpose.Tag = "REQUIRED";
             // 
             // label3
             // 
@@ -394,6 +401,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.btn_forward.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_forward.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(234)))), ((int)(((byte)(211)))));
+            this.btn_forward.Enabled = false;
             this.btn_forward.Location = new System.Drawing.Point(1124, 173);
             this.btn_forward.Name = "btn_forward";
             this.btn_forward.Size = new System.Drawing.Size(231, 23);
@@ -440,6 +448,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_received_by.Name = "txt_received_by";
             this.txt_received_by.Size = new System.Drawing.Size(200, 20);
             this.txt_received_by.TabIndex = 19;
+            this.txt_received_by.Tag = "REQUIRED";
             // 
             // label10
             // 
@@ -470,6 +479,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.btn_cancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_cancel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            this.btn_cancel.Enabled = false;
             this.btn_cancel.Location = new System.Drawing.Point(1124, 173);
             this.btn_cancel.Name = "btn_cancel";
             this.btn_cancel.Size = new System.Drawing.Size(231, 23);
@@ -493,14 +503,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.AllowUserToAddRows = false;
             this.dgv_main.AllowUserToDeleteRows = false;
             this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_main.ColumnHeadersHeight = 50;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.number,
@@ -520,6 +530,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.Name = "dgv_main";
             this.dgv_main.Size = new System.Drawing.Size(1400, 525);
             this.dgv_main.TabIndex = 1;
+            this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
+            this.dgv_main.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellEndEdit);
             this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
             this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
             // 

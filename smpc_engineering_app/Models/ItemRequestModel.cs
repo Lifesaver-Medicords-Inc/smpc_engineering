@@ -39,9 +39,21 @@ namespace smpc_engineering_app.Models
         public string remarks { get; set; }
     }
 
+    public class ItemRequestLocationModel
+    {
+        public int id { get; set; }
+        public int ir_id { get; set; }
+        public int ir_details_id { get; set; }
+        public int issued_qty { get; set; }
+        public string issued_uom { get; set; }
+        public string location { get; set; }
+        public int warehouse_id { get; set; }
+    }
+
     public class ItemRequestList
     {
         public List<ItemRequestModel> item_request { get; set; }
         public List<ItemRequestDetailsModel> item_request_details { get; set; }
+        public List<ItemRequestLocationModel> item_request_location { get; set; }
     }
 }

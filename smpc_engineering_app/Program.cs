@@ -21,6 +21,24 @@ namespace smpc_engineering_app
                 .WriteTo.File("logs\\engineering-logs-.log", rollingInterval: RollingInterval.Day) 
                 .CreateLogger();
 
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += (sender, args) =>
+            {
+                MessageBox.Show($"UI Thread Exception:\n\n{args.Exception.Message}",
+                                "Unhandled UI Exception",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                var ex = args.ExceptionObject as Exception;
+                MessageBox.Show($"Non-UI Exception:\n\n{ex?.Message}",
+                                "Unhandled Exception",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
+            };
+
             try
             { 
                 Application.EnableVisualStyles();

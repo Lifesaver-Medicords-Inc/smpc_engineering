@@ -29,15 +29,15 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_ir_search = new System.Windows.Forms.DataGridView();
             this.txt_search = new System.Windows.Forms.TextBox();
-            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ref_doc = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.supplier_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.req_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.required_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.req_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.req_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ref_doc = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ir_search)).BeginInit();
             this.SuspendLayout();
             // 
@@ -45,26 +45,27 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.dgv_ir_search.AllowUserToAddRows = false;
             this.dgv_ir_search.AllowUserToDeleteRows = false;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_ir_search.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_ir_search.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_ir_search.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgv_ir_search.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.id,
             this.doc_no,
             this.ref_doc,
-            this.supplier_code,
+            this.req_by,
             this.req_date,
             this.required_date});
             this.dgv_ir_search.Location = new System.Drawing.Point(-1, 31);
             this.dgv_ir_search.Name = "dgv_ir_search";
             this.dgv_ir_search.Size = new System.Drawing.Size(802, 389);
             this.dgv_ir_search.TabIndex = 3;
+            this.dgv_ir_search.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_ir_search_CellClick);
             // 
             // txt_search
             // 
@@ -74,39 +75,13 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.txt_search.TabIndex = 4;
             this.txt_search.TextChanged += new System.EventHandler(this.txt_search_TextChanged);
             // 
-            // id
+            // required_date
             // 
-            this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.id.DataPropertyName = "id";
-            this.id.HeaderText = "ID";
-            this.id.Name = "id";
-            this.id.ReadOnly = true;
-            this.id.Visible = false;
-            this.id.Width = 80;
-            // 
-            // doc_no
-            // 
-            this.doc_no.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.doc_no.DataPropertyName = "doc_no";
-            this.doc_no.HeaderText = "DOC NO";
-            this.doc_no.Name = "doc_no";
-            this.doc_no.ReadOnly = true;
-            // 
-            // ref_doc
-            // 
-            this.ref_doc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ref_doc.DataPropertyName = "ref_doc";
-            this.ref_doc.HeaderText = "REF DOC";
-            this.ref_doc.Name = "ref_doc";
-            this.ref_doc.ReadOnly = true;
-            // 
-            // supplier_code
-            // 
-            this.supplier_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.supplier_code.DataPropertyName = "ref_doc";
-            this.supplier_code.HeaderText = "REQUESTOR";
-            this.supplier_code.Name = "supplier_code";
-            this.supplier_code.ReadOnly = true;
+            this.required_date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.required_date.DataPropertyName = "required_date";
+            this.required_date.HeaderText = "REQUIRED DATE";
+            this.required_date.Name = "required_date";
+            this.required_date.ReadOnly = true;
             // 
             // req_date
             // 
@@ -117,13 +92,39 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.req_date.Name = "req_date";
             this.req_date.ReadOnly = true;
             // 
-            // required_date
+            // req_by
             // 
-            this.required_date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.required_date.DataPropertyName = "required_date";
-            this.required_date.HeaderText = "REQUIRED DATE";
-            this.required_date.Name = "required_date";
-            this.required_date.ReadOnly = true;
+            this.req_by.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.req_by.DataPropertyName = "req_by";
+            this.req_by.HeaderText = "REQUESTOR";
+            this.req_by.Name = "req_by";
+            this.req_by.ReadOnly = true;
+            // 
+            // ref_doc
+            // 
+            this.ref_doc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ref_doc.DataPropertyName = "ref_doc";
+            this.ref_doc.HeaderText = "REF DOC";
+            this.ref_doc.Name = "ref_doc";
+            this.ref_doc.ReadOnly = true;
+            // 
+            // doc_no
+            // 
+            this.doc_no.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.doc_no.DataPropertyName = "doc_no";
+            this.doc_no.HeaderText = "DOC NO";
+            this.doc_no.Name = "doc_no";
+            this.doc_no.ReadOnly = true;
+            // 
+            // id
+            // 
+            this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.id.DataPropertyName = "id";
+            this.id.HeaderText = "ID";
+            this.id.Name = "id";
+            this.id.ReadOnly = true;
+            this.id.Visible = false;
+            this.id.Width = 80;
             // 
             // ItemRequestSearch
             // 
@@ -148,7 +149,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn doc_no;
         private System.Windows.Forms.DataGridViewTextBoxColumn ref_doc;
-        private System.Windows.Forms.DataGridViewTextBoxColumn supplier_code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn req_by;
         private System.Windows.Forms.DataGridViewTextBoxColumn req_date;
         private System.Windows.Forms.DataGridViewTextBoxColumn required_date;
     }

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using smpc_engineering_app.Models;
 using smpc_engineering_app.Shared;
 
-namespace smpc_engineering_app.Services.Transaction
+namespace smpc_engineering_app.Services.Setup
 {
-    class ItemRequestService : ServiceBase<ItemRequestList>
+    class ItemListService : ServiceBase<ItemListModel>
     {
-        public ItemRequestService() : base(ApiEndPoints.ITEM_REQUEST) { }
+        public ItemListService() : base(ApiEndPoints.All_ITEM) { }
     }
 }

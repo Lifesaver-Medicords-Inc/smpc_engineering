@@ -20,6 +20,55 @@ namespace smpc_engineering_app.Services.Helpers
 {
     public static class Helpers
     {
+        public static async Task<bool> ValidateDataGridViewCells(DataGridView dgv, string[] columnsToCheck, bool showError = true)
+        {
+            bool hasError = false;
+            List<DataGridViewCell> invalidCells = new List<DataGridViewCell>();
+
+            foreach (DataGridViewRow row in dgv.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                foreach (string colName in columnsToCheck)
+                {
+                    if (!dgv.Columns.Contains(colName))
+                        continue;
+
+                    var cell = row.Cells[colName];
+                    string value = cell?.Value?.ToString()?.Trim();
+
+                    bool isEmpty = string.IsNullOrEmpty(value);
+                    bool isZero = false;
+
+                    if (decimal.TryParse(value, out decimal numericValue))
+                        isZero = numericValue == 0;
+
+                    if (isEmpty || isZero)
+                    {
+                        hasError = true;
+                        invalidCells.Add(cell);
+                        cell.Style.BackColor = Color.Red;
+                    }
+                }
+            }
+
+            if (hasError)
+            {
+                if (showError)
+                    ShowDialogMessage("error", "Please ensure all required fields are filled.");
+
+                // Wait 3 seconds before resetting color
+                await Task.Delay(3000);
+
+                foreach (var cell in invalidCells)
+                {
+                    cell.Style.BackColor = Color.White;
+                }
+            }
+
+            return hasError;
+        }
+
         public static TextBox CreateSearchBox(string placeholderText, EventHandler onTextChanged)
         {
             TextBox txtSearch = new TextBox
@@ -952,27 +1001,57 @@ namespace smpc_engineering_app.Services.Helpers
         public static Boolean ValidateControlsValues(Panel pnl)
         {
             Boolean isError = false;
-            Dictionary<string, dynamic> values = new Dictionary<string, dynamic>();
             foreach (Control control in pnl.Controls)
             {
-                // Check if the control is a TextBox
+                // Handle TextBox
                 if (control is TextBox textBox)
                 {
-                    string key = textBox.Name.Replace("txt_", ""); 
-                    if (textBox.Tag.ToString() == "REQUIRED" && textBox.Text == "")
+                    string key = textBox.Name.Replace("txt_", "");
+                    if (string.Equals(textBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
+                        && string.IsNullOrEmpty(textBox.Text))
                     {
-                        control.BackColor = Color.Red;
-                        control.ForeColor = Color.White;
-                        isError = true; 
+                        FlashRed(control);
+                        isError = true;
                     }
                     else
                     {
                         control.BackColor = Color.White;
-                        control.ForeColor = Color.Black;
                     }
-                } 
-            } 
+                }
+
+                // Handle ComboBox
+                //comboboxes should be dropdown list and flatsyle flat
+                else if (control is ComboBox comboBox)
+                {
+                    if (string.Equals(comboBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
+                        && comboBox.SelectedIndex < 0)   //correct check for DropDownList
+                    {
+                        FlashRed(comboBox);
+                        isError = true;
+                    }
+                    else
+                    {
+                        comboBox.BackColor = Color.White;
+                    }
+                }
+            }
             return isError;
+        }
+
+        private static void FlashRed(Control control)
+        {
+            Color originalColor = control.BackColor;
+            control.BackColor = Color.Red;
+
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = 3000; // 3 seconds
+            timer.Tick += (s, e) =>
+            {
+                control.BackColor = originalColor;
+                timer.Stop();
+                timer.Dispose();
+            };
+            timer.Start();
         }
 
         public static void BindControls(Panel[] pnl_list, DataTable dt, int selectedIndex = 0)
