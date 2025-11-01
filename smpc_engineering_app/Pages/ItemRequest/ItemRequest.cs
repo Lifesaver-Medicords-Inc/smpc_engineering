@@ -13,6 +13,7 @@ using smpc_engineering_app.Pages.ItemRequest.ItemRequestModals;
 using smpc_engineering_app.Pages.Components;
 using smpc_engineering_app.Services.Transaction;
 using smpc_engineering_app.Shared;
+using smpc_engineering_app.Services.Setup;
 
 namespace smpc_engineering_app.Pages.ItemRequest
 {
@@ -26,6 +27,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
         };
 
         readonly ItemRequestService itemRequestService = new ItemRequestService();
+        readonly SalesOrderViewService salesOrderViewService = new SalesOrderViewService();
         private string userDepartment = CacheData.CurrentUser.department.ToLower();
         private readonly Panel[] _panels;
         private bool _isNewMode = false;
@@ -36,14 +38,22 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private List<ItemRequestModel> _itemRequests;
         private List<ItemRequestDetailsModel> _originalDetailsBackup;
         private ItemRequestList _irdata;
+        private DataTable _sotable;
         private DataTable _irltable;
         private DataTable _irTable;
+        private List<string> originalReqDeptItems;
+        private DataTable _originalIRLBackup;
+        private Dictionary<string, string> _originalTopValues;
+        private Dictionary<string, string> _originalBotValues;
+        private bool _isFilteredByRefDoc = false;
+        private string _userName;
 
         public ItemRequest()
         {
             InitializeComponent();
 
             _isWarehouseUser = userDepartment == "warehouse";
+            _userName = CacheData.CurrentUser.first_name + " " + CacheData.CurrentUser.last_name;
             btn_new.Visible = _isWarehouseUser ? false : true;
             btn_cancel.Visible = _isWarehouseUser ? false : true;
             _panels = new[] { pnl_top, pnl_bot };
@@ -77,6 +87,19 @@ namespace smpc_engineering_app.Pages.ItemRequest
             var excludeControls = !_isWarehouseUser
                 ? new[] { "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "txt_received_by" }
                 : new[] { "txt_required_date", "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no" };
+
+            if (enable && !isNewMode)
+            {
+                _originalTopValues = Helpers.BackupPanelData(pnl_top);
+                _originalBotValues = Helpers.BackupPanelData(pnl_bot);
+            }
+
+            //Backup and clear irltable when entering edit/new mode
+            if (enable)
+            {
+                _originalIRLBackup = _irltable != null ? _irltable.Copy() : new DataTable();
+                _irltable = new DataTable();
+            }
 
             //Enable panels based on user role
             if (_isWarehouseUser)
@@ -117,6 +140,9 @@ namespace smpc_engineering_app.Pages.ItemRequest
             int newIndex = _currentIRIndex + step;
             if (newIndex >= 0 && newIndex < _itemRequests.Count)
             {
+
+                cmb_ref_doc.SelectedIndex = -1;
+                cmb_req_dept.SelectedIndex = -1;
                 _currentIRIndex = newIndex;
                 ShowCurrentRecord();
             }
@@ -134,7 +160,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             //Clear only the rows, keep columns
             dgv_main.DataSource = null;
             dgv_main.Rows.Clear();
-
             Helpers.ResetControls(_panels);
         }
 
@@ -240,12 +265,28 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     _irdata.item_request_details.AddRange(_originalDetailsBackup);
                 }
 
+                //Restore irltable
+                _irltable = _originalIRLBackup != null ? _originalIRLBackup.Copy() : new DataTable();
+
                 ShowCurrentRecord(); // Rebinds original data from _irdata
+
+                // Restore all textboxes, combo boxes, etc.
+                Helpers.RestorePanelData(pnl_top, _originalTopValues);
+                Helpers.RestorePanelData(pnl_bot, _originalBotValues);
+
+                //Restore original binding if filtered by ref_doc
+                if (_isFilteredByRefDoc)
+                {
+                    ShowCurrentRecord();
+                    _isFilteredByRefDoc = false;
+                }
             }
         }
 
         private async void btn_save_Click(object sender, EventArgs e)
         {
+            dgv_main.EndEdit();
+
             // Select panel based on department
             Panel panelToValidate = !_isWarehouseUser ? pnl_top : pnl_bot;
 
@@ -276,10 +317,36 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     return;
                 }
             }
+
+
+            txt_req_date.Text = DateTime.Now.ToString("MM/dd/yyyy");
+
+            if (_isWarehouseUser)
+            {
+                txt_approved_by.Text = _userName;
+                txt_issued_by.Text = _userName;
+            }
+            else
+            {
+                txt_req_by.Text = _userName;
+            }
+
+            var itemRequestParent = Helpers.BuildModelFromPanels<ItemRequestModel>(_panels);
+            bool isForward = !btn_forward.Visible;
+            itemRequestParent.is_forward = isForward;
+            var itemRequestDetails = Helpers.BuildModelsFromData<ItemRequestDetailsModel>(dgv_main);
+            var itemRequestLocation = Helpers.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
+
+            Console.WriteLine(itemRequestParent);
+            Console.WriteLine(itemRequestDetails);
+            Console.WriteLine(itemRequestLocation);
         }
 
         private async void ItemRequest_Load(object sender, EventArgs e)
         {
+            // store original items (from designer)
+            originalReqDeptItems = cmb_req_dept.Items.Cast<string>().ToList();
+
             try
             {
                 Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
@@ -302,6 +369,25 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             //fill this declared value by the receiving reports data
             _irdata = await itemRequestService.GetAsModel();
+
+            _sotable = await salesOrderViewService.GetAsDatatable();
+
+            if (_sotable != null && _sotable.Rows.Count > 0 && _sotable.Columns.Contains("ref_doc"))
+            {
+                // Get unique non-empty ref_doc values
+                var uniqueRefDocs = _sotable.AsEnumerable()
+                    .Select(r => r.Field<string>("ref_doc"))
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Distinct()
+                    .OrderBy(v => v)
+                    .ToList();
+
+                // Bind to ComboBox
+                cmb_ref_doc.BeginUpdate();
+                cmb_ref_doc.Items.Clear();
+                cmb_ref_doc.Items.AddRange(uniqueRefDocs.ToArray());
+                cmb_ref_doc.EndUpdate();
+            }
 
             if (_irdata != null && _irdata.item_request != null && _irdata.item_request.Count > 0)
             {
@@ -343,13 +429,21 @@ namespace smpc_engineering_app.Pages.ItemRequest
              _irTable = Helpers.ToDataTable(_irdata.item_request);
             _irltable = Helpers.ToDataTable(_irdata.item_request_location);
 
+            //Clear and rebuild _irltable based on current record only
+            var current = _itemRequests[_currentIRIndex];
+            var filteredLocations = _irdata.item_request_location
+                .Where(l => l.ir_id == current.id)
+                .ToList();
+
+            _irltable = filteredLocations.Any()
+                ? Helpers.ToDataTable(filteredLocations)
+                : new DataTable();
+
             if (_irTable.Rows.Count == 0 || _currentIRIndex >= _irTable.Rows.Count)
                 return;
 
             //Bind controls automatically (textboxes, checkboxes, etc.)
             Helpers.BindControls(_panels, _irTable, _currentIRIndex);
-
-            var current = _itemRequests[_currentIRIndex];
 
             if (_isWarehouseUser)
             {
@@ -562,6 +656,87 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     // Prevent multiple unnecessary blank rows
                     dgv_main.AllowUserToAddRows = false;
                 }
+            }
+        }
+
+        private void cmb_req_dept_TextChanged(object sender, EventArgs e)
+        {
+            // store what user typed
+            string text = cmb_req_dept.Text;
+            int selStart = cmb_req_dept.SelectionStart;
+
+            // filter from the original items (designer items)
+            var filtered = originalReqDeptItems
+                .Where(item => item.IndexOf(text, StringComparison.OrdinalIgnoreCase) >= 0)
+                .ToList();
+
+            // prevent recursion
+            cmb_req_dept.TextChanged -= cmb_req_dept_TextChanged;
+
+            // Close dropdown first so .Text doesn’t trigger internal auto-select
+            bool reopen = cmb_req_dept.DroppedDown;
+            cmb_req_dept.DroppedDown = false;
+
+            // rebuild list
+            cmb_req_dept.BeginUpdate();
+            cmb_req_dept.Items.Clear();
+            cmb_req_dept.Items.AddRange(filtered.Cast<object>().ToArray());
+            cmb_req_dept.EndUpdate();
+
+            // restore the exact user text manually
+            cmb_req_dept.Text = text;
+
+            // safe cursor restore
+            if (selStart < 0) selStart = 0;
+            if (selStart > cmb_req_dept.Text.Length) selStart = cmb_req_dept.Text.Length;
+            cmb_req_dept.SelectionStart = selStart;
+            cmb_req_dept.SelectionLength = 0;
+
+            // only show dropdown when user has typed something
+            if (filtered.Count > 0 && !string.IsNullOrEmpty(text))
+                cmb_req_dept.DroppedDown = true;
+
+            // re-attach event
+            cmb_req_dept.TextChanged += cmb_req_dept_TextChanged;
+        }
+
+        private void cmb_ref_doc_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                // Get selected reference document
+                string selectedRefDoc = cmb_ref_doc.SelectedItem?.ToString();
+                if (string.IsNullOrEmpty(selectedRefDoc) || _sotable == null)
+                {
+                    dgv_main.DataSource = null;
+                    dgv_main.Rows.Clear();
+                    return;
+                }
+
+                // Filter rows from _sotable based on selected ref_doc
+                var filteredRows = _sotable.AsEnumerable()
+                    .Where(r => r.Field<string>("ref_doc") == selectedRefDoc)
+                    .ToList();
+
+                if (filteredRows.Count == 0)
+                {
+                    dgv_main.DataSource = null;
+                    dgv_main.Rows.Clear();
+                    return;
+                }
+
+                // Convert filtered rows to DataTable
+                DataTable filteredTable = filteredRows.CopyToDataTable();
+                dgv_main.AutoGenerateColumns = false;
+
+                // Bind the filtered DataTable to DataGridView
+                dgv_main.DataSource = filteredTable;
+
+                _isFilteredByRefDoc = true;
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to load items for selected Ref Doc: {ex.Message}");
             }
         }
     }

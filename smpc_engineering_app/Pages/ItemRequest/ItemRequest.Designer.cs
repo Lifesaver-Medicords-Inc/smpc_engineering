@@ -144,6 +144,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.cmb_ref_doc.Name = "cmb_ref_doc";
             this.cmb_ref_doc.Size = new System.Drawing.Size(200, 21);
             this.cmb_ref_doc.TabIndex = 27;
+            this.cmb_ref_doc.SelectedIndexChanged += new System.EventHandler(this.cmb_ref_doc_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -239,6 +240,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.cmb_req_dept.Size = new System.Drawing.Size(200, 21);
             this.cmb_req_dept.TabIndex = 17;
             this.cmb_req_dept.Tag = "REQUIRED";
+            this.cmb_req_dept.TextChanged += new System.EventHandler(this.cmb_req_dept_TextChanged);
             // 
             // txt_purpose
             // 

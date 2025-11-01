@@ -15,11 +15,244 @@ using System.Runtime.InteropServices;
 using System.Drawing.Printing;
 using System.Globalization;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace smpc_engineering_app.Services.Helpers
 {
     public static class Helpers
     {
+        //Model mapper for datagridview
+        public static List<T> BuildModelsFromData<T>(object dataSource) where T : new()
+        {
+            var models = new List<T>();
+            var modelType = typeof(T);
+            var properties = modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+            // --- CASE 1: DataGridView ---
+            if (dataSource is DataGridView dgv)
+            {
+                foreach (DataGridViewRow row in dgv.Rows)
+                {
+                    if (row.IsNewRow)
+                        continue;
+
+                    var model = new T();
+
+                    foreach (var prop in properties)
+                    {
+                        if (!dgv.Columns.Contains(prop.Name))
+                            continue;
+
+                        var value = row.Cells[prop.Name].Value;
+                        SetModelPropertyValue(model, prop, value);
+                    }
+
+                    models.Add(model);
+                }
+            }
+
+            // --- CASE 2: DataTable ---
+            else if (dataSource is DataTable dt)
+            {
+                foreach (DataRow dr in dt.Rows)
+                {
+                    var model = new T();
+
+                    foreach (var prop in properties)
+                    {
+                        if (!dt.Columns.Contains(prop.Name))
+                            continue;
+
+                        var value = dr[prop.Name];
+                        SetModelPropertyValue(model, prop, value);
+                    }
+
+                    models.Add(model);
+                }
+            }
+
+            else
+            {
+                throw new ArgumentException("Unsupported data source type. Must be DataGridView or DataTable.");
+            }
+
+            return models;
+        }
+
+        // Helper method for safe conversion and assignment
+        private static void SetModelPropertyValue<T>(T model, PropertyInfo prop, object value)
+        {
+            if (value == null || value == DBNull.Value)
+                return;
+
+            try
+            {
+                object convertedValue = Convert.ChangeType(
+                    value,
+                    Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType
+                );
+
+                prop.SetValue(model, convertedValue);
+            }
+            catch
+            {
+                // Ignore conversion errors or handle as needed
+            }
+        }
+
+        // Model mapper for panels
+        public static T BuildModelFromPanels<T>(Panel[] panels) where T : new()
+        {
+            var model = new T();
+            var modelType = typeof(T);
+
+            // Loop through each property of the model
+            foreach (var prop in modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                Control control = null;
+
+                // Search through all panels for a matching control
+                foreach (var panel in panels)
+                {
+                    control = panel.Controls
+                        .Cast<Control>()
+                        .FirstOrDefault(c =>
+                            c.Name.Equals("txt_" + prop.Name, StringComparison.OrdinalIgnoreCase) ||
+                            c.Name.Equals("cmb_" + prop.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (control != null)
+                        break;
+                }
+
+                if (control == null)
+                    continue;
+
+                object value = null;
+
+                if (control is TextBox textBox)
+                    value = textBox.Text;
+                else if (control is ComboBox comboBox)
+                    value = comboBox.Text;
+
+                if (value != null && prop.CanWrite)
+                {
+                    try
+                    {
+                        object convertedValue = Convert.ChangeType(value, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+                        prop.SetValue(model, convertedValue);
+                    }
+                    catch
+                    {
+                        // Ignore conversion errors or handle as needed
+                    }
+                }
+            }
+
+            return model;
+        }
+
+        // Function to validate if a date follows MM/dd/yyyy format and is not earlier than today
+        public static bool ValidateDateFormat(string dateText)
+        {
+            if (string.IsNullOrWhiteSpace(dateText))
+            {
+                Helpers.ShowDialogMessage("error", "Please enter a date.");
+                return false;
+            }
+
+            if (DateTime.TryParseExact(
+                dateText,
+                "MM/dd/yyyy",
+                System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None,
+                out DateTime parsedDate))
+            {
+                // Check if the date is earlier than today
+                if (parsedDate.Date < DateTime.Today)
+                {
+                    Helpers.ShowDialogMessage("error", "The date cannot be earlier than today.");
+                    return false;
+                }
+
+                // Passed all checks
+                return true;
+            }
+            else
+            {
+                // Invalid format
+                Helpers.ShowDialogMessage("error", "Please ensure the date follows the format MM/dd/yyyy.");
+                return false;
+            }
+        }
+
+        //Back up all control values inside a panel (TextBox, ComboBox, CheckBox, DateTimePicker)
+        public static Dictionary<string, string> BackupPanelData(Panel panel)
+        {
+            var backup = new Dictionary<string, string>();
+
+            foreach (Control control in panel.Controls)
+            {
+                if (control is TextBox txt)
+                    backup[txt.Name] = txt.Text;
+                else if (control is ComboBox cmb)
+                    backup[cmb.Name] = cmb.Text;
+                else if (control is CheckBox chk)
+                    backup[chk.Name] = chk.Checked.ToString();
+                else if (control is DateTimePicker dtp)
+                    backup[dtp.Name] = dtp.Value.ToString();
+            }
+
+            return backup;
+        }
+
+        //Restore control values inside a panel from a backup dictionary
+        public static void RestorePanelData(Panel panel, Dictionary<string, string> backup)
+        {
+            if (backup == null) return;
+
+            foreach (Control control in panel.Controls)
+            {
+                if (control is TextBox txt && backup.ContainsKey(txt.Name))
+                {
+                    txt.Text = backup[txt.Name];
+                }
+                else if (control is ComboBox cmb && backup.ContainsKey(cmb.Name))
+                {
+                    string savedValue = backup[cmb.Name];
+
+                    // Fix: handle DropDownList style combos properly
+                    if (cmb.DropDownStyle == ComboBoxStyle.DropDownList)
+                    {
+                        // If empty, clear selection
+                        if (string.IsNullOrEmpty(savedValue))
+                        {
+                            cmb.SelectedIndex = -1;
+                        }
+                        else
+                        {
+                            // Try to select the saved item if it exists
+                            int index = cmb.FindStringExact(savedValue);
+                            cmb.SelectedIndex = index;
+                        }
+                    }
+                    else
+                    {
+                        // For normal editable combos
+                        cmb.Text = savedValue;
+                    }
+                }
+                else if (control is CheckBox chk && backup.ContainsKey(chk.Name))
+                {
+                    chk.Checked = bool.TryParse(backup[chk.Name], out bool val) && val;
+                }
+                else if (control is DateTimePicker dtp && backup.ContainsKey(dtp.Name))
+                {
+                    if (DateTime.TryParse(backup[dtp.Name], out DateTime date))
+                        dtp.Value = date;
+                }
+            }
+        }
+
         public static async Task<bool> ValidateDataGridViewCells(DataGridView dgv, string[] columnsToCheck, bool showError = true)
         {
             bool hasError = false;
@@ -140,6 +373,10 @@ namespace smpc_engineering_app.Services.Helpers
                     {
                         // Reset the TextBox's text
                         textBox.Text = "";
+                    }
+                    else if(control is ComboBox combobox)
+                    {
+                        combobox.SelectedIndex = -1;
                     }
                 }
             }
@@ -779,7 +1016,77 @@ namespace smpc_engineering_app.Services.Helpers
 
             return values;
         }
-         
+
+        public static Dictionary<string, dynamic> GetControlsValuesList(Panel[] panels)
+        {
+            Dictionary<string, dynamic> values = new Dictionary<string, dynamic>();
+
+            foreach (Panel pnl in panels)
+            {
+                foreach (Control control in pnl.Controls)
+                {
+                    // Skip controls tagged as "EXCLUDED"
+                    if (control.Tag != null && control.Tag.ToString().Equals("EXCLUDED", StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    // TextBox
+                    if (control is TextBox textBox)
+                    {
+                        string key = textBox.Name.Replace("txt_", "");
+                        string val = (textBox.Tag != null && textBox.Tag.Equals("MONEY"))
+                            ? textBox.Text.Replace(",", "")
+                            : textBox.Text;
+
+                        values[key] = val;
+                    }
+
+                    // ComboBox
+                    else if (control is ComboBox comboBox)
+                    {
+                        string key = comboBox.Name.Replace("cmb_", "");
+                        string val = "";
+
+                        if (comboBox.Tag != null && comboBox.Tag.ToString() == "DYNAMIC")
+                        {
+                            key += "_id";
+                            values[key] = comboBox.SelectedValue;
+                        }
+                        else
+                        {
+                            val = comboBox.Text;
+                            values[key] = val;
+                        }
+                    }
+
+                    // CheckBox
+                    else if (control is CheckBox checkbox)
+                    {
+                        string key = checkbox.Name.Replace("chk_", "");
+                        string val = checkbox.Checked ? "1" : "0";
+                        values[key] = val;
+                    }
+
+                    // DateTimePicker
+                    else if (control is DateTimePicker dateTimePicker)
+                    {
+                        string key = dateTimePicker.Name.Replace("dtp_", "");
+                        string val = dateTimePicker.Value.ToString("yyyy-MM-dd");
+                        values[key] = val;
+                    }
+
+                    // NumericUpDown
+                    else if (control is NumericUpDown numericUpDown)
+                    {
+                        string key = numericUpDown.Name.Replace("txt_", "");
+                        string val = numericUpDown.Value.ToString();
+                        values[key] = val;
+                    }
+                }
+            }
+
+            return values;
+        }
+
         public static Dictionary<string, dynamic> GetControlsValues(Panel pnl1, Panel pnl2)
         { 
 
