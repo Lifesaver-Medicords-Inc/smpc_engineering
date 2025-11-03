@@ -95,7 +95,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
 
             //Backup and clear irltable when entering edit/new mode
-            if (enable)
+            if (isNewMode)
             {
                 _originalIRLBackup = _irltable != null ? _irltable.Copy() : new DataTable();
                 _irltable = new DataTable();
@@ -283,6 +283,50 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
         }
 
+        private async void btn_delete_Click(object sender, EventArgs e)
+        {
+            if (_currentIRIndex < 0)
+            {
+                Helpers.ShowDialogMessage("error", "No record selected to delete.");
+                return;
+            }
+
+            var current = _itemRequests[_currentIRIndex];
+
+            var confirm = MessageBox.Show($"Are you sure you want to delete Receiving Report #{current.id}?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                Helpers.Loading.ShowLoading(dgv_main, "Deleting data...");
+
+                var irModel = new ItemRequestModel
+                {
+                    id = string.IsNullOrWhiteSpace(txt_id.Text) ? current.id : int.Parse(txt_id.Text),
+                };
+
+                var irPayload = new ItemRequestPayload
+                {
+                    item_request = irModel
+                };
+
+                await itemRequestService.DeleteIRRecord(irPayload);
+
+                Helpers.ShowDialogMessage("success", "Receiving Report deleted successfully.");
+            }
+            catch(Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to delete: {ex.Message}");
+            }
+            finally
+            {
+                await LoadItemRequests();
+
+                Helpers.Loading.HideLoading(dgv_main);
+            }
+        }
+
         private async void btn_save_Click(object sender, EventArgs e)
         {
             dgv_main.EndEdit();
@@ -299,37 +343,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 return;
             }
 
-            if (!_isWarehouseUser)
-            {
-                // Validate DataGridView columns
-                bool hasGridError = await Helpers.ValidateDataGridViewCells(dgv_main, new string[] { "item_description", "req_qty" });
-                if (hasGridError)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                // Validate DataGridView columns
-                bool hasGridError = await Helpers.ValidateDataGridViewCells(dgv_main, new string[] { "issued_qty" });
-                if (hasGridError)
-                {
-                    return;
-                }
-            }
+            string[] columnsToValidate = _isWarehouseUser
+                ? new[] { "issued_qty" }
+                : new[] { "item_description", "req_qty" };
 
-
-            txt_req_date.Text = DateTime.Now.ToString("MM/dd/yyyy");
-
-            if (_isWarehouseUser)
-            {
-                txt_approved_by.Text = _userName;
-                txt_issued_by.Text = _userName;
-            }
-            else
-            {
-                txt_req_by.Text = _userName;
-            }
+            if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
+                return;
 
             var itemRequestParent = Helpers.BuildModelFromPanels<ItemRequestModel>(_panels);
             bool isForward = !btn_forward.Visible;
@@ -337,9 +356,70 @@ namespace smpc_engineering_app.Pages.ItemRequest
             var itemRequestDetails = Helpers.BuildModelsFromData<ItemRequestDetailsModel>(dgv_main);
             var itemRequestLocation = Helpers.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
 
-            Console.WriteLine(itemRequestParent);
-            Console.WriteLine(itemRequestDetails);
-            Console.WriteLine(itemRequestLocation);
+            //Validate department selection
+            bool validDept = cmb_req_dept.Items.Cast<object>()
+                .Any(item => item.ToString().Equals(itemRequestParent.req_dept, StringComparison.OrdinalIgnoreCase));
+
+            if (!validDept)
+            {
+                Helpers.ShowDialogMessage("error", "Please select a valid department from the list.");
+                return;
+            }
+
+            //Check if itemRequestDetails is null or empty
+            if (itemRequestDetails == null || itemRequestDetails.Count == 0)
+            {
+                Helpers.ShowDialogMessage("error", "Please select at least one item.");
+                return;
+            }
+
+            //Only set date and user info inside itemRequestParent when valid
+            itemRequestParent.req_date = DateTime.Now.ToString("MM/dd/yyyy");
+
+            if (_isWarehouseUser)
+            {
+                itemRequestParent.approved_by = _userName;
+                itemRequestParent.issued_by = _userName;
+            }
+            else
+            {
+                itemRequestParent.req_by = _userName;
+            }
+
+            // Wrap everything into ReceivingReportPayload
+            var irPayload = new ItemRequestPayload
+            {
+                item_request = itemRequestParent,
+                item_request_details = itemRequestDetails,
+                item_request_location = itemRequestLocation
+            };
+
+            try
+            {
+                Helpers.Loading.ShowLoading(dgv_main, "Saving data...");
+
+                if (_isNewMode)
+                {
+                    var result = await itemRequestService.CreateIRRecord(irPayload);
+                    Helpers.ShowDialogMessage("success", "Item Request created successfully.");
+                }
+                else
+                {
+                    var result = await itemRequestService.UpdateIRRecord(irPayload);
+                    Helpers.ShowDialogMessage("success", "Item Request updated successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to save: {ex.Message}");
+            }
+            finally
+            {
+                SetEditMode(false);
+                await LoadItemRequests();
+
+                Helpers.Loading.HideLoading(dgv_main);
+            }
         }
 
         private async void ItemRequest_Load(object sender, EventArgs e)
@@ -442,26 +522,19 @@ namespace smpc_engineering_app.Pages.ItemRequest
             if (_irTable.Rows.Count == 0 || _currentIRIndex >= _irTable.Rows.Count)
                 return;
 
+            cmb_req_dept.TextChanged -= cmb_req_dept_TextChanged;
             //Bind controls automatically (textboxes, checkboxes, etc.)
             Helpers.BindControls(_panels, _irTable, _currentIRIndex);
+            cmb_req_dept.TextChanged += cmb_req_dept_TextChanged;
 
             if (_isWarehouseUser)
             {
-                btn_cancel.Visible = false;
-                btn_forward.Visible = false;
-            } else
+                btn_cancel.Visible = btn_forward.Visible = false;
+            }
+            else
             {
-                //Check if the current item request is forwarded
-                if (current.is_forward == true)
-                {
-                    btn_cancel.Visible = true;
-                    btn_forward.Visible = false;
-                }
-                else
-                {
-                    btn_cancel.Visible = false;
-                    btn_forward.Visible = true;
-                }
+                btn_cancel.Visible = current.is_forward == true;
+                btn_forward.Visible = current.is_forward != true;
             }
 
             //Disable auto column generation before setting the data source
@@ -616,6 +689,16 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
                         if (totalIssued > 0)
                             currentRow.Cells["issued_uom"].Value = currentUom;
+
+                        foreach (DataRow row in qtyForm.SelectedIssuedLocations.Rows)
+                        {
+                            // Clone structure if _irltable is empty
+                            if (_irltable.Columns.Count == 0)
+                                _irltable = qtyForm.SelectedIssuedLocations.Clone();
+
+                            // Import each selected row to _irltable (append only)
+                            _irltable.ImportRow(row);
+                        }
                     }
                 }
             }

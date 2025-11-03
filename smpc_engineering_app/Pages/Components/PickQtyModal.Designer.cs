@@ -105,7 +105,6 @@ namespace smpc_engineering_app.Pages.Components
             this.ir_details_id.HeaderText = "IRD ID";
             this.ir_details_id.Name = "ir_details_id";
             this.ir_details_id.ReadOnly = true;
-            this.ir_details_id.Visible = false;
             // 
             // warehouse_id
             // 

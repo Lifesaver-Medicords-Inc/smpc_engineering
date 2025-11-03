@@ -50,14 +50,15 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 
             string searchText = txt_search.Text.Trim();
 
-            if (string.IsNullOrEmpty(searchText))
+            if (string.IsNullOrEmpty(searchText) || searchText == placeHolderText)
             {
                 dgv_ir_search.DataSource = irTable;
-                return;
             }
-
-            var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "ref_doc", "req_by", "req_date", "required_date");
-            dgv_ir_search.DataSource = searchedData;
+            else
+            {
+                var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "ref_doc", "req_by", "req_date", "required_date");
+                dgv_ir_search.DataSource = searchedData;
+            }
         }
 
         private async void ItemRequestSearch_Load(object sender, EventArgs e)

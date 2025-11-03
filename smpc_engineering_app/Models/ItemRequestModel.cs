@@ -56,4 +56,11 @@ namespace smpc_engineering_app.Models
         public List<ItemRequestDetailsModel> item_request_details { get; set; }
         public List<ItemRequestLocationModel> item_request_location { get; set; }
     }
+
+    public class ItemRequestPayload
+    {
+        public ItemRequestModel item_request { get; set; }
+        public List<ItemRequestDetailsModel> item_request_details { get; set; }
+        public List<ItemRequestLocationModel> item_request_location { get; set; }
+    }
 }

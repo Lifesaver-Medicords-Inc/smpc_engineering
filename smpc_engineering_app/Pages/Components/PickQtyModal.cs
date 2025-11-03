@@ -17,6 +17,7 @@ namespace smpc_engineering_app.Pages.Components
         public string PassedUom { get; set; }
         public int PassedId { get; set; }
         public DataTable PassedIRLocation { get; set; }
+        public DataTable SelectedIssuedLocations { get; private set; }
         public int TotalIssuedQty { get; private set; }
         readonly BinLocationListService binLocationService = new BinLocationListService();
         private DataTable locationTable;
@@ -206,15 +207,29 @@ namespace smpc_engineering_app.Pages.Components
             {
                 int total = 0;
 
-                foreach (DataGridViewRow dgvRow in dgv_pick_qty.Rows)
+                // Get the current table bound to the DataGridView
+                DataTable sourceTable = dgv_pick_qty.DataSource as DataTable;
+
+                if (sourceTable == null)
                 {
-                    if (dgvRow.IsNewRow) continue;
+                    Helpers.ShowDialogMessage("warning", "No data available.");
+                    return;
+                }
 
-                    var qtyValue = dgvRow.Cells["issued_qty"].Value?.ToString();
+                // Clone structure for storing only rows with issued_qty
+                SelectedIssuedLocations = sourceTable.Clone();
 
-                    if (decimal.TryParse(qtyValue, out decimal qty))
+                foreach (DataRow row in sourceTable.Rows)
+                {
+                    var qtyValue = row["issued_qty"]?.ToString()?.Trim();
+
+                    if (decimal.TryParse(qtyValue, out decimal qty) && qty > 0)
                     {
+                        // Add to total
                         total += (int)qty;
+
+                        // Copy row to the filtered table
+                        SelectedIssuedLocations.ImportRow(row);
                     }
                 }
 

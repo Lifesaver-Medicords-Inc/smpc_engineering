@@ -320,6 +320,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.btn_delete.Name = "btn_delete";
             this.btn_delete.Size = new System.Drawing.Size(60, 22);
             this.btn_delete.Text = "Delete";
+            this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
             // 
             // btn_save
             // 
