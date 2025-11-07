@@ -60,6 +60,9 @@ namespace smpc_engineering_app.Shared
         //Bin Location List
         public const string BIN_LOCATION = "/setup/item/all_binloc";
 
+        //All Item List
+        public const string USER_LIST = "/setup/item/all_user";
+
         //Item Request Setup
         public const string ITEM_REQUEST = "/setup/item/request";
 

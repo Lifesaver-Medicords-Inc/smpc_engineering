@@ -28,6 +28,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
         readonly ItemRequestService itemRequestService = new ItemRequestService();
         readonly SalesOrderViewService salesOrderViewService = new SalesOrderViewService();
+        readonly UserListService userListService = new UserListService();
         private string userDepartment = CacheData.CurrentUser.department.ToLower();
         private readonly Panel[] _panels;
         private bool _isNewMode = false;
@@ -36,15 +37,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private int _currentIRIndex = -1;
         private int _previousIRIndex = -1;
         private List<ItemRequestModel> _itemRequests;
-        private List<ItemRequestDetailsModel> _originalDetailsBackup;
+        private List<UserListModel> _userdata;
         private ItemRequestList _irdata;
         private DataTable _sotable;
         private DataTable _irltable;
         private DataTable _irTable;
         private List<string> originalReqDeptItems;
-        private DataTable _originalIRLBackup;
-        private Dictionary<string, string> _originalTopValues;
-        private Dictionary<string, string> _originalBotValues;
         private bool _isFilteredByRefDoc = false;
         private string _userName;
 
@@ -85,21 +83,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             btn_cancel.Enabled = enable;
 
             var excludeControls = !_isWarehouseUser
-                ? new[] { "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "txt_received_by" }
-                : new[] { "txt_required_date", "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no" };
-
-            if (enable && !isNewMode)
-            {
-                _originalTopValues = Helpers.BackupPanelData(pnl_top);
-                _originalBotValues = Helpers.BackupPanelData(pnl_bot);
-            }
-
-            //Backup and clear irltable when entering edit/new mode
-            if (isNewMode)
-            {
-                _originalIRLBackup = _irltable != null ? _irltable.Copy() : new DataTable();
-                _irltable = new DataTable();
-            }
+                ? new[] { "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "cmb_received_by" }
+                : new[] { "txt_required_date", "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "dtp_required_date", "dtp_issue_date" };
 
             //Enable panels based on user role
             if (_isWarehouseUser)
@@ -143,6 +128,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
                 cmb_ref_doc.SelectedIndex = -1;
                 cmb_req_dept.SelectedIndex = -1;
+                cmb_received_by.SelectedIndex = -1;
                 _currentIRIndex = newIndex;
                 ShowCurrentRecord();
             }
@@ -165,26 +151,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
         private void btn_edit_Click(object sender, EventArgs e)
         {
-            // Backup the current record details before allowing edit
-            var current = _itemRequests[_currentIRIndex];
-            _originalDetailsBackup = _irdata.item_request_details
-                .Where(d => d.ir_id == current.id)
-                .Select(d => new ItemRequestDetailsModel
-                {
-                    id = d.id,
-                    ir_id = d.ir_id,
-                    item_id = d.item_id,
-                    item_description = d.item_description,
-                    req_qty = d.req_qty,
-                    req_uom = d.req_uom,
-                    issued_qty = d.issued_qty,
-                    issued_uom = d.issued_uom,
-                    remarks = d.remarks,
-                    serial_no = d.serial_no,
-                    total_req = d.total_req,
-                    total_issued = d.total_issued
-                })
-                .ToList();
+            if (_currentIRIndex < 0 || _itemRequests == null || !_itemRequests.Any())
+            {
+                Helpers.ShowDialogMessage("error", "No record selected to edit.");
+                return;
+            }
+
+            // Store last viewed record index
+            _previousIRIndex = _currentIRIndex;
 
             SetEditMode(true);
         }
@@ -246,40 +220,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             SetEditMode(false);
 
-            //If we were in new mode, restore the previous record
-            if (wasNewMode && _previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
+
+            // Return to the previous record index if available
+            if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
             {
                 _currentIRIndex = _previousIRIndex;
                 ShowCurrentRecord();
-            }
-
-            //If we were in "edit" mode, reload the current record (discard new rows)
-            else if (wasEditMode && _currentIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
-            {
-                // Restore the original details from backup if available
-                if (_originalDetailsBackup != null)
-                {
-                    var current = _itemRequests[_currentIRIndex];
-                    // Remove modified details and replace with the original backup
-                    _irdata.item_request_details.RemoveAll(d => d.ir_id == current.id);
-                    _irdata.item_request_details.AddRange(_originalDetailsBackup);
-                }
-
-                //Restore irltable
-                _irltable = _originalIRLBackup != null ? _originalIRLBackup.Copy() : new DataTable();
-
-                ShowCurrentRecord(); // Rebinds original data from _irdata
-
-                // Restore all textboxes, combo boxes, etc.
-                Helpers.RestorePanelData(pnl_top, _originalTopValues);
-                Helpers.RestorePanelData(pnl_bot, _originalBotValues);
-
-                //Restore original binding if filtered by ref_doc
-                if (_isFilteredByRefDoc)
-                {
-                    ShowCurrentRecord();
-                    _isFilteredByRefDoc = false;
-                }
             }
         }
 
@@ -338,10 +284,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             bool hasError = Helpers.ValidateControlsValues(panelToValidate);
 
             if (hasError)
-            {
-                Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
                 return;
-            }
 
             string[] columnsToValidate = _isWarehouseUser
                 ? new[] { "issued_qty" }
@@ -371,6 +314,37 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 Helpers.ShowDialogMessage("error", "Please select at least one item.");
                 return;
+            }
+
+            //Check ref_doc condition
+            if (!string.IsNullOrEmpty(itemRequestParent.ref_doc))
+            {
+                foreach (DataGridViewRow row in dgv_main.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    // Get so_id and sod_id values
+                    var soId = row.Cells["so_id"]?.Value?.ToString();
+                    var sodId = row.Cells["sod_id"]?.Value?.ToString();
+
+                    // Only validate if both IDs have data
+                    if (string.IsNullOrWhiteSpace(soId) || string.IsNullOrWhiteSpace(sodId) || soId == "0" || sodId == "0")
+                        continue;
+
+                    // Get req_qty and order_qty as decimals (handle parsing safely)
+                    decimal reqQty = 0, orderQty = 0;
+                    decimal.TryParse(row.Cells["req_qty"]?.Value?.ToString(), out reqQty);
+                    decimal.TryParse(row.Cells["order_qty"]?.Value?.ToString(), out orderQty);
+
+                    // Compare values
+                    if (reqQty > orderQty)
+                    {
+                        string itemDesc = row.Cells["item_description"]?.Value?.ToString() ?? "Unknown Item";
+                        Helpers.ShowDialogMessage("error",
+                            $"Requested quantity for '{itemDesc}' cannot exceed the ordered quantity ({orderQty}).");
+                        return;
+                    }
+                }
             }
 
             //Only set date and user info inside itemRequestParent when valid
@@ -449,6 +423,28 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             //fill this declared value by the receiving reports data
             _irdata = await itemRequestService.GetAsModel();
+            _userdata = await userListService.GetAsList();
+
+            // Populate user combo box
+            if (_userdata != null && _userdata.Count > 0)
+            {
+                // Add user names manually
+                var userNames = _userdata
+                    .Select(u => u.user_name)
+                    .Where(name => !string.IsNullOrWhiteSpace(name))
+                    .Distinct()
+                    .OrderBy(name => name)
+                    .ToArray();
+
+                // Clear any existing items safely
+                cmb_received_by.BeginUpdate();
+                cmb_received_by.Items.Clear();
+                cmb_received_by.Items.AddRange(userNames);
+                cmb_received_by.EndUpdate();
+            }
+
+            // Reverse order so newest records appear first
+            _irdata.item_request.Reverse();
 
             _sotable = await salesOrderViewService.GetAsDatatable();
 
@@ -640,8 +636,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             var currentRow = dgv_main.Rows[e.RowIndex];
 
-            dgv_main.AllowUserToAddRows = false;
-
             if (!_isWarehouseUser && columnName == "item_description")
             {
                 using (var itemForm = new ItemRequestItems())
@@ -652,6 +646,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                         currentRow.Cells["item_id"].Value = itemForm.SelectedItemId;
                         currentRow.Cells["item_description"].Value = itemForm.SelectedItemDesc;
                         currentRow.Cells["req_uom"].Value = itemForm.SelectedItemUom;
+
                     }
                 }
                 return;
@@ -704,44 +699,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
         }
 
-        private void dgv_main_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            // Ensure valid cell
-            if (e.RowIndex < 0 || e.ColumnIndex < 0)
-                return;
-
-            // Only trigger this for the 'req_qty' column
-            string columnName = dgv_main.Columns[e.ColumnIndex].Name;
-            if (columnName != "req_qty")
-                return;
-
-            // Get the current row being edited
-            var currentRow = dgv_main.Rows[e.RowIndex];
-
-            // Check if the req_qty value is not zero
-            if (decimal.TryParse(currentRow.Cells["req_qty"].Value?.ToString(), out decimal reqQty))
-            {
-                // Only add a new row if req_qty is greater than 0 and this is the last row
-                if (reqQty > 0 && e.RowIndex == dgv_main.Rows.Count - 1 && !_isWarehouseUser)
-                {
-                    // End current edit
-                    dgv_main.EndEdit();
-
-                    // Allow user to add rows (if disabled in edit mode)
-                    dgv_main.AllowUserToAddRows = true;
-
-                    // Get the bound list
-                    if (dgv_main.DataSource is BindingList<ItemRequestDetailsModel> list)
-                    {
-                        list.Add(new ItemRequestDetailsModel());
-                    }
-
-                    // Prevent multiple unnecessary blank rows
-                    dgv_main.AllowUserToAddRows = false;
-                }
-            }
-        }
-
         private void cmb_req_dept_TextChanged(object sender, EventArgs e)
         {
             // store what user typed
@@ -787,7 +744,9 @@ namespace smpc_engineering_app.Pages.ItemRequest
         {
             try
             {
-                // Get selected reference document
+                if (!_isEditMode && !_isNewMode)
+                    return;
+
                 string selectedRefDoc = cmb_ref_doc.SelectedItem?.ToString();
                 if (string.IsNullOrEmpty(selectedRefDoc) || _sotable == null)
                 {

@@ -46,14 +46,15 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 
             string searchText = txt_search.Text.Trim();
 
-            if (string.IsNullOrEmpty(searchText))
+            if (string.IsNullOrEmpty(searchText) || searchText == placeHolderText)
             {
                 dgv_all_item.DataSource = itemTable;
-                return;
             }
-
-            var searchedData = Helpers.FilterDataTable(itemTable, searchText, "short_desc", "item_code", "general_name", "item_model", "uom_name", "size");
-            dgv_all_item.DataSource = searchedData;
+            else
+            {
+                var searchedData = Helpers.FilterDataTable(itemTable, searchText, "short_desc", "item_code", "general_name", "item_model", "uom_name", "size");
+                dgv_all_item.DataSource = searchedData;
+            }
         }
 
         private async void ItemRequestItems_Load(object sender, EventArgs e)

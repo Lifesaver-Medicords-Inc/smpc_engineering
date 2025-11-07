@@ -27,8 +27,11 @@ namespace smpc_engineering_app.Models
     {
         public int id { get; set; }
         public int ir_id { get; set; }
+        public int so_id { get; set; }
+        public int sod_id { get; set; }
         public int item_id { get; set; }
         public string item_description { get; set; }
+        public int order_qty { get; set; }
         public int req_qty { get; set; }
         public string req_uom { get; set; }
         public int issued_qty { get; set; }

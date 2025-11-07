@@ -30,17 +30,17 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemRequest));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
+            this.dtp_issue_date = new System.Windows.Forms.DateTimePicker();
+            this.dtp_required_date = new System.Windows.Forms.DateTimePicker();
             this.txt_id = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.cmb_ref_doc = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txt_doc_no = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txt_issue_date = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.txt_required_date = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txt_req_date = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -60,12 +60,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.panel6 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.pnl_bot = new System.Windows.Forms.Panel();
+            this.cmb_received_by = new System.Windows.Forms.ComboBox();
             this.btn_forward = new System.Windows.Forms.Button();
             this.txt_issued_by = new System.Windows.Forms.TextBox();
             this.label12 = new System.Windows.Forms.Label();
             this.txt_approved_by = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.txt_received_by = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.txt_req_by = new System.Windows.Forms.TextBox();
             this.label9 = new System.Windows.Forms.Label();
@@ -76,7 +76,10 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ir_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.so_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sod_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_description = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.order_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.req_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.req_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.issued_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -93,15 +96,15 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             // pnl_top
             // 
+            this.pnl_top.Controls.Add(this.dtp_issue_date);
+            this.pnl_top.Controls.Add(this.dtp_required_date);
             this.pnl_top.Controls.Add(this.txt_id);
             this.pnl_top.Controls.Add(this.label13);
             this.pnl_top.Controls.Add(this.cmb_ref_doc);
             this.pnl_top.Controls.Add(this.label8);
             this.pnl_top.Controls.Add(this.txt_doc_no);
             this.pnl_top.Controls.Add(this.label7);
-            this.pnl_top.Controls.Add(this.txt_issue_date);
             this.pnl_top.Controls.Add(this.label6);
-            this.pnl_top.Controls.Add(this.txt_required_date);
             this.pnl_top.Controls.Add(this.label5);
             this.pnl_top.Controls.Add(this.txt_req_date);
             this.pnl_top.Controls.Add(this.label4);
@@ -116,6 +119,26 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.pnl_top.Name = "pnl_top";
             this.pnl_top.Size = new System.Drawing.Size(1400, 215);
             this.pnl_top.TabIndex = 0;
+            // 
+            // dtp_issue_date
+            // 
+            this.dtp_issue_date.Enabled = false;
+            this.dtp_issue_date.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtp_issue_date.Location = new System.Drawing.Point(634, 130);
+            this.dtp_issue_date.Name = "dtp_issue_date";
+            this.dtp_issue_date.Size = new System.Drawing.Size(200, 20);
+            this.dtp_issue_date.TabIndex = 97;
+            this.dtp_issue_date.Tag = "REQUIRED";
+            // 
+            // dtp_required_date
+            // 
+            this.dtp_required_date.Enabled = false;
+            this.dtp_required_date.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtp_required_date.Location = new System.Drawing.Point(634, 109);
+            this.dtp_required_date.Name = "dtp_required_date";
+            this.dtp_required_date.Size = new System.Drawing.Size(200, 20);
+            this.dtp_required_date.TabIndex = 96;
+            this.dtp_required_date.Tag = "REQUIRED";
             // 
             // txt_id
             // 
@@ -173,14 +196,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label7.TabIndex = 24;
             this.label7.Text = "DOC. NO:";
             // 
-            // txt_issue_date
-            // 
-            this.txt_issue_date.Location = new System.Drawing.Point(634, 130);
-            this.txt_issue_date.Name = "txt_issue_date";
-            this.txt_issue_date.Size = new System.Drawing.Size(200, 20);
-            this.txt_issue_date.TabIndex = 23;
-            this.txt_issue_date.Tag = "REQUIRED";
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -189,14 +204,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label6.Size = new System.Drawing.Size(74, 13);
             this.label6.TabIndex = 22;
             this.label6.Text = "ISSUE DATE:";
-            // 
-            // txt_required_date
-            // 
-            this.txt_required_date.Location = new System.Drawing.Point(634, 109);
-            this.txt_required_date.Name = "txt_required_date";
-            this.txt_required_date.Size = new System.Drawing.Size(200, 20);
-            this.txt_required_date.TabIndex = 21;
-            this.txt_required_date.Tag = "REQUIRED";
             // 
             // label5
             // 
@@ -248,7 +255,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_purpose.Name = "txt_purpose";
             this.txt_purpose.Size = new System.Drawing.Size(200, 20);
             this.txt_purpose.TabIndex = 15;
-            this.txt_purpose.Tag = "REQUIRED";
+            this.txt_purpose.Tag = "";
             // 
             // label3
             // 
@@ -384,12 +391,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             // pnl_bot
             // 
+            this.pnl_bot.Controls.Add(this.cmb_received_by);
             this.pnl_bot.Controls.Add(this.btn_forward);
             this.pnl_bot.Controls.Add(this.txt_issued_by);
             this.pnl_bot.Controls.Add(this.label12);
             this.pnl_bot.Controls.Add(this.txt_approved_by);
             this.pnl_bot.Controls.Add(this.label11);
-            this.pnl_bot.Controls.Add(this.txt_received_by);
             this.pnl_bot.Controls.Add(this.label10);
             this.pnl_bot.Controls.Add(this.txt_req_by);
             this.pnl_bot.Controls.Add(this.label9);
@@ -399,6 +406,23 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.pnl_bot.Name = "pnl_bot";
             this.pnl_bot.Size = new System.Drawing.Size(1400, 210);
             this.pnl_bot.TabIndex = 1;
+            // 
+            // cmb_received_by
+            // 
+            this.cmb_received_by.FormattingEnabled = true;
+            this.cmb_received_by.Items.AddRange(new object[] {
+            "Management",
+            "Sales",
+            "Logistics",
+            "Engineering",
+            "Accounting",
+            "Purchasing",
+            "Warehouse"});
+            this.cmb_received_by.Location = new System.Drawing.Point(139, 78);
+            this.cmb_received_by.Name = "cmb_received_by";
+            this.cmb_received_by.Size = new System.Drawing.Size(200, 21);
+            this.cmb_received_by.TabIndex = 38;
+            this.cmb_received_by.Tag = "REQUIRED";
             // 
             // btn_forward
             // 
@@ -444,14 +468,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label11.Size = new System.Drawing.Size(165, 13);
             this.label11.TabIndex = 22;
             this.label11.Text = "APPROVED/ AUTHORIZED BY:";
-            // 
-            // txt_received_by
-            // 
-            this.txt_received_by.Location = new System.Drawing.Point(139, 78);
-            this.txt_received_by.Name = "txt_received_by";
-            this.txt_received_by.Size = new System.Drawing.Size(200, 20);
-            this.txt_received_by.TabIndex = 19;
-            this.txt_received_by.Tag = "REQUIRED";
             // 
             // label10
             // 
@@ -506,21 +522,25 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.AllowUserToAddRows = false;
             this.dgv_main.AllowUserToDeleteRows = false;
             this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgv_main.ColumnHeadersHeight = 50;
+            this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.number,
             this.id,
             this.ir_id,
             this.item_id,
+            this.so_id,
+            this.sod_id,
             this.item_description,
+            this.order_qty,
             this.req_qty,
             this.req_uom,
             this.issued_qty,
@@ -534,7 +554,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.Size = new System.Drawing.Size(1400, 525);
             this.dgv_main.TabIndex = 1;
             this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
-            this.dgv_main.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellEndEdit);
             this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
             this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
             // 
@@ -570,6 +589,22 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.item_id.ReadOnly = true;
             this.item_id.Visible = false;
             // 
+            // so_id
+            // 
+            this.so_id.DataPropertyName = "so_id";
+            this.so_id.HeaderText = "SO ID";
+            this.so_id.Name = "so_id";
+            this.so_id.ReadOnly = true;
+            this.so_id.Visible = false;
+            // 
+            // sod_id
+            // 
+            this.sod_id.DataPropertyName = "sod_id";
+            this.sod_id.HeaderText = "SOD ID";
+            this.sod_id.Name = "sod_id";
+            this.sod_id.ReadOnly = true;
+            this.sod_id.Visible = false;
+            // 
             // item_description
             // 
             this.item_description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
@@ -578,6 +613,13 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.item_description.MinimumWidth = 200;
             this.item_description.Name = "item_description";
             this.item_description.ReadOnly = true;
+            // 
+            // order_qty
+            // 
+            this.order_qty.DataPropertyName = "order_qty";
+            this.order_qty.HeaderText = "ORDER QTY";
+            this.order_qty.Name = "order_qty";
+            this.order_qty.ReadOnly = true;
             // 
             // req_qty
             // 
@@ -681,17 +723,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.TextBox txt_purpose;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmb_req_dept;
-        private System.Windows.Forms.TextBox txt_required_date;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txt_req_date;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txt_issue_date;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txt_doc_no;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.DataGridView dgv_main;
-        private System.Windows.Forms.TextBox txt_received_by;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox txt_req_by;
         private System.Windows.Forms.Label label9;
@@ -704,11 +743,17 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.TextBox txt_id;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button btn_cancel;
+        private System.Windows.Forms.DateTimePicker dtp_required_date;
+        private System.Windows.Forms.DateTimePicker dtp_issue_date;
+        private System.Windows.Forms.ComboBox cmb_received_by;
         private System.Windows.Forms.DataGridViewTextBoxColumn number;
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn ir_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn so_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sod_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_description;
+        private System.Windows.Forms.DataGridViewTextBoxColumn order_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn req_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn req_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn issued_qty;
