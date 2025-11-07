@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using smpc_engineering_app.Pages.PickActivity;
 
 namespace smpc_engineering_app.Services
 {
@@ -20,6 +21,7 @@ namespace smpc_engineering_app.Services
             { "Sales Order", new SalesOrder() },
             { "Sales Quotation List", new SalesQuotationList() },
             { "Item Request", new ItemRequest() },
+            { "Pick Activity", new PickActivity() },
         };
 
         private string _selectedRoute;

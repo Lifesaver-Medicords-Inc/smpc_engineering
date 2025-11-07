@@ -14,6 +14,13 @@ namespace smpc_engineering_app.Pages.Components
 {
     public partial class PickQtyModal : Form
     {
+        //Dictionaries for the column grouping of datagridviews
+        Dictionary<string, string[]> columnGroupsMain = new Dictionary<string, string[]>()
+        {
+            { "PICK", new string[] { "issued_qty", "issued_uom" } },
+            { "STOCK", new string[] { "stock_qty", "stock_uom" } },
+        };
+
         public string PassedUom { get; set; }
         public int PassedId { get; set; }
         public DataTable PassedIRLocation { get; set; }
@@ -27,12 +34,11 @@ namespace smpc_engineering_app.Pages.Components
 
             // Center the modal relative to its parent form
             this.StartPosition = FormStartPosition.CenterParent;
+            Helpers.EnableGroupHeaders(dgv_pick_qty, columnGroupsMain);
         }
 
         private async void PickQtyModal_Load(object sender, EventArgs e)
         {
-
-            Console.WriteLine(PassedIRLocation);
             try
             {
                 Helpers.Loading.ShowLoading(dgv_pick_qty, "Fetching data...");
@@ -56,10 +62,22 @@ namespace smpc_engineering_app.Pages.Components
 
             if (locationTable.Rows.Count > 0)
             {
+                // Keep only unique rows based on location + warehouse_id
+                locationTable = locationTable.AsEnumerable()
+                    .GroupBy(row => new
+                    {
+                        Location = row["location"]?.ToString()?.Trim(),
+                        WarehouseId = row["warehouse_id"]?.ToString()?.Trim()
+                    })
+                    .Select(g => g.First()) // keep the first unique combination
+                    .CopyToDataTable();
+
+
                 //Set each row's issued_uom to the passed UOM
                 foreach (DataRow row in locationTable.Rows)
                 {
                     row["issued_uom"] = PassedUom;
+                    row["stock_uom"] = PassedUom;
                     row["ir_details_id"] = PassedId;
                 }
 

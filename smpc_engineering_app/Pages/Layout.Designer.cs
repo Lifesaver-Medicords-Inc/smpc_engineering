@@ -33,6 +33,7 @@ namespace smpc_engineering_app
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Sales Order");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Sales Quotation List");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Item Request");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Pick Activity");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SMPC));
             this.container = new System.Windows.Forms.Panel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -290,11 +291,14 @@ namespace smpc_engineering_app
             treeNode3.Text = "Sales Quotation List";
             treeNode4.Name = "Item Request";
             treeNode4.Text = "Item Request";
+            treeNode5.Name = "Pick Activity";
+            treeNode5.Text = "Pick Activity";
             this.Sidebar.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5});
             this.Sidebar.Size = new System.Drawing.Size(200, 615);
             this.Sidebar.TabIndex = 10;
             this.Sidebar.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Sidebar_NodeMouseClick);
