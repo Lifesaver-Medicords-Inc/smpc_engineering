@@ -118,6 +118,7 @@ namespace smpc_engineering_app.Services.Helpers
                         .Cast<Control>()
                         .FirstOrDefault(c =>
                             c.Name.Equals("txt_" + prop.Name, StringComparison.OrdinalIgnoreCase) ||
+                            c.Name.Equals("dtp_" + prop.Name, StringComparison.OrdinalIgnoreCase) ||
                             c.Name.Equals("cmb_" + prop.Name, StringComparison.OrdinalIgnoreCase));
 
                     if (control != null)
@@ -133,6 +134,8 @@ namespace smpc_engineering_app.Services.Helpers
                     value = textBox.Text;
                 else if (control is ComboBox comboBox)
                     value = comboBox.Text;
+                else if (control is DateTimePicker dateTimePicker)
+                    value = dateTimePicker.Value.ToString("MM/dd/yyyy");
 
                 if (value != null && prop.CanWrite)
                 {
@@ -393,7 +396,7 @@ namespace smpc_engineering_app.Services.Helpers
                         continue;
 
                     // Affect controls of these types
-                    if (control is TextBox || control is ComboBox || control is CheckBox)
+                    if (control is TextBox || control is ComboBox || control is CheckBox || control is DateTimePicker)
                         control.Enabled = enable;
 
                     // Recurse into child containers
@@ -1303,22 +1306,27 @@ namespace smpc_engineering_app.Services.Helpers
             return values;
         }
 
-
-
-        public static Boolean ValidateControlsValues(Panel pnl)
+        public static bool ValidateControlsValues(Panel pnl)
         {
-            Boolean isError = false;
+            bool isError = false;
+            bool messageShown = false; // Prevent multiple dialog popups
+
             foreach (Control control in pnl.Controls)
             {
                 // Handle TextBox
                 if (control is TextBox textBox)
                 {
-                    string key = textBox.Name.Replace("txt_", "");
                     if (string.Equals(textBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
-                        && string.IsNullOrEmpty(textBox.Text))
+                        && string.IsNullOrWhiteSpace(textBox.Text))
                     {
                         FlashRed(control);
                         isError = true;
+
+                        if (!messageShown)
+                        {
+                            Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
+                            messageShown = true;
+                        }
                     }
                     else
                     {
@@ -1327,21 +1335,84 @@ namespace smpc_engineering_app.Services.Helpers
                 }
 
                 // Handle ComboBox
-                //comboboxes should be dropdown list and flatsyle flat
                 else if (control is ComboBox comboBox)
                 {
                     if (string.Equals(comboBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
-                        && comboBox.SelectedIndex < 0)   //correct check for DropDownList
+                        && comboBox.SelectedIndex < 0)
                     {
                         FlashRed(comboBox);
                         isError = true;
+
+                        if (!messageShown)
+                        {
+                            Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
+                            messageShown = true;
+                        }
                     }
                     else
                     {
                         comboBox.BackColor = Color.White;
                     }
                 }
+
+                // Handle DateTimePicker
+                else if (control is DateTimePicker dateTimePicker)
+                {
+                    if (string.Equals(dateTimePicker.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase))
+                    {
+                        DateTime selectedDate = dateTimePicker.Value.Date;
+                        DateTime today = DateTime.Now.Date;
+
+                        // Validation: must not be earlier than today and within MinDate/MaxDate
+                        if (selectedDate < today)
+                        {
+                            FlashRed(dateTimePicker);
+                            isError = true;
+
+                            if (!messageShown)
+                            {
+                                Helpers.ShowDialogMessage("error", "Date cannot be earlier than today.");
+                                messageShown = true;
+                            }
+                        }
+                        else if (selectedDate < dateTimePicker.MinDate.Date)
+                        {
+                            FlashRed(dateTimePicker);
+                            isError = true;
+
+                            if (!messageShown)
+                            {
+                                Helpers.ShowDialogMessage("error", "Selected date is below the minimum allowed date.");
+                                messageShown = true;
+                            }
+                        }
+                        else if (selectedDate > dateTimePicker.MaxDate.Date)
+                        {
+                            FlashRed(dateTimePicker);
+                            isError = true;
+
+                            if (!messageShown)
+                            {
+                                Helpers.ShowDialogMessage("error", "Selected date exceeds the maximum allowed date.");
+                                messageShown = true;
+                            }
+                        }
+                        else
+                        {
+                            dateTimePicker.CalendarMonthBackground = Color.White;
+                        }
+                    }
+                    else
+                    {
+                        dateTimePicker.CalendarMonthBackground = Color.White;
+                    }
+                }
+
+                // Stop further validation after showing one error message
+                if (messageShown)
+                    break;
             }
+
             return isError;
         }
 
@@ -1419,45 +1490,54 @@ namespace smpc_engineering_app.Services.Helpers
                             {
                                 Console.WriteLine(comboBox.Name);
                                 string key = comboBox.Name.Replace("cmb_", "") + "_id";
+                                string columnValue = dt.Rows[selectedIndex][column_name]?.ToString() ?? "";
 
                                 if (comboBox.Tag == "DYNAMIC")
                                 {
-
-                                    //Console.WriteLine(comboBox.Name);
-                                    comboBox.SelectedValue = (string)dt.Rows[selectedIndex][key].ToString();
+                                    comboBox.SelectedValue = columnValue;
                                 }
-                                // Check multiple values
                                 else if (comboBox.Tag == "MULTIVALUE")
                                 {
-                                    string rawValue = dt.Rows[selectedIndex][column_name].ToString();
+                                    string rawValue = columnValue;
                                     var multiValues = rawValue.Split(',')
                                                          .Select(v => v.Trim())
                                                          .Where(v => !string.IsNullOrEmpty(v))
                                                          .ToList();
 
-                                    // Set the first value as the display text (optional behavior)
+                                    // Set the first value as display text
                                     comboBox.Text = multiValues.FirstOrDefault() ?? string.Empty;
 
-                                    // Populate the ComboBox with all values
-                                    //comboBox.Items.Clear();
+                                    // Add missing values into ComboBox items
                                     foreach (var val in multiValues)
                                     {
-                                        comboBox.Items.Add(val);
+                                        if (!comboBox.Items.Contains(val))
+                                            comboBox.Items.Add(val);
                                     }
 
-                                    // Optionally set the first item as selected (you could change this logic)
                                     if (multiValues.Count > 0)
-                                    {
-                                        comboBox.SelectedIndex = 0;  // Select the first item (if needed)
-                                    }
+                                        comboBox.SelectedIndex = comboBox.FindStringExact(multiValues[0]);
                                 }
                                 else
                                 {
-                                    string keys = comboBox.Name.Replace("cmb_", "");
-                                    //Console.WriteLine(comboBox.Name);
-                                    comboBox.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
-                                }
+                                    string valueToSet = columnValue;
 
+                                    // if the ComboBox does not contain the value, add it temporarily
+                                    if (!comboBox.Items.Contains(valueToSet) && !string.IsNullOrWhiteSpace(valueToSet))
+                                    {
+                                        comboBox.Items.Add(valueToSet);
+                                    }
+
+                                    // Now safely assign the text
+                                    comboBox.Text = valueToSet;
+
+                                    // Force the display even if DropDownStyle = DropDownList
+                                    comboBox.SelectedIndex = comboBox.FindStringExact(valueToSet);
+                                    if (comboBox.SelectedIndex == -1)
+                                    {
+                                        // Simulate display value for DropDownList
+                                        comboBox.SelectedIndex = comboBox.Items.IndexOf(valueToSet);
+                                    }
+                                }
                             }
                             // Check if the control is a Checkbox
                             if (control is CheckBox checkbox)
