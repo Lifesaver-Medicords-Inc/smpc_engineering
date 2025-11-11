@@ -107,6 +107,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // textBox4
             // 
+            this.textBox4.Enabled = false;
             this.textBox4.Location = new System.Drawing.Point(1265, 85);
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(99, 20);
@@ -124,6 +125,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // textBox3
             // 
+            this.textBox3.Enabled = false;
             this.textBox3.Location = new System.Drawing.Point(139, 88);
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(370, 20);
@@ -132,6 +134,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // textBox2
             // 
+            this.textBox2.Enabled = false;
             this.textBox2.Location = new System.Drawing.Point(139, 151);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(200, 20);
@@ -149,6 +152,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // textBox1
             // 
+            this.textBox1.Enabled = false;
             this.textBox1.Location = new System.Drawing.Point(139, 130);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(200, 20);
@@ -166,6 +170,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // txt_id
             // 
+            this.txt_id.Enabled = false;
             this.txt_id.Location = new System.Drawing.Point(1164, 151);
             this.txt_id.Name = "txt_id";
             this.txt_id.Size = new System.Drawing.Size(200, 20);
@@ -183,6 +188,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // txt_doc_no
             // 
+            this.txt_doc_no.Enabled = false;
             this.txt_doc_no.Location = new System.Drawing.Point(1164, 130);
             this.txt_doc_no.Name = "txt_doc_no";
             this.txt_doc_no.Size = new System.Drawing.Size(200, 20);
@@ -200,6 +206,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // txt_purpose
             // 
+            this.txt_purpose.Enabled = false;
             this.txt_purpose.Location = new System.Drawing.Point(139, 109);
             this.txt_purpose.Name = "txt_purpose";
             this.txt_purpose.Size = new System.Drawing.Size(200, 20);
@@ -355,6 +362,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             this.btn_save_pick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btn_save_pick.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(234)))), ((int)(((byte)(211)))));
+            this.btn_save_pick.Enabled = false;
             this.btn_save_pick.Location = new System.Drawing.Point(1265, 85);
             this.btn_save_pick.Name = "btn_save_pick";
             this.btn_save_pick.Size = new System.Drawing.Size(114, 23);

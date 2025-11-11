@@ -99,11 +99,11 @@
     <Compile Include="Models\ItemListModel.cs" />
     <Compile Include="Models\ItemRequestModel.cs" />
     <Compile Include="Models\JobOrderRedboxListModel.cs" />
+    <Compile Include="Models\PickActivityModel.cs" />
     <Compile Include="Models\QuotationRedboxListModel.cs" />
     <Compile Include="Models\EngrUsersModel.cs" />
-    <Compile Include="Models\JobOrderSODModel.cs" />
-    <Compile Include="Models\JobOrderSOModel.cs" />
     <Compile Include="Models\JobOrderModel.cs" />
+    <Compile Include="Models\SalesOrderViewEngModel.cs" />
     <Compile Include="Models\SalesOrderViewModel.cs" />
     <Compile Include="Models\UserListModel.cs" />
     <Compile Include="Pages\Components\PickQtyModal.cs">
@@ -190,8 +190,8 @@
     <Compile Include="Services\Setup\UserListService.cs" />
     <Compile Include="Services\Transaction\ItemRequestService.cs" />
     <Compile Include="Services\Transaction\JobOrderService.cs" />
-    <Compile Include="Services\Transaction\JobOrderSODService.cs" />
-    <Compile Include="Services\Transaction\JobOrderSOService.cs" />
+    <Compile Include="Services\Transaction\PickActivityService.cs" />
+    <Compile Include="Services\Transaction\SalesOrderViewEngService.cs" />
     <Compile Include="Shared\ApiEndPoints.cs" />
     <Compile Include="Shared\CacheData.cs" />
     <Compile Include="Shared\ChartType.cs" />

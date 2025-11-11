@@ -12,9 +12,15 @@ namespace smpc_engineering_app.Models
         public int sod_id { get; set; }
         public string ref_doc { get; set; }
         public int item_id { get; set; }
+        public string customer { get; set; }
+        public string customer_code { get; set; }
+        public string sales_person { get; set; }
         public string item_description { get; set; }
         public int order_qty { get; set; }
         public int req_qty { get; set; }
         public string req_uom { get; set; }
+        public int left_qty { get; set; }
+        public int pick_qty { get; set; }
+        public string left_uom { get; set; }
     }
 }

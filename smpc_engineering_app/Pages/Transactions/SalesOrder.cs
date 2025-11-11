@@ -12,15 +12,19 @@ using smpc_engineering_app.Services.Transaction;
 using smpc_engineering_app.Services.Helpers;
 using smpc_engineering_app.Properties;
 using System.IO;
+using smpc_engineering_app.Models;
 
 namespace smpc_engineering_app.Pages.Transactions
 {
     public partial class SalesOrder : UserControl
     {
-        readonly JobOrderSOService productionListSOService = new JobOrderSOService();
-        readonly JobOrderSODService productionListSODService = new JobOrderSODService();
+        readonly SalesOrderViewEngService salesOrderViewEngService = new SalesOrderViewEngService();
         private readonly string jobOrderPath = Settings.Default.JOBORDERPATH;
         private TreeNode selectedNode;
+        private int _currentSOIndex = -1;
+        private SalesOrderViewEngList _sodata;
+        private List<SalesOrderViewEngModel> _salesOrders;
+        private DataTable _soTable;
 
         private readonly string[] systemFolders =
         {
@@ -76,95 +80,180 @@ namespace smpc_engineering_app.Pages.Transactions
             SALES_LV.ContextMenuStrip = lvContextMenu;
         }
 
-        public async void SetSalesOrder(string salesOrder)
+        private async void SalesOrder_Load(object sender, EventArgs e)
         {
-            Helpers.Loading.ShowLoading(dgv_order_sales, "Fetching sales orders...");
-
-            txt_created_by.Text = CacheData.CurrentUser.first_name + " " + CacheData.CurrentUser.last_name;
-
-            DataTable dt = await productionListSOService.GetAsDatatable(salesOrder);
-
-            if (dt != null && dt.Rows.Count > 0)
+            try
             {
-                DataRow row = dt.Rows[0];
+                Helpers.Loading.ShowLoading(dgv_order_sales, "Fetching data...");
+                await LoadSalesOrders();
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(dgv_order_sales);
+            }
+        }
 
-                txt_id.Text = row["id"]?.ToString();
-                txt_branch_name.Text = row["customer"]?.ToString();
-                txt_tin.Text = row["tin"]?.ToString();
-                txt_customer_code.Text = row["code"]?.ToString();
-                txt_ship_to.Text = row["delivery_to"]?.ToString();
-                txt_bill_to.Text = row["bill_to"]?.ToString();
+        private async Task LoadSalesOrders()
+        {
+            pnl_Sales.Visible = true;
 
-                // Store SO number and update current folder path
-                string soNumber = row["doc_no"]?.ToString();
-                txt_doc.Text = "SO#" + soNumber;
-                txt_document_no.Text = row["reference_doc"]?.ToString();
-                txt_status.Text = row["status"]?.ToString();
+            // save current index before reload
+            int oldIndex = _currentSOIndex;
 
-                // Load files filtered by SO#
-                if (SALES_TV.SelectedNode != null)
+            //fill this declared value by the receiving reports data
+            _sodata = await salesOrderViewEngService.GetAsModel();
+
+            // Reverse order so newest records appear first
+            _sodata.sales_order_view.Reverse();
+
+            if (_sodata != null && _sodata.sales_order_view != null && _sodata.sales_order_view.Count > 0)
+            {
+                //set this variable to the parent of the rr
+                _salesOrders = _sodata.sales_order_view;
+
+                // restore old index if valid, otherwise fallback to 0
+                if (oldIndex >= 0 && oldIndex < _salesOrders.Count)
+                    _currentSOIndex = oldIndex;
+                else
+                    _currentSOIndex = 0;
+
+                ShowCurrentRecord();
+            }
+            else
+            {
+                _salesOrders = new List<SalesOrderViewEngModel>();
+                _currentSOIndex = -1;
+                dgv_order_sales.DataSource = null;
+                btn_prev.Enabled = false;
+                btn_next.Enabled = false;
+            }
+        }
+
+        private void ShowCurrentRecord()
+        {
+            if (_currentSOIndex < 0 || _sodata == null || _sodata.sales_order_view == null || !_sodata.sales_order_view.Any())
+                return;
+
+            // Add prefix "SO#" to doc_no before binding
+            foreach (var so in _sodata.sales_order_view)
+            {
+                if (!string.IsNullOrEmpty(so.doc_no) && !so.doc_no.StartsWith("SO#"))
                 {
-                    string currentPath = SALES_TV.SelectedNode.Tag?.ToString();
-                    if (!string.IsNullOrEmpty(currentPath))
-                    {
-                        LoadFiles(currentPath); // This will now filter by SO#
-                    }
-                }
-
-                if (DateTime.TryParse(row["date"]?.ToString(), out DateTime date))
-                {
-                    dtp_date.Value = date;
-                }
-
-                if (DateTime.TryParse(row["delivery_date"]?.ToString(), out DateTime deliveryDate))
-                {
-                    dtp_delivery_date.Value = deliveryDate;
+                    so.doc_no = "SO#" + so.doc_no;
                 }
             }
 
-            await LoadSalesOrderDetails();
+            txt_created_by.Text = CacheData.CurrentUser.first_name + " " + CacheData.CurrentUser.last_name;
 
-            Helpers.Loading.HideLoading(dgv_order_sales);
+            // Convert receiving report list to DataTable using helper
+            _soTable = Helpers.ToDataTable(_sodata.sales_order_view);
+
+            //Clear and rebuild _irltable based on current record only
+            var current = _salesOrders[_currentSOIndex];
+
+            if (_soTable.Rows.Count == 0 || _currentSOIndex >= _soTable.Rows.Count)
+                return;
+
+            //Bind controls automatically (textboxes, checkboxes, etc.)
+            Helpers.BindControls(new Panel[] { panel5 }, _soTable, _currentSOIndex);
+
+            //Disable auto column generation before setting the data source
+            dgv_order_sales.AutoGenerateColumns = false;
+
+            //Bind child details (grids)
+            if (_sodata?.sales_order_details_view != null)
+            {
+                var detailsForCurrent = new BindingList<SalesOrderDetailsViewEngModel>(_sodata.sales_order_details_view.Where(d => d.so_id == current.id).ToList());
+
+                dgv_order_sales.DataSource = detailsForCurrent;
+            }
+            else
+            {
+                dgv_order_sales.DataSource = null;
+            }
+
+            //Enable/disable navigation buttons
+            btn_prev.Enabled = _currentSOIndex > 0;
+            btn_next.Enabled = _currentSOIndex < _salesOrders.Count - 1;
+
+            // Load files filtered by SO#
+            if (SALES_TV.SelectedNode != null)
+            {
+                string currentPath = SALES_TV.SelectedNode.Tag?.ToString();
+                if (!string.IsNullOrEmpty(currentPath))
+                {
+                    LoadFiles(currentPath); // This will now filter by SO#
+                }
+            }
 
             LoadDirectory(SALES_TV, jobOrderPath);
         }
 
-        private async Task LoadSalesOrderDetails()
+        public async void SetSalesOrder(string salesOrder)
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(txt_id.Text))
-                {
-                    DataTable sodData = await productionListSODService.GetAsDatatable(txt_id.Text);
-
-                    if (sodData != null && sodData.Rows.Count > 0)
-                    {
-                        // Add a numbering column if it doesn't exist
-                        if (!sodData.Columns.Contains("numbering"))
-                        {
-                            sodData.Columns.Add("numbering", typeof(int));
-                        }
-
-                        // Fill numbering column
-                        for (int i = 0; i < sodData.Rows.Count; i++)
-                        {
-                            sodData.Rows[i]["numbering"] = i + 1;
-                        }
-
-                        // Put "No" column first
-                        dgv_order_sales.DataSource = sodData;
-                        dgv_order_sales.Columns["numbering"].DisplayIndex = 0;
-                    }
-                    else
-                    {
-                        dgv_order_sales.DataSource = null;
-                    }
-                }
+                Helpers.Loading.ShowLoading(dgv_order_sales, "Fetching data...");
+                await LoadSalesOrders();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading Sales Order Details: {ex.Message}");
+                Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
             }
+            finally
+            {
+                Helpers.Loading.HideLoading(dgv_order_sales);
+            }
+
+            if (string.IsNullOrEmpty(salesOrder) || _sodata == null || _sodata.sales_order_view == null)
+                return;
+
+            txt_created_by.Text = CacheData.CurrentUser.first_name + " " + CacheData.CurrentUser.last_name;
+
+            // Ensure the prefix "SO#" is consistent
+            string formattedSO = salesOrder.StartsWith("SO#") ? salesOrder : "SO#" + salesOrder;
+
+            // Find the matching record index (case-insensitive match)
+            int index = _sodata.sales_order_view.FindIndex(so =>
+                string.Equals(so.doc_no, formattedSO, StringComparison.OrdinalIgnoreCase));
+
+            if (index >= 0)
+            {
+                _currentSOIndex = index;
+                ShowCurrentRecord();
+            }
+            else
+            {
+                Helpers.ShowDialogMessage("error", "Sales Order record not found.");
+            }
+        }
+
+        private void ChangeRecord(int step)
+        {
+            if (_salesOrders == null || !_salesOrders.Any()) return;
+
+            pnl_Sales.Visible = true;
+
+            int newIndex = _currentSOIndex + step;
+            if (newIndex >= 0 && newIndex < _salesOrders.Count)
+            {
+                _currentSOIndex = newIndex;
+                ShowCurrentRecord();
+            }
+        }
+
+        private void btn_next_Click(object sender, EventArgs e)
+        {
+            ChangeRecord(1);
+        }
+
+        private void btn_prev_Click(object sender, EventArgs e)
+        {
+            ChangeRecord(-1);
         }
 
         private void DeleteFileItem_Click(object sender, EventArgs e)
@@ -210,9 +299,9 @@ namespace smpc_engineering_app.Pages.Transactions
             string nameWithoutExt = Path.GetFileNameWithoutExtension(currentFileName);
             string extension = Path.GetExtension(currentFileName);
 
-            // Extract SO# suffix (changed from prefix)
-            string currentSO = txt_doc.Text.Replace("SO#", "").Trim();
-            string soSuffix = $"_SO{currentSO}"; // Changed from SO{currentSO}_
+            // Extract SO# suffix
+            string currentSO = txt_doc_no.Text.Replace("SO#", "").Trim();
+            string soSuffix = $"_SO{currentSO}";
 
             if (!nameWithoutExt.EndsWith(soSuffix, StringComparison.OrdinalIgnoreCase))
             {
@@ -229,7 +318,7 @@ namespace smpc_engineering_app.Pages.Transactions
                 if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.InputText))
                 {
                     string newFileNameWithoutSuffix = dialog.InputText.Trim();
-                    string newFileName = $"{newFileNameWithoutSuffix}{soSuffix}{extension}"; // Changed from {soPrefix}{newFileNameWithoutPrefix}{extension}
+                    string newFileName = $"{newFileNameWithoutSuffix}{soSuffix}{extension}";
                     string newFilePath = Path.Combine(GetCurrentDirectory(), newFileName);
 
                     try
@@ -314,10 +403,8 @@ namespace smpc_engineering_app.Pages.Transactions
                 if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.InputText))
                 {
                     string newFolderName = dialog.InputText.Trim();
-
-                    // ✅ Change: Move SO# prefix to the end
-                    string soNumber = txt_doc.Text.Replace("SO#", "").Trim();
-                    newFolderName = $"{newFolderName}_SO{soNumber}"; // Changed from SO#{soNumber}_{newFolderName}
+                    string soNumber = txt_doc_no.Text.Replace("SO#", "").Trim();
+                    newFolderName = $"{newFolderName}_SO{soNumber}";
 
                     string newFolderPath = Path.Combine(parentPath, newFolderName);
 
@@ -354,9 +441,9 @@ namespace smpc_engineering_app.Pages.Transactions
 
             string currentFolderName = Path.GetFileName(currentPath);
 
-            // Extract SO# suffix (changed from prefix)
-            string currentSO = txt_doc.Text.Replace("SO#", "").Trim();
-            string soSuffix = $"_SO{currentSO}"; // Changed from SO#{currentSO}_
+            // Extract SO# suffix
+            string currentSO = txt_doc_no.Text.Replace("SO#", "").Trim();
+            string soSuffix = $"_SO{currentSO}";
 
             // If folder doesn't have suffix, do not allow renaming
             if (!currentFolderName.EndsWith(soSuffix, StringComparison.OrdinalIgnoreCase))
@@ -374,7 +461,7 @@ namespace smpc_engineering_app.Pages.Transactions
                 if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.InputText))
                 {
                     string newFolderNameWithoutSuffix = dialog.InputText.Trim();
-                    string newFolderName = $"{newFolderNameWithoutSuffix}{soSuffix}"; // Changed from {soPrefix}{newFolderNameWithoutPrefix}
+                    string newFolderName = $"{newFolderNameWithoutSuffix}{soSuffix}";
 
                     string parentDirectory = Path.GetDirectoryName(currentPath);
                     string newFolderPath = Path.Combine(parentDirectory, newFolderName);
@@ -521,7 +608,7 @@ namespace smpc_engineering_app.Pages.Transactions
             {
                 int successCount = 0;
                 int errorCount = 0;
-                string soNumber = txt_doc.Text.Replace("SO#", "").Trim();
+                string soNumber = txt_doc_no.Text.Replace("SO#", "").Trim();
 
                 foreach (string file in files)
                 {
@@ -533,8 +620,7 @@ namespace smpc_engineering_app.Pages.Transactions
                             string nameWithoutExt = Path.GetFileNameWithoutExtension(originalFileName);
                             string extension = Path.GetExtension(originalFileName);
 
-                            // ✅ Change: Move SO# to suffix instead of prefix
-                            string newFileName = $"{nameWithoutExt}_SO{soNumber}{extension}"; // Changed from SO{soNumber}_{originalFileName}
+                            string newFileName = $"{nameWithoutExt}_SO{soNumber}{extension}";
 
                             string destinationPath = Path.Combine(targetFolder, newFileName);
 
@@ -636,8 +722,8 @@ namespace smpc_engineering_app.Pages.Transactions
 
         private void LoadManualSubDirectories(string path, TreeNode parentNode)
         {
-            string currentSO = txt_doc.Text.Replace("SO#", "").Trim();
-            string soSuffix = $"_SO{currentSO}"; // Changed from SO#{currentSO}_
+            string currentSO = txt_doc_no.Text.Replace("SO#", "").Trim();
+            string soSuffix = $"_SO{currentSO}";
 
             foreach (var category in new[] { "ACTIVE", "BENCHED" })
             {
@@ -692,7 +778,7 @@ namespace smpc_engineering_app.Pages.Transactions
             {
                 string folderName = Path.GetFileName(dir);
 
-                // Apply SO filter if SO is selected (check for suffix instead of prefix)
+                // Apply SO filter if SO is selected
                 if (!string.IsNullOrEmpty(soSuffix) &&
                     !folderName.EndsWith(soSuffix, StringComparison.OrdinalIgnoreCase) &&
                     !systemFolders.Contains(folderName)) // system folders always show
@@ -767,8 +853,8 @@ namespace smpc_engineering_app.Pages.Transactions
                                         .ToArray();
 
                     // Get current SO number for filtering
-                    string currentSONumber = txt_doc.Text.Replace("SO#", "").Trim();
-                    string soSuffix = $"_SO{currentSONumber}"; // Changed from SO{currentSONumber}_
+                    string currentSONumber = txt_doc_no.Text.Replace("SO#", "").Trim();
+                    string soSuffix = $"_SO{currentSONumber}";
 
                     foreach (var file in files)
                     {
@@ -837,7 +923,7 @@ namespace smpc_engineering_app.Pages.Transactions
             }
         }
 
-        // Optional: Add a button for traditional file upload
+        //Add a button for traditional file upload
         private void btnUpload_Click(object sender, EventArgs e)
         {
             if (SALES_TV.SelectedNode == null)
@@ -880,9 +966,6 @@ namespace smpc_engineering_app.Pages.Transactions
 
         private void SetFileIcon(ListViewItem item, string extension)
         {
-            // You can expand this method to set different icons based on file type
-            // For now, using a simple approach - you might want to use ImageList with icons
-
             switch (extension.ToLower())
             {
                 case ".pdf":

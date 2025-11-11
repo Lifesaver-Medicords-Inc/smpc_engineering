@@ -116,6 +116,35 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 btn_new.Visible = !enable;
             }
+
+            if (enable)
+            {
+                try
+                {
+                    cmb_ref_doc.BeginUpdate();
+                    cmb_ref_doc.Items.Clear();
+
+                    if (_sotable != null && _sotable.Rows.Count > 0 && _sotable.Columns.Contains("ref_doc"))
+                    {
+                        var uniqueRefDocs = _sotable.AsEnumerable()
+                            .Select(r => r.Field<string>("ref_doc"))
+                            .Where(v => !string.IsNullOrWhiteSpace(v))
+                            .Distinct()
+                            .OrderBy(v => v)
+                            .ToList();
+
+                        cmb_ref_doc.Items.AddRange(uniqueRefDocs.ToArray());
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Helpers.ShowDialogMessage("error", $"Failed to refresh Ref Doc list: {ex.Message}");
+                }
+                finally
+                {
+                    cmb_ref_doc.EndUpdate();
+                }
+            }
         }
 
         private void ChangeRecord(int step)
@@ -215,9 +244,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
         private void btn_close_Click(object sender, EventArgs e)
         {
-            bool wasNewMode = _isNewMode;
-            bool wasEditMode = _isEditMode;
-
             SetEditMode(false);
 
 
@@ -655,6 +681,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 // Safely get required values
                 string currentUom = currentRow.Cells["req_uom"]?.Value?.ToString();
+                int currentItemId = currentRow.Cells["item_id"]?.Value == null ? 0 : Convert.ToInt32(currentRow.Cells["item_id"].Value);
                 if (!int.TryParse(currentRow.Cells["id"]?.Value?.ToString(), out int currentId))
                     return;
 
@@ -672,6 +699,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 // Show modal
                 using (var qtyForm = new PickQtyModal
                 {
+                    PassedItemId = currentItemId,
                     PassedUom = currentUom,
                     PassedId = currentId,
                     PassedIRLocation = filteredIRLocation

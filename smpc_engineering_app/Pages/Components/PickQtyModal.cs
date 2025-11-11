@@ -23,6 +23,7 @@ namespace smpc_engineering_app.Pages.Components
 
         public string PassedUom { get; set; }
         public int PassedId { get; set; }
+        public int PassedItemId { get; set; }
         public DataTable PassedIRLocation { get; set; }
         public DataTable SelectedIssuedLocations { get; private set; }
         public int TotalIssuedQty { get; private set; }
@@ -57,38 +58,45 @@ namespace smpc_engineering_app.Pages.Components
 
         private async Task LoadBinLocations()
         {
-            var data = await binLocationService.GetAsDatatable();
-            locationTable = ExpandLocationRanges(data);
-
-            if (locationTable.Rows.Count > 0)
+            try
             {
-                // Keep only unique rows based on location + warehouse_id
-                locationTable = locationTable.AsEnumerable()
-                    .GroupBy(row => new
-                    {
-                        Location = row["location"]?.ToString()?.Trim(),
-                        WarehouseId = row["warehouse_id"]?.ToString()?.Trim()
-                    })
-                    .Select(g => g.First()) // keep the first unique combination
-                    .CopyToDataTable();
+                var data = await binLocationService.GetFilteredLocation(PassedItemId);
+                locationTable = data;
 
-
-                //Set each row's issued_uom to the passed UOM
-                foreach (DataRow row in locationTable.Rows)
+                if (locationTable.Rows.Count > 0)
                 {
-                    row["issued_uom"] = PassedUom;
-                    row["stock_uom"] = PassedUom;
-                    row["ir_details_id"] = PassedId;
+                    // Keep only unique rows based on location + warehouse_id
+                    locationTable = locationTable.AsEnumerable()
+                        .GroupBy(row => new
+                        {
+                            Location = row["location"]?.ToString()?.Trim(),
+                            WarehouseId = row["warehouse_id"]?.ToString()?.Trim()
+                        })
+                        .Select(g => g.First()) // keep the first unique combination
+                        .CopyToDataTable();
+
+
+                    //Set each row's issued_uom to the passed UOM
+                    foreach (DataRow row in locationTable.Rows)
+                    {
+                        row["issued_uom"] = PassedUom;
+                        row["stock_uom"] = PassedUom;
+                        row["ir_details_id"] = PassedId;
+                    }
+
+                    ApplyPassedIRLocation();
+
+                    dgv_pick_qty.DataSource = locationTable;
                 }
-
-                ApplyPassedIRLocation();
-
-                dgv_pick_qty.DataSource = locationTable;
-            }
-            else
+                else
+                {
+                    dgv_pick_qty.DataSource = null;
+                    MessageBox.Show("No item list found.");
+                }
+            } catch (NullReferenceException)
             {
-                dgv_pick_qty.DataSource = null;
-                MessageBox.Show("No item list found.");
+                Helpers.ShowDialogMessage("error", "The item has no available bin location yet.");
+                this.Close();
             }
         }
 
@@ -119,64 +127,6 @@ namespace smpc_engineering_app.Pages.Components
                     match["issued_qty"] = passedIssuedQty;
                 }
             }
-        }
-
-        private DataTable ExpandLocationRanges(DataTable originalTable)
-        {
-            DataTable expandedTable = originalTable.Clone(); // copy structure
-
-            foreach (DataRow row in originalTable.Rows)
-            {
-                string location = row["location"]?.ToString().Trim() ?? "";
-
-                // Check if location contains a range (e.g., "TO")
-                if (location.IndexOf(" TO ", StringComparison.OrdinalIgnoreCase) >= 0)
-                {
-                    // Split start and end parts
-                    string[] parts = location.Split(new string[] { " TO " }, StringSplitOptions.RemoveEmptyEntries);
-                    if (parts.Length == 2)
-                    {
-                        string startPart = parts[0].Trim(); // e.g., Z3-A3-R2-L2-B1
-                        string endPart = parts[1].Trim();   // e.g., B5
-
-                        // Find the last '-' to separate prefix from bin section
-                        int lastDashIndex = startPart.LastIndexOf('-');
-                        if (lastDashIndex >= 0)
-                        {
-                            string prefix = startPart.Substring(0, lastDashIndex + 1); // e.g., Z3-A3-R2-L2-
-                            string binPart = startPart.Substring(lastDashIndex + 1);   // e.g., B1
-
-                            // Split binPart into letter and number (e.g., B + 1)
-                            char binLetter = binPart[0];
-                            string startBinNumber = binPart.Substring(1); // "1"
-
-                            // Get end bin number (strip B if present)
-                            string endBinNumber = endPart.StartsWith(binLetter.ToString(), StringComparison.OrdinalIgnoreCase)
-                                ? endPart.Substring(1)
-                                : endPart;
-
-                            // Try to parse start and end numbers
-                            if (int.TryParse(startBinNumber, out int start) && int.TryParse(endBinNumber, out int end))
-                            {
-                                // Generate rows B1...B5 (preserving B)
-                                for (int i = start; i <= end; i++)
-                                {
-                                    DataRow newRow = expandedTable.NewRow();
-                                    newRow.ItemArray = (object[])row.ItemArray.Clone();
-                                    newRow["location"] = $"{prefix}{binLetter}{i}";
-                                    expandedTable.Rows.Add(newRow);
-                                }
-                                continue; // next original row
-                            }
-                        }
-                    }
-                }
-
-                // If no range detected, keep the row as is
-                expandedTable.ImportRow(row);
-            }
-
-            return expandedTable;
         }
 
         private void dgv_pick_qty_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)

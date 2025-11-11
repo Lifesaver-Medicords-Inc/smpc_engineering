@@ -57,14 +57,20 @@ namespace smpc_engineering_app.Shared
         //All Item List
         public const string All_ITEM = "/setup/item/all_item";
 
+        //Sales Order Engineering
+        public const string SALES_ORDER_ENGINEER = "/setup/job/so_view";
+
         //Bin Location List
         public const string BIN_LOCATION = "/setup/item/all_binloc";
 
         //All Item List
         public const string USER_LIST = "/setup/item/all_user";
 
-        //Item Request Setup
+        //Item Request
         public const string ITEM_REQUEST = "/setup/item/request";
+
+        //Pick Activity
+        public const string PICK_ACTIVITY = "/setup/pickAct/list";
 
 
         //Engr. Users
