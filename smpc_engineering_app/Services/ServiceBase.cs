@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace smpc_engineering_app.Services
 {
@@ -82,7 +84,7 @@ namespace smpc_engineering_app.Services
         }
 
         // DELETE
-        public   async Task<bool> Delete(Dictionary<string, dynamic> data)
+        public async Task<bool> Delete(Dictionary<string, dynamic> data)
         {
             var response = await ApiService<ApiResponseModel<T>>.Delete(url, data);
             bool isSuccess = response.success;

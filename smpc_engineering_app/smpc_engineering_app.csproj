@@ -160,6 +160,12 @@
     <Compile Include="Pages\PickActivity\PickActivity.Designer.cs">
       <DependentUpon>PickActivity.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.Designer.cs">
+      <DependentUpon>PickActivitySearch.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Transactions\SalesOrder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -186,7 +192,8 @@
     <Compile Include="Services\Setup\ItemListService.cs" />
     <Compile Include="Services\Setup\ComponentService.cs" />
     <Compile Include="Services\Setup\EngrUsersService.cs" />
-    <Compile Include="Services\Setup\SalesOrderViewService.cs" />
+    <Compile Include="Services\Setup\SalesOrderIRViewService.cs" />
+    <Compile Include="Services\Setup\SalesOrderPAViewService.cs" />
     <Compile Include="Services\Setup\UserListService.cs" />
     <Compile Include="Services\Transaction\ItemRequestService.cs" />
     <Compile Include="Services\Transaction\JobOrderService.cs" />
@@ -241,6 +248,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\PickActivity\PickActivity.resx">
       <DependentUpon>PickActivity.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.resx">
+      <DependentUpon>PickActivitySearch.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Transactions\SalesOrder.resx">
       <DependentUpon>SalesOrder.cs</DependentUpon>

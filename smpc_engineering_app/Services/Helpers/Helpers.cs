@@ -1309,7 +1309,6 @@ namespace smpc_engineering_app.Services.Helpers
         public static bool ValidateControlsValues(Panel pnl)
         {
             bool isError = false;
-            bool messageShown = false; // Prevent multiple dialog popups
 
             foreach (Control control in pnl.Controls)
             {
@@ -1317,16 +1316,10 @@ namespace smpc_engineering_app.Services.Helpers
                 if (control is TextBox textBox)
                 {
                     if (string.Equals(textBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
-                        && string.IsNullOrWhiteSpace(textBox.Text))
+                        && string.IsNullOrEmpty(textBox.Text))
                     {
                         FlashRed(control);
                         isError = true;
-
-                        if (!messageShown)
-                        {
-                            Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
-                            messageShown = true;
-                        }
                     }
                     else
                     {
@@ -1342,12 +1335,6 @@ namespace smpc_engineering_app.Services.Helpers
                     {
                         FlashRed(comboBox);
                         isError = true;
-
-                        if (!messageShown)
-                        {
-                            Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
-                            messageShown = true;
-                        }
                     }
                     else
                     {
@@ -1356,67 +1343,29 @@ namespace smpc_engineering_app.Services.Helpers
                 }
 
                 // Handle DateTimePicker
-                else if (control is DateTimePicker dateTimePicker)
+                else if (control is DateTimePicker dtp)
                 {
-                    if (string.Equals(dateTimePicker.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(dtp.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase))
                     {
-                        DateTime selectedDate = dateTimePicker.Value.Date;
-                        DateTime today = DateTime.Now.Date;
-
-                        // Validation: must not be earlier than today and within MinDate/MaxDate
-                        if (selectedDate < today)
+                        // You can customize this check as needed
+                        if (dtp.Value == dtp.MinDate || dtp.Value == default(DateTime))
                         {
-                            FlashRed(dateTimePicker);
+                            FlashRed(dtp);
                             isError = true;
-
-                            if (!messageShown)
-                            {
-                                Helpers.ShowDialogMessage("error", "Date cannot be earlier than today.");
-                                messageShown = true;
-                            }
-                        }
-                        else if (selectedDate < dateTimePicker.MinDate.Date)
-                        {
-                            FlashRed(dateTimePicker);
-                            isError = true;
-
-                            if (!messageShown)
-                            {
-                                Helpers.ShowDialogMessage("error", "Selected date is below the minimum allowed date.");
-                                messageShown = true;
-                            }
-                        }
-                        else if (selectedDate > dateTimePicker.MaxDate.Date)
-                        {
-                            FlashRed(dateTimePicker);
-                            isError = true;
-
-                            if (!messageShown)
-                            {
-                                Helpers.ShowDialogMessage("error", "Selected date exceeds the maximum allowed date.");
-                                messageShown = true;
-                            }
                         }
                         else
                         {
-                            dateTimePicker.CalendarMonthBackground = Color.White;
+                            dtp.CalendarMonthBackground = Color.White;
+                            dtp.BackColor = Color.White;
                         }
                     }
-                    else
-                    {
-                        dateTimePicker.CalendarMonthBackground = Color.White;
-                    }
                 }
-
-                // Stop further validation after showing one error message
-                if (messageShown)
-                    break;
             }
 
             return isError;
         }
 
-        private static void FlashRed(Control control)
+        public static void FlashRed(Control control)
         {
             Color originalColor = control.BackColor;
             control.BackColor = Color.Red;

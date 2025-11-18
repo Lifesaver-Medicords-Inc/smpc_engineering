@@ -51,8 +51,11 @@ namespace smpc_engineering_app.Shared
         public const string JOB_ORDER_SOD = "/setup/job/sales_details";
         public const string COMPONENTS = "/setup/job/components";
 
-        //Sales Order View
-        public const string SALES_ORDER_VIEW = "/setup/item/so_doc";
+        //Sales Order IR View
+        public const string SALES_ORDER_IR_VIEW = "/setup/item/so_doc";
+
+        //Sales Order PA View
+        public const string SALES_ORDER_PA_VIEW = "/setup/pickAct/salesOrder";
 
         //All Item List
         public const string All_ITEM = "/setup/item/all_item";
@@ -68,6 +71,7 @@ namespace smpc_engineering_app.Shared
 
         //Item Request
         public const string ITEM_REQUEST = "/setup/item/request";
+        public const string ITEM_REQUEST_LOCATION = "/setup/item/request/location";
 
         //Pick Activity
         public const string PICK_ACTIVITY = "/setup/pickAct/list";

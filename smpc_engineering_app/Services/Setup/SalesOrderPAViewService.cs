@@ -8,8 +8,8 @@ using smpc_engineering_app.Shared;
 
 namespace smpc_engineering_app.Services.Setup
 {
-    class SalesOrderViewService : ServiceBase<SalesOrderViewModel>
+    class SalesOrderPAViewService : ServiceBase<SalesOrderViewModel>
     {
-        public SalesOrderViewService() : base(ApiEndPoints.SALES_ORDER_VIEW) { }
+        public SalesOrderPAViewService() : base(ApiEndPoints.SALES_ORDER_PA_VIEW) { }
     }
 }

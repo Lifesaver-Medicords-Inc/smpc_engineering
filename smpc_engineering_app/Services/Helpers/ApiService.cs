@@ -125,6 +125,5 @@ namespace smpc_engineering_app.Services.Helpers
 
             return await SendRequestAsync(url, HttpMethod.Delete, jsonContent);
         }
-
     }
 }
