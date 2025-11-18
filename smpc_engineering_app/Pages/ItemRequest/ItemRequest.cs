@@ -27,7 +27,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
         };
 
         readonly ItemRequestService itemRequestService = new ItemRequestService();
-        readonly SalesOrderViewService salesOrderViewService = new SalesOrderViewService();
+        readonly SalesOrderIRViewService salesOrderViewService = new SalesOrderIRViewService();
         readonly UserListService userListService = new UserListService();
         private string userDepartment = CacheData.CurrentUser.department.ToLower();
         private readonly Panel[] _panels;
@@ -42,6 +42,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private DataTable _sotable;
         private DataTable _irltable;
         private DataTable _irTable;
+        private DataTable _itemTable;
         private List<string> originalReqDeptItems;
         private bool _isFilteredByRefDoc = false;
         private string _userName;
@@ -97,6 +98,30 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 // Non-warehouse users → enable both panels normally
                 Helpers.SetChildControlsEnabled(_panels, enable, excludeControls);
+            }
+
+            //Only clear _irltable if it's New Mode
+            if (isNewMode && _irltable != null)
+            {
+                _irltable.Clear();
+            }
+
+            // Initialize or clear _itemTable based on edit mode
+            if (enable && !isNewMode)
+            {
+                if (_itemTable == null)
+                {
+                    _itemTable = new DataTable();
+                    _itemTable.Columns.Add("warehouse_id", typeof(int));
+                    _itemTable.Columns.Add("item_id", typeof(int));
+                    _itemTable.Columns.Add("location", typeof(string));
+                    _itemTable.Columns.Add("issued_qty", typeof(decimal));
+                    _itemTable.Columns.Add("ir_details_id", typeof(decimal));
+                }
+            }
+            else if (!enable && _itemTable != null)
+            {
+                _itemTable.Clear();
             }
 
             Helpers.SetButtonVisibility(
@@ -242,7 +267,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             ChangeRecord(1);
         }
 
-        private void btn_close_Click(object sender, EventArgs e)
+        private async void btn_close_Click(object sender, EventArgs e)
         {
             SetEditMode(false);
 
@@ -251,7 +276,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
             {
                 _currentIRIndex = _previousIRIndex;
-                ShowCurrentRecord();
+                await LoadItemRequests();
             }
         }
 
@@ -309,8 +334,25 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // Validate required controls in selected panel
             bool hasError = Helpers.ValidateControlsValues(panelToValidate);
 
-            if (hasError)
+            if (hasError) // if validation failed
+            {
+                Helpers.ShowDialogMessage("error", "Please fill in all required fields.");
                 return;
+            }
+
+            if (dtp_issue_date.Value.Date < DateTime.Now.Date)
+            {
+                Helpers.ShowDialogMessage("error", "Issue Date cannot be earlier than today.");
+                dtp_issue_date.Focus();
+                return;
+            }
+
+            if (dtp_required_date.Value.Date < DateTime.Now.Date)
+            {
+                Helpers.ShowDialogMessage("error", "Required Date cannot be earlier than today.");
+                dtp_required_date.Focus();
+                return;
+            }
 
             string[] columnsToValidate = _isWarehouseUser
                 ? new[] { "issued_qty" }
@@ -323,7 +365,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             bool isForward = !btn_forward.Visible;
             itemRequestParent.is_forward = isForward;
             var itemRequestDetails = Helpers.BuildModelsFromData<ItemRequestDetailsModel>(dgv_main);
-            var itemRequestLocation = Helpers.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
+            var itemRequestLocations = Helpers.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
 
             //Validate department selection
             bool validDept = cmb_req_dept.Items.Cast<object>()
@@ -391,7 +433,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 item_request = itemRequestParent,
                 item_request_details = itemRequestDetails,
-                item_request_location = itemRequestLocation
+                item_request_location = itemRequestLocations
             };
 
             try
@@ -541,6 +583,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 ? Helpers.ToDataTable(filteredLocations)
                 : new DataTable();
 
+            Console.WriteLine(_irltable);
+
             if (_irTable.Rows.Count == 0 || _currentIRIndex >= _irTable.Rows.Count)
                 return;
 
@@ -681,6 +725,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             {
                 // Safely get required values
                 string currentUom = currentRow.Cells["req_uom"]?.Value?.ToString();
+                int currentParentId = int.Parse(txt_id.Text);
                 int currentItemId = currentRow.Cells["item_id"]?.Value == null ? 0 : Convert.ToInt32(currentRow.Cells["item_id"].Value);
                 if (!int.TryParse(currentRow.Cells["id"]?.Value?.ToString(), out int currentId))
                     return;
@@ -696,13 +741,27 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     }
                 }
 
+                // Filter rows by item_id, exclude current IR details
+                DataTable filteredItemLocation = _itemTable.Clone();
+                foreach (DataRow row in _itemTable.Rows)
+                {
+                    if (row["item_id"] != DBNull.Value &&
+                        Convert.ToInt32(row["item_id"]) == currentItemId &&
+                        (row["ir_details_id"] == DBNull.Value || Convert.ToInt32(row["ir_details_id"]) != currentId)) // exclude current IR
+                    {
+                        filteredItemLocation.ImportRow(row);
+                    }
+                }
+
                 // Show modal
                 using (var qtyForm = new PickQtyModal
                 {
                     PassedItemId = currentItemId,
                     PassedUom = currentUom,
-                    PassedId = currentId,
-                    PassedIRLocation = filteredIRLocation
+                    PassedIRId = currentId,
+                    PassedIRParentId = currentParentId,
+                    PassedIRLocation = filteredIRLocation,
+                    PassedItemLocation = filteredItemLocation
                 })
                 {
                     if (qtyForm.ShowDialog() == DialogResult.OK)
@@ -721,6 +780,41 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
                             // Import each selected row to _irltable (append only)
                             _irltable.ImportRow(row);
+
+                            // Initialize _itemTable columns if needed
+                            if (_itemTable.Columns.Count == 0)
+                            {
+                                _itemTable.Columns.Add("warehouse_id", typeof(int));
+                                _itemTable.Columns.Add("item_id", typeof(int));
+                                _itemTable.Columns.Add("location", typeof(string));
+                                _itemTable.Columns.Add("issued_qty", typeof(decimal));
+                                _itemTable.Columns.Add("ir_details_id", typeof(decimal));
+                            }
+
+                            // Find existing row with the same key combination
+                            DataRow existingRow = _itemTable.AsEnumerable().FirstOrDefault(r =>
+                                r["warehouse_id"]?.ToString() == row["warehouse_id"]?.ToString() &&
+                                r["item_id"]?.ToString() == row["item_id"]?.ToString() &&
+                                r["location"]?.ToString() == row["location"]?.ToString() &&
+                                r["ir_details_id"]?.ToString() == row["ir_details_id"]?.ToString()
+                            );
+
+                            if (existingRow != null)
+                            {
+                                // Replace the issued_qty with the new value
+                                existingRow["issued_qty"] = row["issued_qty"];
+                            }
+                            else
+                            {
+                                // Add new row
+                                DataRow itemRow = _itemTable.NewRow();
+                                itemRow["warehouse_id"] = row["warehouse_id"];
+                                itemRow["item_id"] = row["item_id"];
+                                itemRow["location"] = row["location"];
+                                itemRow["issued_qty"] = row["issued_qty"];
+                                itemRow["ir_details_id"] = row["ir_details_id"];
+                                _itemTable.Rows.Add(itemRow);
+                            }
                         }
                     }
                 }

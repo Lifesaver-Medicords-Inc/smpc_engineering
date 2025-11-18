@@ -357,6 +357,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.btn_next.Name = "btn_next";
             this.btn_next.Size = new System.Drawing.Size(52, 22);
             this.btn_next.Text = "Next";
+            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
             // 
             // btn_prev

@@ -82,6 +82,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         private async Task LoadItemRequests()
         {
             ItemRequest = await itemRequestService.GetAsModel();
+            ItemRequest.item_request.Reverse();
 
             if (_isWarehouseUser)
             {
