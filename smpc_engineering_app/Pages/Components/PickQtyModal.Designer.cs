@@ -32,15 +32,19 @@ namespace smpc_engineering_app.Pages.Components
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.btn_save = new System.Windows.Forms.Button();
             this.dgv_pick_qty = new System.Windows.Forms.DataGridView();
-            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ir_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ir_details_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.warehouse_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.issued_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stock_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.stock_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stock_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.stock_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.actual_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.actual_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.issued_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.item_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.warehouse_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ir_details_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ir_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pa_details_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_pick_qty)).BeginInit();
             this.SuspendLayout();
             // 
@@ -73,11 +77,15 @@ namespace smpc_engineering_app.Pages.Components
             this.dgv_pick_qty.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_pick_qty.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.id,
+            this.pa_details_id,
             this.ir_id,
             this.ir_details_id,
             this.warehouse_id,
+            this.item_id,
             this.issued_qty,
             this.issued_uom,
+            this.actual_qty,
+            this.actual_uom,
             this.stock_qty,
             this.stock_uom,
             this.location});
@@ -88,66 +96,13 @@ namespace smpc_engineering_app.Pages.Components
             this.dgv_pick_qty.TabIndex = 4;
             this.dgv_pick_qty.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_pick_qty_EditingControlShowing);
             // 
-            // id
+            // location
             // 
-            this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.id.DataPropertyName = "id";
-            this.id.HeaderText = "ID";
-            this.id.Name = "id";
-            this.id.ReadOnly = true;
-            this.id.Visible = false;
-            // 
-            // ir_id
-            // 
-            this.ir_id.DataPropertyName = "ir_id";
-            this.ir_id.HeaderText = "IR ID";
-            this.ir_id.Name = "ir_id";
-            this.ir_id.ReadOnly = true;
-            this.ir_id.Visible = false;
-            // 
-            // ir_details_id
-            // 
-            this.ir_details_id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.ir_details_id.DataPropertyName = "ir_details_id";
-            this.ir_details_id.HeaderText = "IRD ID";
-            this.ir_details_id.Name = "ir_details_id";
-            this.ir_details_id.ReadOnly = true;
-            this.ir_details_id.Visible = false;
-            // 
-            // warehouse_id
-            // 
-            this.warehouse_id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.warehouse_id.DataPropertyName = "warehouse_id";
-            this.warehouse_id.HeaderText = "WAREHOUSE ID";
-            this.warehouse_id.Name = "warehouse_id";
-            this.warehouse_id.ReadOnly = true;
-            this.warehouse_id.Visible = false;
-            // 
-            // issued_qty
-            // 
-            this.issued_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.issued_qty.DataPropertyName = "issued_qty";
-            this.issued_qty.HeaderText = "QTY";
-            this.issued_qty.Name = "issued_qty";
-            this.issued_qty.Width = 80;
-            // 
-            // issued_uom
-            // 
-            this.issued_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.issued_uom.DataPropertyName = "issued_uom";
-            this.issued_uom.HeaderText = "UOM";
-            this.issued_uom.Name = "issued_uom";
-            this.issued_uom.ReadOnly = true;
-            this.issued_uom.Width = 80;
-            // 
-            // stock_qty
-            // 
-            this.stock_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.stock_qty.DataPropertyName = "stock_qty";
-            this.stock_qty.HeaderText = "QTY";
-            this.stock_qty.Name = "stock_qty";
-            this.stock_qty.ReadOnly = true;
-            this.stock_qty.Width = 80;
+            this.location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.location.DataPropertyName = "location";
+            this.location.HeaderText = "BIN LOCATION";
+            this.location.Name = "location";
+            this.location.ReadOnly = true;
             // 
             // stock_uom
             // 
@@ -158,13 +113,95 @@ namespace smpc_engineering_app.Pages.Components
             this.stock_uom.ReadOnly = true;
             this.stock_uom.Width = 80;
             // 
-            // location
+            // stock_qty
             // 
-            this.location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.location.DataPropertyName = "location";
-            this.location.HeaderText = "BIN LOCATION";
-            this.location.Name = "location";
-            this.location.ReadOnly = true;
+            this.stock_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.stock_qty.DataPropertyName = "stock_qty";
+            this.stock_qty.HeaderText = "QTY";
+            this.stock_qty.Name = "stock_qty";
+            this.stock_qty.ReadOnly = true;
+            this.stock_qty.Width = 80;
+            // 
+            // actual_uom
+            // 
+            this.actual_uom.DataPropertyName = "actual_uom";
+            this.actual_uom.HeaderText = "UOM";
+            this.actual_uom.Name = "actual_uom";
+            this.actual_uom.ReadOnly = true;
+            // 
+            // actual_qty
+            // 
+            this.actual_qty.DataPropertyName = "actual_qty";
+            this.actual_qty.HeaderText = "QTY";
+            this.actual_qty.Name = "actual_qty";
+            // 
+            // issued_uom
+            // 
+            this.issued_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.issued_uom.DataPropertyName = "issued_uom";
+            this.issued_uom.HeaderText = "UOM";
+            this.issued_uom.Name = "issued_uom";
+            this.issued_uom.ReadOnly = true;
+            this.issued_uom.Width = 80;
+            // 
+            // issued_qty
+            // 
+            this.issued_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.issued_qty.DataPropertyName = "issued_qty";
+            this.issued_qty.HeaderText = "QTY";
+            this.issued_qty.Name = "issued_qty";
+            this.issued_qty.Width = 80;
+            // 
+            // item_id
+            // 
+            this.item_id.DataPropertyName = "item_id";
+            this.item_id.HeaderText = "ITEM ID";
+            this.item_id.Name = "item_id";
+            this.item_id.ReadOnly = true;
+            this.item_id.Visible = false;
+            // 
+            // warehouse_id
+            // 
+            this.warehouse_id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.warehouse_id.DataPropertyName = "warehouse_id";
+            this.warehouse_id.HeaderText = "WAREHOUSE ID";
+            this.warehouse_id.Name = "warehouse_id";
+            this.warehouse_id.ReadOnly = true;
+            this.warehouse_id.Visible = false;
+            // 
+            // ir_details_id
+            // 
+            this.ir_details_id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.ir_details_id.DataPropertyName = "ir_details_id";
+            this.ir_details_id.HeaderText = "IRD ID";
+            this.ir_details_id.Name = "ir_details_id";
+            this.ir_details_id.ReadOnly = true;
+            this.ir_details_id.Visible = false;
+            // 
+            // ir_id
+            // 
+            this.ir_id.DataPropertyName = "ir_id";
+            this.ir_id.HeaderText = "IR ID";
+            this.ir_id.Name = "ir_id";
+            this.ir_id.ReadOnly = true;
+            this.ir_id.Visible = false;
+            // 
+            // pa_details_id
+            // 
+            this.pa_details_id.DataPropertyName = "pa_details_id";
+            this.pa_details_id.HeaderText = "PAD ID";
+            this.pa_details_id.Name = "pa_details_id";
+            this.pa_details_id.ReadOnly = true;
+            this.pa_details_id.Visible = false;
+            // 
+            // id
+            // 
+            this.id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.id.DataPropertyName = "id";
+            this.id.HeaderText = "ID";
+            this.id.Name = "id";
+            this.id.ReadOnly = true;
+            this.id.Visible = false;
             // 
             // PickQtyModal
             // 
@@ -185,11 +222,15 @@ namespace smpc_engineering_app.Pages.Components
         private System.Windows.Forms.Button btn_save;
         private System.Windows.Forms.DataGridView dgv_pick_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn pa_details_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn ir_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn ir_details_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn warehouse_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn item_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn issued_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn issued_uom;
+        private System.Windows.Forms.DataGridViewTextBoxColumn actual_qty;
+        private System.Windows.Forms.DataGridViewTextBoxColumn actual_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn stock_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn stock_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn location;

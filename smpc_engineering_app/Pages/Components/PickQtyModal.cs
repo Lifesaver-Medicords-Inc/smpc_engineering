@@ -9,24 +9,25 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using smpc_engineering_app.Services.Setup;
 using smpc_engineering_app.Services.Helpers;
+using smpc_engineering_app.Services.Transaction;
+using smpc_engineering_app.Models;
 
 namespace smpc_engineering_app.Pages.Components
 {
     public partial class PickQtyModal : Form
     {
-        //Dictionaries for the column grouping of datagridviews
-        Dictionary<string, string[]> columnGroupsMain = new Dictionary<string, string[]>()
-        {
-            { "PICK", new string[] { "issued_qty", "issued_uom" } },
-            { "STOCK", new string[] { "stock_qty", "stock_uom" } },
-        };
-
         public string PassedUom { get; set; }
-        public int PassedId { get; set; }
+        public int PassedIRId { get; set; }
+        public int PassedIRParentId { get; set; }
+        public int PassedPAId { get; set; }
         public int PassedItemId { get; set; }
         public DataTable PassedIRLocation { get; set; }
+        public DataTable PassedItemLocation { get; set; }
+        public DataTable PassedPALocation { get; set; }
         public DataTable SelectedIssuedLocations { get; private set; }
+        public DataTable SelectedActualLocations { get; private set; }
         public int TotalIssuedQty { get; private set; }
+        public int TotalActualQty { get; private set; }
         readonly BinLocationListService binLocationService = new BinLocationListService();
         private DataTable locationTable;
         public PickQtyModal()
@@ -35,7 +36,6 @@ namespace smpc_engineering_app.Pages.Components
 
             // Center the modal relative to its parent form
             this.StartPosition = FormStartPosition.CenterParent;
-            Helpers.EnableGroupHeaders(dgv_pick_qty, columnGroupsMain);
         }
 
         private async void PickQtyModal_Load(object sender, EventArgs e)
@@ -65,8 +65,56 @@ namespace smpc_engineering_app.Pages.Components
 
                 if (locationTable.Rows.Count > 0)
                 {
-                    // Keep only unique rows based on location + warehouse_id
-                    locationTable = locationTable.AsEnumerable()
+                    // Adjust stock_qty based on PassedItemLocation
+                    if (PassedItemLocation != null && PassedItemLocation.Rows.Count > 0)
+                    {
+                        foreach (DataRow passedRow in PassedItemLocation.Rows)
+                        {
+                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
+                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
+                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
+                            string issuedQtyStr = passedRow["issued_qty"]?.ToString()?.Trim();
+
+                            if (!decimal.TryParse(issuedQtyStr, out decimal issuedQty))
+                                continue;
+
+                            // Find matching row in locationTable
+                            var matches = locationTable.AsEnumerable()
+                                .Where(row =>
+                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
+                                );
+
+                            foreach (var match in matches)
+                            {
+                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
+                                {
+                                    // Subtract issued_qty from stock_qty
+                                    match["stock_qty"] = Math.Max(stockQty - issuedQty, 0);
+                                }
+                            }
+                        }
+                    }
+
+                    //Filter out rows where stock_qty <= 0 or stock_qty is invalid
+                    var filteredRows = locationTable.AsEnumerable()
+                        .Where(row =>
+                        {
+                            var stockVal = row["stock_qty"]?.ToString()?.Trim();
+                            return decimal.TryParse(stockVal, out decimal stockQty) && stockQty > 0;
+                        })
+                        .ToList();
+
+                    if (filteredRows.Count == 0)
+                    {
+                        Helpers.ShowDialogMessage("warning", "No locations found with stock greater than 0.");
+                        dgv_pick_qty.DataSource = null;
+                        return;
+                    }
+
+                    //Keep only unique rows based on location + warehouse_id
+                    locationTable = filteredRows
                         .GroupBy(row => new
                         {
                             Location = row["location"]?.ToString()?.Trim(),
@@ -75,25 +123,33 @@ namespace smpc_engineering_app.Pages.Components
                         .Select(g => g.First()) // keep the first unique combination
                         .CopyToDataTable();
 
-
-                    //Set each row's issued_uom to the passed UOM
+                    //Set UOM and related fields
                     foreach (DataRow row in locationTable.Rows)
                     {
                         row["issued_uom"] = PassedUom;
+                        row["actual_uom"] = PassedUom;
                         row["stock_uom"] = PassedUom;
-                        row["ir_details_id"] = PassedId;
+                        row["ir_details_id"] = PassedIRId;
+                        row["pa_details_id"] = PassedPAId;
+                        row["item_id"] = PassedItemId;
+                        row["ir_id"] = PassedIRParentId;
                     }
 
                     ApplyPassedIRLocation();
+                    ApplyPassedPALocation();
 
                     dgv_pick_qty.DataSource = locationTable;
+
+                    //Apply column visibility and grouping rules
+                    ApplyColumnVisibilityAndGrouping();
                 }
                 else
                 {
                     dgv_pick_qty.DataSource = null;
                     MessageBox.Show("No item list found.");
                 }
-            } catch (NullReferenceException)
+            }
+            catch (NullReferenceException)
             {
                 Helpers.ShowDialogMessage("error", "The item has no available bin location yet.");
                 this.Close();
@@ -129,13 +185,42 @@ namespace smpc_engineering_app.Pages.Components
             }
         }
 
+        private void ApplyPassedPALocation()
+        {
+            if (PassedPALocation == null || PassedPALocation.Rows.Count == 0)
+                return;
+
+            foreach (DataRow passedRow in PassedPALocation.Rows)
+            {
+                string passedLocation = passedRow["location"]?.ToString()?.Trim();
+                string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
+                string passedActualQty = passedRow["actual_qty"]?.ToString()?.Trim();
+
+                if (string.IsNullOrEmpty(passedLocation) || string.IsNullOrEmpty(passedWarehouseId))
+                    continue;
+
+                // Find matching rows in the main locationTable
+                var matches = locationTable.AsEnumerable()
+                    .Where(row =>
+                        string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
+                        string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase)
+                    );
+
+                foreach (var match in matches)
+                {
+                    // Set issued_qty to the one from PassedIRLocation
+                    match["actual_qty"] = passedActualQty;
+                }
+            }
+        }
+
         private void dgv_pick_qty_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
             // Get the name of the current column
             string columnName = dgv_pick_qty.Columns[dgv_pick_qty.CurrentCell.ColumnIndex].Name;
 
             // List of column names that should accept only numbers
-            string[] numericColumns = { "issued_qty" };
+            string[] numericColumns = { "issued_qty", "actual_qty" };
 
             // Check if the current column is one of them
             if (numericColumns.Contains(columnName))
@@ -187,16 +272,32 @@ namespace smpc_engineering_app.Pages.Components
                 // Clone structure for storing only rows with issued_qty
                 SelectedIssuedLocations = sourceTable.Clone();
 
+                // Determine which column to use based on the context
+                string qtyColumn = PassedIRId > 0 ? "issued_qty" : "actual_qty";
+                string uomColumn = PassedIRId > 0 ? "issued_uom" : "actual_uom";
+
                 foreach (DataRow row in sourceTable.Rows)
                 {
-                    var qtyValue = row["issued_qty"]?.ToString()?.Trim();
+                    var qtyValue = row[qtyColumn]?.ToString()?.Trim();
+                    var stockValue = row["stock_qty"]?.ToString()?.Trim();
 
                     if (decimal.TryParse(qtyValue, out decimal qty) && qty > 0)
                     {
-                        // Add to total
-                        total += (int)qty;
+                        if (!decimal.TryParse(stockValue, out decimal stockQty))
+                        {
+                            Helpers.ShowDialogMessage("error", "Invalid or missing stock quantity.");
+                            return;
+                        }
 
-                        // Copy row to the filtered table
+                        //qty cannot exceed stock_qty
+                        if (qty > stockQty)
+                        {
+                            Helpers.ShowDialogMessage("error",
+                                $"Issued qty ({qty}) cannot exceed stock qty ({stockQty}).");
+                            return;
+                        }
+
+                        total += (int)qty;
                         SelectedIssuedLocations.ImportRow(row);
                     }
                 }
@@ -211,5 +312,64 @@ namespace smpc_engineering_app.Pages.Components
                 Helpers.ShowDialogMessage("error", $"Error while saving: {ex.Message}");
             }
         }
+
+        private void ApplyColumnVisibilityAndGrouping()
+        {
+            try
+            {
+                bool hasIRId = PassedIRId > 0;
+                bool hasPAId = PassedPAId > 0;
+
+                // Reset visibility (make all visible by default)
+                dgv_pick_qty.Columns["issued_qty"].Visible = true;
+                dgv_pick_qty.Columns["issued_uom"].Visible = true;
+                dgv_pick_qty.Columns["actual_qty"].Visible = true;
+                dgv_pick_qty.Columns["actual_uom"].Visible = true;
+
+                // If IR ID is provided → show Issued columns, hide Actual columns
+                if (hasIRId && !hasPAId)
+                {
+                    dgv_pick_qty.Columns["actual_qty"].Visible = false;
+                    dgv_pick_qty.Columns["actual_uom"].Visible = false;
+
+                    // Group only the issued columns
+                    var irColumns = new Dictionary<string, string[]>
+                    {
+                        { "PICK", new string[] { "issued_qty", "issued_uom" } },
+                        { "STOCK", new string[] { "stock_qty", "stock_uom" } },
+                    };
+                    Helpers.EnableGroupHeaders(dgv_pick_qty, irColumns);
+                }
+                // If PA ID is provided → show Actual columns, hide Issued columns
+                else if (hasPAId && !hasIRId)
+                {
+                    dgv_pick_qty.Columns["issued_qty"].Visible = false;
+                    dgv_pick_qty.Columns["issued_uom"].Visible = false;
+
+                    // Group only the actual columns
+                    var paColumns = new Dictionary<string, string[]>
+                    {
+                        { "PICK", new string[] { "actual_qty", "actual_uom" } },
+                        { "STOCK", new string[] { "stock_qty", "stock_uom" } },
+                    };
+                    Helpers.EnableGroupHeaders(dgv_pick_qty, paColumns);
+                }
+                // If neither has value → default grouping
+                else
+                {
+                    var defaultColumns = new Dictionary<string, string[]>
+                    {
+                        { "PICK", new string[] { "issued_qty", "issued_uom" } },
+                        { "STOCK", new string[] { "stock_qty", "stock_uom" } },
+                    };
+                    Helpers.EnableGroupHeaders(dgv_pick_qty, defaultColumns);
+                }
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to apply grouping: {ex.Message}");
+            }
+        }
+
     }
 }

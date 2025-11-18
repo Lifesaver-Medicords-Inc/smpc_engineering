@@ -32,18 +32,20 @@ namespace smpc_engineering_app.Pages.PickActivity
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickActivity));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.label10 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.cmb_reference_so = new System.Windows.Forms.ComboBox();
             this.txt_id = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
+            this.label13 = new System.Windows.Forms.Label();
             this.txt_doc_no = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.txt_customer = new System.Windows.Forms.TextBox();
+            this.txt_sales_person = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txt_picked_by = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.txt_prepared_by = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txt_purpose = new System.Windows.Forms.TextBox();
+            this.txt_code = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -59,12 +61,13 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label1 = new System.Windows.Forms.Label();
             this.pnl_bot = new System.Windows.Forms.Panel();
             this.btn_print = new System.Windows.Forms.Button();
-            this.btn_save_pick = new System.Windows.Forms.Button();
             this.dgv_main = new System.Windows.Forms.DataGridView();
             this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.pa_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.so_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sod_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_description = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.left_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -83,18 +86,20 @@ namespace smpc_engineering_app.Pages.PickActivity
             // 
             // pnl_top
             // 
-            this.pnl_top.Controls.Add(this.textBox4);
-            this.pnl_top.Controls.Add(this.label4);
-            this.pnl_top.Controls.Add(this.textBox3);
-            this.pnl_top.Controls.Add(this.textBox2);
-            this.pnl_top.Controls.Add(this.label10);
-            this.pnl_top.Controls.Add(this.textBox1);
-            this.pnl_top.Controls.Add(this.label9);
+            this.pnl_top.Controls.Add(this.cmb_reference_so);
             this.pnl_top.Controls.Add(this.txt_id);
-            this.pnl_top.Controls.Add(this.label8);
+            this.pnl_top.Controls.Add(this.label13);
             this.pnl_top.Controls.Add(this.txt_doc_no);
+            this.pnl_top.Controls.Add(this.label4);
+            this.pnl_top.Controls.Add(this.txt_customer);
+            this.pnl_top.Controls.Add(this.txt_sales_person);
+            this.pnl_top.Controls.Add(this.label10);
+            this.pnl_top.Controls.Add(this.label9);
+            this.pnl_top.Controls.Add(this.txt_picked_by);
+            this.pnl_top.Controls.Add(this.label8);
+            this.pnl_top.Controls.Add(this.txt_prepared_by);
             this.pnl_top.Controls.Add(this.label7);
-            this.pnl_top.Controls.Add(this.txt_purpose);
+            this.pnl_top.Controls.Add(this.txt_code);
             this.pnl_top.Controls.Add(this.label3);
             this.pnl_top.Controls.Add(this.label2);
             this.pnl_top.Controls.Add(this.toolStrip1);
@@ -105,59 +110,83 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.pnl_top.Size = new System.Drawing.Size(1400, 215);
             this.pnl_top.TabIndex = 1;
             // 
-            // textBox4
+            // cmb_reference_so
             // 
-            this.textBox4.Enabled = false;
-            this.textBox4.Location = new System.Drawing.Point(1265, 85);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(99, 20);
-            this.textBox4.TabIndex = 36;
-            this.textBox4.Tag = "";
+            this.cmb_reference_so.BackColor = System.Drawing.Color.White;
+            this.cmb_reference_so.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_reference_so.Enabled = false;
+            this.cmb_reference_so.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmb_reference_so.FormattingEnabled = true;
+            this.cmb_reference_so.Location = new System.Drawing.Point(139, 131);
+            this.cmb_reference_so.MaxLength = 50;
+            this.cmb_reference_so.MinimumSize = new System.Drawing.Size(200, 0);
+            this.cmb_reference_so.Name = "cmb_reference_so";
+            this.cmb_reference_so.Size = new System.Drawing.Size(200, 21);
+            this.cmb_reference_so.TabIndex = 99;
+            this.cmb_reference_so.TabStop = false;
+            this.cmb_reference_so.Tag = "REQUIRED";
+            this.cmb_reference_so.SelectedIndexChanged += new System.EventHandler(this.cmb_reference_so_SelectedIndexChanged);
+            // 
+            // txt_id
+            // 
+            this.txt_id.Location = new System.Drawing.Point(1164, 177);
+            this.txt_id.Name = "txt_id";
+            this.txt_id.Size = new System.Drawing.Size(200, 20);
+            this.txt_id.TabIndex = 38;
+            this.txt_id.Tag = "";
+            this.txt_id.Visible = false;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(1045, 180);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(99, 13);
+            this.label13.TabIndex = 37;
+            this.label13.Text = "PICK ACTIVITY ID:";
+            this.label13.Visible = false;
+            // 
+            // txt_doc_no
+            // 
+            this.txt_doc_no.Location = new System.Drawing.Point(1164, 90);
+            this.txt_doc_no.Name = "txt_doc_no";
+            this.txt_doc_no.Size = new System.Drawing.Size(99, 20);
+            this.txt_doc_no.TabIndex = 36;
+            this.txt_doc_no.Tag = "";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(1174, 88);
+            this.label4.Location = new System.Drawing.Point(1045, 93);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(52, 13);
             this.label4.TabIndex = 35;
             this.label4.Text = "DOC NO:";
             // 
-            // textBox3
+            // txt_customer
             // 
-            this.textBox3.Enabled = false;
-            this.textBox3.Location = new System.Drawing.Point(139, 88);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(370, 20);
-            this.textBox3.TabIndex = 34;
-            this.textBox3.Tag = "";
+            this.txt_customer.Location = new System.Drawing.Point(139, 88);
+            this.txt_customer.Name = "txt_customer";
+            this.txt_customer.Size = new System.Drawing.Size(370, 20);
+            this.txt_customer.TabIndex = 34;
+            this.txt_customer.Tag = "";
             // 
-            // textBox2
+            // txt_sales_person
             // 
-            this.textBox2.Enabled = false;
-            this.textBox2.Location = new System.Drawing.Point(139, 151);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(200, 20);
-            this.textBox2.TabIndex = 32;
-            this.textBox2.Tag = "";
+            this.txt_sales_person.Location = new System.Drawing.Point(139, 154);
+            this.txt_sales_person.Name = "txt_sales_person";
+            this.txt_sales_person.Size = new System.Drawing.Size(200, 20);
+            this.txt_sales_person.TabIndex = 32;
+            this.txt_sales_person.Tag = "";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(20, 154);
+            this.label10.Location = new System.Drawing.Point(20, 157);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(92, 13);
             this.label10.TabIndex = 33;
             this.label10.Text = "SALES PERSON:";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Enabled = false;
-            this.textBox1.Location = new System.Drawing.Point(139, 130);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(200, 20);
-            this.textBox1.TabIndex = 30;
-            this.textBox1.Tag = "";
             // 
             // label9
             // 
@@ -168,14 +197,13 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label9.TabIndex = 31;
             this.label9.Text = "REFERENCE SO:";
             // 
-            // txt_id
+            // txt_picked_by
             // 
-            this.txt_id.Enabled = false;
-            this.txt_id.Location = new System.Drawing.Point(1164, 151);
-            this.txt_id.Name = "txt_id";
-            this.txt_id.Size = new System.Drawing.Size(200, 20);
-            this.txt_id.TabIndex = 29;
-            this.txt_id.Tag = "";
+            this.txt_picked_by.Location = new System.Drawing.Point(1164, 151);
+            this.txt_picked_by.Name = "txt_picked_by";
+            this.txt_picked_by.Size = new System.Drawing.Size(200, 20);
+            this.txt_picked_by.TabIndex = 29;
+            this.txt_picked_by.Tag = "";
             // 
             // label8
             // 
@@ -186,14 +214,13 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label8.TabIndex = 26;
             this.label8.Text = "PICKED BY:";
             // 
-            // txt_doc_no
+            // txt_prepared_by
             // 
-            this.txt_doc_no.Enabled = false;
-            this.txt_doc_no.Location = new System.Drawing.Point(1164, 130);
-            this.txt_doc_no.Name = "txt_doc_no";
-            this.txt_doc_no.Size = new System.Drawing.Size(200, 20);
-            this.txt_doc_no.TabIndex = 25;
-            this.txt_doc_no.Tag = "";
+            this.txt_prepared_by.Location = new System.Drawing.Point(1164, 130);
+            this.txt_prepared_by.Name = "txt_prepared_by";
+            this.txt_prepared_by.Size = new System.Drawing.Size(200, 20);
+            this.txt_prepared_by.TabIndex = 25;
+            this.txt_prepared_by.Tag = "";
             // 
             // label7
             // 
@@ -204,14 +231,13 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label7.TabIndex = 24;
             this.label7.Text = "PREPARED BY:";
             // 
-            // txt_purpose
+            // txt_code
             // 
-            this.txt_purpose.Enabled = false;
-            this.txt_purpose.Location = new System.Drawing.Point(139, 109);
-            this.txt_purpose.Name = "txt_purpose";
-            this.txt_purpose.Size = new System.Drawing.Size(200, 20);
-            this.txt_purpose.TabIndex = 15;
-            this.txt_purpose.Tag = "";
+            this.txt_code.Location = new System.Drawing.Point(139, 109);
+            this.txt_code.Name = "txt_code";
+            this.txt_code.Size = new System.Drawing.Size(200, 20);
+            this.txt_code.TabIndex = 15;
+            this.txt_code.Tag = "";
             // 
             // label3
             // 
@@ -256,6 +282,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_new.Name = "btn_new";
             this.btn_new.Size = new System.Drawing.Size(51, 22);
             this.btn_new.Text = "New";
+            this.btn_new.Click += new System.EventHandler(this.btn_new_Click);
             // 
             // btn_search
             // 
@@ -264,6 +291,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_search.Name = "btn_search";
             this.btn_search.Size = new System.Drawing.Size(62, 22);
             this.btn_search.Text = "Search";
+            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
             // 
             // btn_edit
             // 
@@ -272,6 +300,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_edit.Name = "btn_edit";
             this.btn_edit.Size = new System.Drawing.Size(47, 22);
             this.btn_edit.Text = "Edit";
+            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
             // 
             // btn_delete
             // 
@@ -280,6 +309,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_delete.Name = "btn_delete";
             this.btn_delete.Size = new System.Drawing.Size(60, 22);
             this.btn_delete.Text = "Delete";
+            this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
             // 
             // btn_save
             // 
@@ -289,6 +319,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_save.Size = new System.Drawing.Size(51, 22);
             this.btn_save.Text = "Save";
             this.btn_save.Visible = false;
+            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
             // 
             // btn_close
             // 
@@ -298,6 +329,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_close.Size = new System.Drawing.Size(56, 22);
             this.btn_close.Text = "Close";
             this.btn_close.Visible = false;
+            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
             // 
             // btn_next
             // 
@@ -307,6 +339,8 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_next.Name = "btn_next";
             this.btn_next.Size = new System.Drawing.Size(52, 22);
             this.btn_next.Text = "Next";
+            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
             // 
             // btn_prev
             // 
@@ -316,6 +350,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_prev.Name = "btn_prev";
             this.btn_prev.Size = new System.Drawing.Size(72, 22);
             this.btn_prev.Text = "Previous";
+            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
             // 
             // panel6
             // 
@@ -340,7 +375,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             // pnl_bot
             // 
             this.pnl_bot.Controls.Add(this.btn_print);
-            this.pnl_bot.Controls.Add(this.btn_save_pick);
             this.pnl_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnl_bot.Location = new System.Drawing.Point(0, 825);
             this.pnl_bot.Name = "pnl_bot";
@@ -358,18 +392,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_print.Text = "PRINT";
             this.btn_print.UseVisualStyleBackColor = false;
             // 
-            // btn_save_pick
-            // 
-            this.btn_save_pick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_save_pick.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(217)))), ((int)(((byte)(234)))), ((int)(((byte)(211)))));
-            this.btn_save_pick.Enabled = false;
-            this.btn_save_pick.Location = new System.Drawing.Point(1265, 85);
-            this.btn_save_pick.Name = "btn_save_pick";
-            this.btn_save_pick.Size = new System.Drawing.Size(114, 23);
-            this.btn_save_pick.TabIndex = 37;
-            this.btn_save_pick.Text = "SAVE";
-            this.btn_save_pick.UseVisualStyleBackColor = false;
-            // 
             // dgv_main
             // 
             this.dgv_main.AllowUserToAddRows = false;
@@ -384,11 +406,14 @@ namespace smpc_engineering_app.Pages.PickActivity
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_main.ColumnHeadersHeight = 50;
+            this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.number,
             this.id,
             this.pa_id,
             this.item_id,
+            this.so_id,
+            this.sod_id,
             this.item_code,
             this.item_description,
             this.left_qty,
@@ -404,6 +429,9 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.dgv_main.Name = "dgv_main";
             this.dgv_main.Size = new System.Drawing.Size(1400, 610);
             this.dgv_main.TabIndex = 3;
+            this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
+            this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
+            this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
             // 
             // number
             // 
@@ -420,6 +448,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.id.DataPropertyName = "id";
             this.id.HeaderText = "ID";
             this.id.Name = "id";
+            this.id.ReadOnly = true;
             this.id.Visible = false;
             // 
             // pa_id
@@ -427,6 +456,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.pa_id.DataPropertyName = "pa_id";
             this.pa_id.HeaderText = "PA ID";
             this.pa_id.Name = "pa_id";
+            this.pa_id.ReadOnly = true;
             this.pa_id.Visible = false;
             // 
             // item_id
@@ -436,6 +466,22 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.item_id.Name = "item_id";
             this.item_id.ReadOnly = true;
             this.item_id.Visible = false;
+            // 
+            // so_id
+            // 
+            this.so_id.DataPropertyName = "so_id";
+            this.so_id.HeaderText = "SO ID";
+            this.so_id.Name = "so_id";
+            this.so_id.ReadOnly = true;
+            this.so_id.Visible = false;
+            // 
+            // sod_id
+            // 
+            this.sod_id.DataPropertyName = "sod_id";
+            this.sod_id.HeaderText = "SOD ID";
+            this.sod_id.Name = "sod_id";
+            this.sod_id.ReadOnly = true;
+            this.sod_id.Visible = false;
             // 
             // item_code
             // 
@@ -488,7 +534,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             // pick_uom
             // 
             this.pick_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.pick_uom.DataPropertyName = "pick_uom";
+            this.pick_uom.DataPropertyName = "left_uom";
             this.pick_uom.HeaderText = "UOM";
             this.pick_uom.MinimumWidth = 80;
             this.pick_uom.Name = "pick_uom";
@@ -534,6 +580,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.Controls.Add(this.pnl_top);
             this.Name = "PickActivity";
             this.Size = new System.Drawing.Size(1400, 950);
+            this.Load += new System.EventHandler(this.PickActivity_Load);
             this.pnl_top.ResumeLayout(false);
             this.pnl_top.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
@@ -549,11 +596,11 @@ namespace smpc_engineering_app.Pages.PickActivity
         #endregion
 
         private System.Windows.Forms.Panel pnl_top;
-        private System.Windows.Forms.TextBox txt_id;
+        private System.Windows.Forms.TextBox txt_picked_by;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox txt_doc_no;
+        private System.Windows.Forms.TextBox txt_prepared_by;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox txt_purpose;
+        private System.Windows.Forms.TextBox txt_code;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStrip toolStrip1;
@@ -567,21 +614,24 @@ namespace smpc_engineering_app.Pages.PickActivity
         private System.Windows.Forms.ToolStripButton btn_prev;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox txt_sales_person;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox txt_customer;
+        private System.Windows.Forms.TextBox txt_doc_no;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel pnl_bot;
         private System.Windows.Forms.Button btn_print;
-        private System.Windows.Forms.Button btn_save_pick;
         private System.Windows.Forms.DataGridView dgv_main;
+        private System.Windows.Forms.TextBox txt_id;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox cmb_reference_so;
         private System.Windows.Forms.DataGridViewTextBoxColumn number;
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn pa_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn so_id;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sod_id;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_code;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_description;
         private System.Windows.Forms.DataGridViewTextBoxColumn left_qty;

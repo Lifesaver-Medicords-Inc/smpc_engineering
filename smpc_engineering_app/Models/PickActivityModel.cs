@@ -58,7 +58,7 @@ namespace smpc_engineering_app.Models
     public class PickActivityPayload
     {
         public PickActivityModel pick_activity { get; set; }
-        public List<ItemRequestDetailsModel> pick_activity_details { get; set; }
-        public List<ItemRequestLocationModel> pick_activity_location { get; set; }
+        public List<PickActivityDetailsModel> pick_activity_details { get; set; }
+        public List<PickActivityLocationModel> pick_activity_location { get; set; }
     }
 }
