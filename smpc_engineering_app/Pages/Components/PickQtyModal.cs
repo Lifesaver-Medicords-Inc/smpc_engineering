@@ -22,7 +22,8 @@ namespace smpc_engineering_app.Pages.Components
         public int PassedPAId { get; set; }
         public int PassedItemId { get; set; }
         public DataTable PassedIRLocation { get; set; }
-        public DataTable PassedItemLocation { get; set; }
+        public DataTable PassedIRItemLocation { get; set; }
+        public DataTable PassedPAItemLocation { get; set; }
         public DataTable PassedPALocation { get; set; }
         public DataTable SelectedIssuedLocations { get; private set; }
         public DataTable SelectedActualLocations { get; private set; }
@@ -65,38 +66,6 @@ namespace smpc_engineering_app.Pages.Components
 
                 if (locationTable.Rows.Count > 0)
                 {
-                    // Adjust stock_qty based on PassedItemLocation
-                    if (PassedItemLocation != null && PassedItemLocation.Rows.Count > 0)
-                    {
-                        foreach (DataRow passedRow in PassedItemLocation.Rows)
-                        {
-                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
-                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
-                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
-                            string issuedQtyStr = passedRow["issued_qty"]?.ToString()?.Trim();
-
-                            if (!decimal.TryParse(issuedQtyStr, out decimal issuedQty))
-                                continue;
-
-                            // Find matching row in locationTable
-                            var matches = locationTable.AsEnumerable()
-                                .Where(row =>
-                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
-                                );
-
-                            foreach (var match in matches)
-                            {
-                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
-                                {
-                                    // Subtract issued_qty from stock_qty
-                                    match["stock_qty"] = Math.Max(stockQty - issuedQty, 0);
-                                }
-                            }
-                        }
-                    }
-
                     //Filter out rows where stock_qty <= 0 or stock_qty is invalid
                     var filteredRows = locationTable.AsEnumerable()
                         .Where(row =>
@@ -138,10 +107,92 @@ namespace smpc_engineering_app.Pages.Components
                     ApplyPassedIRLocation();
                     ApplyPassedPALocation();
 
-                    dgv_pick_qty.DataSource = locationTable;
+                    // Adjust stock_qty based on PassedItemLocation
+                    if (PassedIRItemLocation != null && PassedIRItemLocation.Rows.Count > 0)
+                    {
+                        foreach (DataRow passedRow in PassedIRItemLocation.Rows)
+                        {
+                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
+                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
+                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
+                            string issuedQtyStr = passedRow["issued_qty"]?.ToString()?.Trim();
+
+                            if (!decimal.TryParse(issuedQtyStr, out decimal issuedQty))
+                                continue;
+
+                            // Find matching row in locationTable
+                            var matches = locationTable.AsEnumerable()
+                                .Where(row =>
+                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
+                                );
+
+                            foreach (var match in matches)
+                            {
+                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
+                                {
+                                    // Subtract issued_qty from stock_qty
+                                    match["stock_qty"] = Math.Max(stockQty - issuedQty, 0);
+
+                                }
+                            }
+                        }
+                    }
+
+                    // Adjust stock_qty based on PassedItemLocation
+                    if (PassedPAItemLocation != null && PassedPAItemLocation.Rows.Count > 0)
+                    {
+                        foreach (DataRow passedRow in PassedPAItemLocation.Rows)
+                        {
+                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
+                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
+                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
+                            string actualQtyStr = passedRow["actual_qty"]?.ToString()?.Trim();
+
+                            if (!decimal.TryParse(actualQtyStr, out decimal actualQty))
+                                continue;
+
+                            // Find matching row in locationTable
+                            var matches = locationTable.AsEnumerable()
+                                .Where(row =>
+                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
+                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
+                                );
+
+                            foreach (var match in matches)
+                            {
+                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
+                                {
+                                    // Subtract issued_qty from stock_qty
+                                    match["stock_qty"] = Math.Max(stockQty - actualQty, 0);
+                                }
+                            }
+                        }
+                    }
+
+                    // After subtraction
+                    // Refilter rows with stock_qty > 0
+                    var finalFilteredRows = locationTable.AsEnumerable()
+                        .Where(row =>
+                        {
+                            var stockVal = row["stock_qty"]?.ToString()?.Trim();
+                            return decimal.TryParse(stockVal, out decimal sq) && sq > 0;
+                        })
+                        .ToList();
+
+                    if (finalFilteredRows.Count == 0)
+                    {
+                        Helpers.ShowDialogMessage("warning", "No available stock after allocation.");
+                        dgv_pick_qty.DataSource = null;
+                        return;
+                    }
+
+                    dgv_pick_qty.DataSource = finalFilteredRows.CopyToDataTable();
 
                     //Apply column visibility and grouping rules
-                    ApplyColumnVisibilityAndGrouping();
+                    ApplyColumnVisibilityAndGrouping();              
                 }
                 else
                 {

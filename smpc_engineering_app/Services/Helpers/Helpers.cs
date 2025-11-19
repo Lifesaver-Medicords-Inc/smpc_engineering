@@ -31,6 +31,9 @@ namespace smpc_engineering_app.Services.Helpers
             // --- CASE 1: DataGridView ---
             if (dataSource is DataGridView dgv)
             {
+                if (dgv.Rows.Count == 0)
+                    return models; // return empty list
+
                 foreach (DataGridViewRow row in dgv.Rows)
                 {
                     if (row.IsNewRow)
@@ -49,11 +52,16 @@ namespace smpc_engineering_app.Services.Helpers
 
                     models.Add(model);
                 }
+
+                return models;
             }
 
             // --- CASE 2: DataTable ---
-            else if (dataSource is DataTable dt)
+            if (dataSource is DataTable dt)
             {
+                if (dt.Rows.Count == 0)
+                    return models; // return empty list
+
                 foreach (DataRow dr in dt.Rows)
                 {
                     var model = new T();
@@ -69,13 +77,11 @@ namespace smpc_engineering_app.Services.Helpers
 
                     models.Add(model);
                 }
+
+                return models;
             }
 
-            else
-            {
-                throw new ArgumentException("Unsupported data source type. Must be DataGridView or DataTable.");
-            }
-
+            // If unsupported input, return empty list instead of throwing
             return models;
         }
 

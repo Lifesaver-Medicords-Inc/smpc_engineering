@@ -76,10 +76,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
         private void SetEditMode(bool enable, bool isNewMode = false)
         {
+            _isNewMode = isNewMode;
+            _isEditMode = enable && !isNewMode;
+
             SetEditableColumns(enable);
             dgv_main.AllowUserToAddRows = enable && !_isWarehouseUser;
-            _isNewMode = isNewMode;
-            _isEditMode = !isNewMode && enable;
+
             btn_forward.Enabled = enable;
             btn_cancel.Enabled = enable;
 
@@ -100,28 +102,17 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 Helpers.SetChildControlsEnabled(_panels, enable, excludeControls);
             }
 
-            //Only clear _irltable if it's New Mode
-            if (isNewMode && _irltable != null)
-            {
-                _irltable.Clear();
-            }
+            if (isNewMode)
+                _irltable?.Clear();
 
-            // Initialize or clear _itemTable based on edit mode
+            // Handle item table
             if (enable && !isNewMode)
             {
-                if (_itemTable == null)
-                {
-                    _itemTable = new DataTable();
-                    _itemTable.Columns.Add("warehouse_id", typeof(int));
-                    _itemTable.Columns.Add("item_id", typeof(int));
-                    _itemTable.Columns.Add("location", typeof(string));
-                    _itemTable.Columns.Add("issued_qty", typeof(decimal));
-                    _itemTable.Columns.Add("ir_details_id", typeof(decimal));
-                }
+                EnsureItemTableExists();
             }
-            else if (!enable && _itemTable != null)
+            else
             {
-                _itemTable.Clear();
+                _itemTable?.Clear();
             }
 
             Helpers.SetButtonVisibility(
@@ -142,33 +133,48 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 btn_new.Visible = !enable;
             }
 
-            if (enable)
+            if (enable && isNewMode)
+                RefreshRefDocList();
+        }
+
+        private void EnsureItemTableExists()
+        {
+            if (_itemTable != null) return;
+
+            _itemTable = new DataTable();
+            _itemTable.Columns.Add("warehouse_id", typeof(int));
+            _itemTable.Columns.Add("item_id", typeof(int));
+            _itemTable.Columns.Add("location", typeof(string));
+            _itemTable.Columns.Add("issued_qty", typeof(decimal));
+            _itemTable.Columns.Add("ir_details_id", typeof(decimal));
+        }
+
+        private void RefreshRefDocList()
+        {
+            try
             {
-                try
-                {
-                    cmb_ref_doc.BeginUpdate();
-                    cmb_ref_doc.Items.Clear();
+                cmb_ref_doc.BeginUpdate();
+                cmb_ref_doc.Items.Clear();
 
-                    if (_sotable != null && _sotable.Rows.Count > 0 && _sotable.Columns.Contains("ref_doc"))
-                    {
-                        var uniqueRefDocs = _sotable.AsEnumerable()
-                            .Select(r => r.Field<string>("ref_doc"))
-                            .Where(v => !string.IsNullOrWhiteSpace(v))
-                            .Distinct()
-                            .OrderBy(v => v)
-                            .ToList();
+                if (_sotable == null || _sotable.Rows.Count == 0 || !_sotable.Columns.Contains("ref_doc"))
+                    return;
 
-                        cmb_ref_doc.Items.AddRange(uniqueRefDocs.ToArray());
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Helpers.ShowDialogMessage("error", $"Failed to refresh Ref Doc list: {ex.Message}");
-                }
-                finally
-                {
-                    cmb_ref_doc.EndUpdate();
-                }
+                var uniqueRefDocs = _sotable.AsEnumerable()
+                    .Select(r => r.Field<string>("ref_doc"))
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Distinct()
+                    .OrderBy(v => v)
+                    .ToArray();
+
+                cmb_ref_doc.Items.AddRange(uniqueRefDocs);
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to refresh Ref Doc list: {ex.Message}");
+            }
+            finally
+            {
+                cmb_ref_doc.EndUpdate();
             }
         }
 
@@ -761,7 +767,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     PassedIRId = currentId,
                     PassedIRParentId = currentParentId,
                     PassedIRLocation = filteredIRLocation,
-                    PassedItemLocation = filteredItemLocation
+                    PassedIRItemLocation = filteredItemLocation
                 })
                 {
                     if (qtyForm.ShowDialog() == DialogResult.OK)

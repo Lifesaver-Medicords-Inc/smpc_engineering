@@ -40,6 +40,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         private DataTable _sotable;
         private DataTable _paltable;
         private DataTable _paTable;
+        private DataTable _itemTable;
         private string _userName;
 
         public PickActivity()
@@ -77,27 +78,68 @@ namespace smpc_engineering_app.Pages.PickActivity
             if (!_isWarehouseUser)
                 Helpers.SetChildControlsEnabled(new[] { pnl_top }, enable, new string[] { "txt_customer", "txt_code", "txt_prepared_by", "txt_picked_by", "txt_sales_person", "txt_doc_no" });
 
+            // buttons
+            string[] editButtons = { "btn_save", "btn_close" };
+            string[] navButtons = { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" };
+
             Helpers.SetButtonVisibility(
                 toolStrip1,
-                visibleButtons: enable ? new[] { "btn_save", "btn_close" } : new[] { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" },
-                hiddenButtons: enable ? new[] { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" } : new[] { "btn_save", "btn_close" }
+                visibleButtons: enable ? editButtons : navButtons,
+                hiddenButtons: enable ? navButtons : editButtons
             );
 
-            //Hide btn_new entirely if warehouse user
-            if (_isWarehouseUser)
+            // btn_new visibility
+            btn_new.Visible = !_isWarehouseUser && !enable;
+
+            // clear only in new mode
+            if (isNewMode)
+                _paltable?.Clear();
+
+            // Handle item table
+            if (enable && !isNewMode)
             {
-                btn_new.Visible = false;
+                EnsureItemTableExists();
             }
             else
             {
-                btn_new.Visible = !enable;
+                _itemTable?.Clear();
             }
 
-            //Only clear _paltable if it's New Mode
-            if (isNewMode && _paltable != null)
+            // reload SO dropdown only in New Mode
+            if (enable && isNewMode)
+                LoadReferenceSO();
+        }
+
+        private void EnsureItemTableExists()
+        {
+            if (_itemTable != null) return;
+
+            _itemTable = new DataTable();
+            _itemTable.Columns.Add("warehouse_id", typeof(int));
+            _itemTable.Columns.Add("item_id", typeof(int));
+            _itemTable.Columns.Add("location", typeof(string));
+            _itemTable.Columns.Add("actual_qty", typeof(decimal));
+            _itemTable.Columns.Add("pa_details_id", typeof(decimal));
+        }
+
+        private void LoadReferenceSO()
+        {
+            cmb_reference_so.BeginUpdate();
+            cmb_reference_so.Items.Clear();
+
+            if (_sotable != null && _sotable.Rows.Count > 0)
             {
-                _paltable.Clear();
+                var uniqueDocs = _sotable.AsEnumerable()
+                    .Select(r => r.Field<string>("ref_doc"))
+                    .Where(v => !string.IsNullOrWhiteSpace(v))
+                    .Distinct()
+                    .OrderBy(v => v)
+                    .ToArray();
+
+                cmb_reference_so.Items.AddRange(uniqueDocs);
             }
+
+            cmb_reference_so.EndUpdate();
         }
 
         private void ChangeRecord(int step)
@@ -414,7 +456,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             _paTable = Helpers.ToDataTable(_padata.pick_activity);
             _paltable = Helpers.ToDataTable(_padata.pick_activity_location);
 
-            //Clear and rebuild _irltable based on current record only
+            //Clear and rebuild _paltable based on current record only
             var current = _pickActivities[_currentPAIndex];
             var filteredLocations = _padata.pick_activity_location
                 .Where(l => l.pa_id == current.id)
@@ -551,13 +593,26 @@ namespace smpc_engineering_app.Pages.PickActivity
                     }
                 }
 
+                // Filter rows by item_id, exclude current IR details
+                DataTable filteredItemLocation = _itemTable.Clone();
+                foreach (DataRow row in _itemTable.Rows)
+                {
+                    if (row["item_id"] != DBNull.Value &&
+                        Convert.ToInt32(row["item_id"]) == currentItemId &&
+                        (row["pa_details_id"] == DBNull.Value || Convert.ToInt32(row["pa_details_id"]) != currentId)) // exclude current IR
+                    {
+                        filteredItemLocation.ImportRow(row);
+                    }
+                }
+
                 // Show modal
                 using (var qtyForm = new PickQtyModal
                 {
                     PassedItemId = currentItemId,
                     PassedUom = currentUom,
                     PassedPAId = currentId,
-                    PassedPALocation = filteredPALocation
+                    PassedPALocation = filteredPALocation,
+                    PassedPAItemLocation = filteredItemLocation
                 })
                 {
                     if (qtyForm.ShowDialog() == DialogResult.OK)
@@ -570,12 +625,47 @@ namespace smpc_engineering_app.Pages.PickActivity
 
                         foreach (DataRow row in qtyForm.SelectedIssuedLocations.Rows)
                         {
-                            // Clone structure if _irltable is empty
+                            // Clone structure if _paltable is empty
                             if (_paltable.Columns.Count == 0)
                                 _paltable = qtyForm.SelectedIssuedLocations.Clone();
 
-                            // Import each selected row to _irltable (append only)
+                            // Import each selected row to _paltable (append only)
                             _paltable.ImportRow(row);
+
+                            // Initialize _itemTable columns if needed
+                            if (_itemTable.Columns.Count == 0)
+                            {
+                                _itemTable.Columns.Add("warehouse_id", typeof(int));
+                                _itemTable.Columns.Add("item_id", typeof(int));
+                                _itemTable.Columns.Add("location", typeof(string));
+                                _itemTable.Columns.Add("actual_qty", typeof(decimal));
+                                _itemTable.Columns.Add("pa_details_id", typeof(decimal));
+                            }
+
+                            // Find existing row with the same key combination
+                            DataRow existingRow = _itemTable.AsEnumerable().FirstOrDefault(r =>
+                                r["warehouse_id"]?.ToString() == row["warehouse_id"]?.ToString() &&
+                                r["item_id"]?.ToString() == row["item_id"]?.ToString() &&
+                                r["location"]?.ToString() == row["location"]?.ToString() &&
+                                r["pa_details_id"]?.ToString() == row["pa_details_id"]?.ToString()
+                            );
+
+                            if (existingRow != null)
+                            {
+                                // Replace the issued_qty with the new value
+                                existingRow["actual_qty"] = row["actual_qty"];
+                            }
+                            else
+                            {
+                                // Add new row
+                                DataRow itemRow = _itemTable.NewRow();
+                                itemRow["warehouse_id"] = row["warehouse_id"];
+                                itemRow["item_id"] = row["item_id"];
+                                itemRow["location"] = row["location"];
+                                itemRow["actual_qty"] = row["actual_qty"];
+                                itemRow["pa_details_id"] = row["pa_details_id"];
+                                _itemTable.Rows.Add(itemRow);
+                            }
                         }
                     }
                 }

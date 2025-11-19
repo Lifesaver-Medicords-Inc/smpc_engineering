@@ -43,6 +43,8 @@ namespace smpc_engineering_app.Models
         public int pa_id { get; set; }
         public int pa_details_id { get; set; }
         public int actual_qty { get; set; }
+        public int item_id { get; set; }
+        public int stock_qty { get; set; }
         public string actual_uom { get; set; }
         public string location { get; set; }
         public int warehouse_id { get; set; }
