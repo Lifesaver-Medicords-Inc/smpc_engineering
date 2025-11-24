@@ -40,7 +40,6 @@ namespace smpc_engineering_app.Pages.PickActivity
         private DataTable _sotable;
         private DataTable _paltable;
         private DataTable _paTable;
-        private DataTable _itemTable;
         private string _userName;
 
         public PickActivity()
@@ -59,13 +58,19 @@ namespace smpc_engineering_app.Pages.PickActivity
         {
             var editableColumns = !_isWarehouseUser
                 ? new[] { "pick_qty" }
-                : new[] { "actual_qty", "bin_location" };
+                : new[] { "actual_qty"};
 
             foreach (var colName in editableColumns)
             {
                 if (dgv_main.Columns.Contains(colName))
                     dgv_main.Columns[colName].ReadOnly = !isEdit;
             }
+
+            if (dgv_main.Columns.Contains("bin_location"))
+                dgv_main.Columns["bin_location"].Visible = !isEdit;
+
+            if (dgv_main.Columns.Contains("cmb_bin_location"))
+                dgv_main.Columns["cmb_bin_location"].Visible = isEdit;
         }
 
         private void SetEditMode(bool enable, bool isNewMode = false)
@@ -95,31 +100,9 @@ namespace smpc_engineering_app.Pages.PickActivity
             if (isNewMode)
                 _paltable?.Clear();
 
-            // Handle item table
-            if (enable && !isNewMode)
-            {
-                EnsureItemTableExists();
-            }
-            else
-            {
-                _itemTable?.Clear();
-            }
-
             // reload SO dropdown only in New Mode
             if (enable && isNewMode)
                 LoadReferenceSO();
-        }
-
-        private void EnsureItemTableExists()
-        {
-            if (_itemTable != null) return;
-
-            _itemTable = new DataTable();
-            _itemTable.Columns.Add("warehouse_id", typeof(int));
-            _itemTable.Columns.Add("item_id", typeof(int));
-            _itemTable.Columns.Add("location", typeof(string));
-            _itemTable.Columns.Add("actual_qty", typeof(decimal));
-            _itemTable.Columns.Add("pa_details_id", typeof(decimal));
         }
 
         private void LoadReferenceSO()
@@ -263,7 +246,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             }
 
             string[] columnsToValidate = _isWarehouseUser
-                ? new[] { "actual_qty", "bin_location" }
+                ? new[] { "actual_qty", "cmb_bin_location" }
                 : new[] { "pick_qty"};
 
             if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
@@ -525,6 +508,42 @@ namespace smpc_engineering_app.Pages.PickActivity
                 // Remove handler for all other columns
                 e.Control.KeyPress -= new KeyPressEventHandler(NumericColumn_KeyPress);
             }
+
+            if (dgv_main.CurrentCell.ColumnIndex == dgv_main.Columns["cmb_bin_location"].Index)
+            {
+                if (e.Control is ComboBox cb)
+                {
+                    cb.DropDownStyle = ComboBoxStyle.DropDown; // allow typing
+                    cb.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                    cb.AutoCompleteSource = AutoCompleteSource.ListItems;
+
+                    // Remove previous handler to avoid multiple subscriptions
+                    cb.Validating -= Cb_Validating;
+                    cb.Validating += Cb_Validating;
+                }
+            }
+        }
+
+        private void Cb_Validating(object sender, CancelEventArgs e)
+        {
+            if (sender is ComboBox cb)
+            {
+                string typedValue = cb.Text;
+
+                if (!string.IsNullOrWhiteSpace(typedValue))
+                {
+                    var cell = dgv_main.CurrentCell;
+                    if (cell != null)
+                    {
+                        // Add to ComboBox items if not already present
+                        if (!cb.Items.Contains(typedValue))
+                            cb.Items.Add(typedValue);
+
+                        // Save typed value to the cell
+                        cell.Value = typedValue;
+                    }
+                }
+            }
         }
 
         // Allow only numbers (and optional decimal point)
@@ -593,18 +612,6 @@ namespace smpc_engineering_app.Pages.PickActivity
                     }
                 }
 
-                // Filter rows by item_id, exclude current IR details
-                DataTable filteredItemLocation = _itemTable.Clone();
-                foreach (DataRow row in _itemTable.Rows)
-                {
-                    if (row["item_id"] != DBNull.Value &&
-                        Convert.ToInt32(row["item_id"]) == currentItemId &&
-                        (row["pa_details_id"] == DBNull.Value || Convert.ToInt32(row["pa_details_id"]) != currentId)) // exclude current IR
-                    {
-                        filteredItemLocation.ImportRow(row);
-                    }
-                }
-
                 // Show modal
                 using (var qtyForm = new PickQtyModal
                 {
@@ -612,7 +619,6 @@ namespace smpc_engineering_app.Pages.PickActivity
                     PassedUom = currentUom,
                     PassedPAId = currentId,
                     PassedPALocation = filteredPALocation,
-                    PassedPAItemLocation = filteredItemLocation
                 })
                 {
                     if (qtyForm.ShowDialog() == DialogResult.OK)
@@ -631,41 +637,6 @@ namespace smpc_engineering_app.Pages.PickActivity
 
                             // Import each selected row to _paltable (append only)
                             _paltable.ImportRow(row);
-
-                            // Initialize _itemTable columns if needed
-                            if (_itemTable.Columns.Count == 0)
-                            {
-                                _itemTable.Columns.Add("warehouse_id", typeof(int));
-                                _itemTable.Columns.Add("item_id", typeof(int));
-                                _itemTable.Columns.Add("location", typeof(string));
-                                _itemTable.Columns.Add("actual_qty", typeof(decimal));
-                                _itemTable.Columns.Add("pa_details_id", typeof(decimal));
-                            }
-
-                            // Find existing row with the same key combination
-                            DataRow existingRow = _itemTable.AsEnumerable().FirstOrDefault(r =>
-                                r["warehouse_id"]?.ToString() == row["warehouse_id"]?.ToString() &&
-                                r["item_id"]?.ToString() == row["item_id"]?.ToString() &&
-                                r["location"]?.ToString() == row["location"]?.ToString() &&
-                                r["pa_details_id"]?.ToString() == row["pa_details_id"]?.ToString()
-                            );
-
-                            if (existingRow != null)
-                            {
-                                // Replace the issued_qty with the new value
-                                existingRow["actual_qty"] = row["actual_qty"];
-                            }
-                            else
-                            {
-                                // Add new row
-                                DataRow itemRow = _itemTable.NewRow();
-                                itemRow["warehouse_id"] = row["warehouse_id"];
-                                itemRow["item_id"] = row["item_id"];
-                                itemRow["location"] = row["location"];
-                                itemRow["actual_qty"] = row["actual_qty"];
-                                itemRow["pa_details_id"] = row["pa_details_id"];
-                                _itemTable.Rows.Add(itemRow);
-                            }
                         }
                     }
                 }
@@ -717,6 +688,27 @@ namespace smpc_engineering_app.Pages.PickActivity
             catch (Exception ex)
             {
                 Helpers.ShowDialogMessage("error", $"Failed to load items for selected Reference Doc: {ex.Message}");
+            }
+        }
+
+        private void dgv_main_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            if (e.ColumnIndex == dgv_main.Columns["cmb_bin_location"].Index)
+            {
+                e.Cancel = false;  // prevents exception
+            }
+        }
+
+        private void dgv_main_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgv_main.Columns[e.ColumnIndex].Name == "cmb_bin_location")
+            {
+                var cell = dgv_main.Rows[e.RowIndex].Cells[e.ColumnIndex];
+                if (cell.Value == null)
+                {
+                    if (dgv_main.EditingControl is ComboBox cb)
+                        cell.Value = cb.Text;
+                }
             }
         }
     }

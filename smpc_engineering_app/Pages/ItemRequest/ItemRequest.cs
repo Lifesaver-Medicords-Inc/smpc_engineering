@@ -42,7 +42,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private DataTable _sotable;
         private DataTable _irltable;
         private DataTable _irTable;
-        private DataTable _itemTable;
         private List<string> originalReqDeptItems;
         private bool _isFilteredByRefDoc = false;
         private string _userName;
@@ -105,16 +104,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             if (isNewMode)
                 _irltable?.Clear();
 
-            // Handle item table
-            if (enable && !isNewMode)
-            {
-                EnsureItemTableExists();
-            }
-            else
-            {
-                _itemTable?.Clear();
-            }
-
             Helpers.SetButtonVisibility(
                 toolStrip1,
                 visibleButtons: enable ? new[] { "btn_save", "btn_close" } : new[] { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" },
@@ -135,18 +124,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             if (enable && isNewMode)
                 RefreshRefDocList();
-        }
-
-        private void EnsureItemTableExists()
-        {
-            if (_itemTable != null) return;
-
-            _itemTable = new DataTable();
-            _itemTable.Columns.Add("warehouse_id", typeof(int));
-            _itemTable.Columns.Add("item_id", typeof(int));
-            _itemTable.Columns.Add("location", typeof(string));
-            _itemTable.Columns.Add("issued_qty", typeof(decimal));
-            _itemTable.Columns.Add("ir_details_id", typeof(decimal));
         }
 
         private void RefreshRefDocList()
@@ -747,17 +724,10 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     }
                 }
 
-                // Filter rows by item_id, exclude current IR details
-                DataTable filteredItemLocation = _itemTable.Clone();
-                foreach (DataRow row in _itemTable.Rows)
-                {
-                    if (row["item_id"] != DBNull.Value &&
-                        Convert.ToInt32(row["item_id"]) == currentItemId &&
-                        (row["ir_details_id"] == DBNull.Value || Convert.ToInt32(row["ir_details_id"]) != currentId)) // exclude current IR
-                    {
-                        filteredItemLocation.ImportRow(row);
-                    }
-                }
+                // Set _isNewMode true if filteredIRLocation is empty or all id values are null/0
+                bool newModal = filteredIRLocation.Rows.Count == 0 ||
+                             filteredIRLocation.AsEnumerable().All(r =>
+                                 r["id"] == DBNull.Value || Convert.ToInt32(r["id"]) == 0);
 
                 // Show modal
                 using (var qtyForm = new PickQtyModal
@@ -767,7 +737,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     PassedIRId = currentId,
                     PassedIRParentId = currentParentId,
                     PassedIRLocation = filteredIRLocation,
-                    PassedIRItemLocation = filteredItemLocation
+                    IsNewMode = _isNewMode
                 })
                 {
                     if (qtyForm.ShowDialog() == DialogResult.OK)
@@ -784,43 +754,24 @@ namespace smpc_engineering_app.Pages.ItemRequest
                             if (_irltable.Columns.Count == 0)
                                 _irltable = qtyForm.SelectedIssuedLocations.Clone();
 
-                            // Import each selected row to _irltable (append only)
+                            // Find all matching existing rows
+                            var existingRows = _irltable.AsEnumerable()
+                                .Where(r =>
+                                    r["location"]?.ToString() == row["location"]?.ToString() &&
+                                    r["warehouse_id"]?.ToString() == row["warehouse_id"]?.ToString() &&
+                                    r["ir_details_id"]?.ToString() == row["ir_details_id"]?.ToString() &&
+                                    r["ir_id"]?.ToString() == row["ir_id"]?.ToString() &&
+                                    r["item_id"]?.ToString() == row["item_id"]?.ToString()
+                                ).ToList();
+
+                            // Remove them
+                            foreach (var r in existingRows)
+                            {
+                                _irltable.Rows.Remove(r);
+                            }
+
+                            // Insert the updated/new one
                             _irltable.ImportRow(row);
-
-                            // Initialize _itemTable columns if needed
-                            if (_itemTable.Columns.Count == 0)
-                            {
-                                _itemTable.Columns.Add("warehouse_id", typeof(int));
-                                _itemTable.Columns.Add("item_id", typeof(int));
-                                _itemTable.Columns.Add("location", typeof(string));
-                                _itemTable.Columns.Add("issued_qty", typeof(decimal));
-                                _itemTable.Columns.Add("ir_details_id", typeof(decimal));
-                            }
-
-                            // Find existing row with the same key combination
-                            DataRow existingRow = _itemTable.AsEnumerable().FirstOrDefault(r =>
-                                r["warehouse_id"]?.ToString() == row["warehouse_id"]?.ToString() &&
-                                r["item_id"]?.ToString() == row["item_id"]?.ToString() &&
-                                r["location"]?.ToString() == row["location"]?.ToString() &&
-                                r["ir_details_id"]?.ToString() == row["ir_details_id"]?.ToString()
-                            );
-
-                            if (existingRow != null)
-                            {
-                                // Replace the issued_qty with the new value
-                                existingRow["issued_qty"] = row["issued_qty"];
-                            }
-                            else
-                            {
-                                // Add new row
-                                DataRow itemRow = _itemTable.NewRow();
-                                itemRow["warehouse_id"] = row["warehouse_id"];
-                                itemRow["item_id"] = row["item_id"];
-                                itemRow["location"] = row["location"];
-                                itemRow["issued_qty"] = row["issued_qty"];
-                                itemRow["ir_details_id"] = row["ir_details_id"];
-                                _itemTable.Rows.Add(itemRow);
-                            }
                         }
                     }
                 }

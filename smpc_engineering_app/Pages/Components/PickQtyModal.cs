@@ -21,9 +21,8 @@ namespace smpc_engineering_app.Pages.Components
         public int PassedIRParentId { get; set; }
         public int PassedPAId { get; set; }
         public int PassedItemId { get; set; }
+        public bool IsNewMode { get; set; }
         public DataTable PassedIRLocation { get; set; }
-        public DataTable PassedIRItemLocation { get; set; }
-        public DataTable PassedPAItemLocation { get; set; }
         public DataTable PassedPALocation { get; set; }
         public DataTable SelectedIssuedLocations { get; private set; }
         public DataTable SelectedActualLocations { get; private set; }
@@ -44,6 +43,7 @@ namespace smpc_engineering_app.Pages.Components
             try
             {
                 Helpers.Loading.ShowLoading(dgv_pick_qty, "Fetching data...");
+
                 await LoadBinLocations();
             }
             catch (Exception ex)
@@ -62,7 +62,15 @@ namespace smpc_engineering_app.Pages.Components
             try
             {
                 var data = await binLocationService.GetFilteredLocation(PassedItemId);
-                locationTable = data;
+                locationTable = data ?? new DataTable();
+
+                // Apply IR Passed Locations
+                if (PassedIRLocation != null && PassedIRLocation.Rows.Count > 0)
+                    ApplyPassedLocation(PassedIRLocation, "issued_qty");
+
+                // Apply PA Passed Locations
+                if (PassedPALocation != null && PassedPALocation.Rows.Count > 0)
+                    ApplyPassedLocation(PassedPALocation, "actual_qty");
 
                 if (locationTable.Rows.Count > 0)
                 {
@@ -77,7 +85,7 @@ namespace smpc_engineering_app.Pages.Components
 
                     if (filteredRows.Count == 0)
                     {
-                        Helpers.ShowDialogMessage("warning", "No locations found with stock greater than 0.");
+                        Helpers.ShowDialogMessage("error", "No locations found with stock greater than 0.");
                         dgv_pick_qty.DataSource = null;
                         return;
                     }
@@ -104,74 +112,6 @@ namespace smpc_engineering_app.Pages.Components
                         row["ir_id"] = PassedIRParentId;
                     }
 
-                    ApplyPassedIRLocation();
-                    ApplyPassedPALocation();
-
-                    // Adjust stock_qty based on PassedItemLocation
-                    if (PassedIRItemLocation != null && PassedIRItemLocation.Rows.Count > 0)
-                    {
-                        foreach (DataRow passedRow in PassedIRItemLocation.Rows)
-                        {
-                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
-                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
-                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
-                            string issuedQtyStr = passedRow["issued_qty"]?.ToString()?.Trim();
-
-                            if (!decimal.TryParse(issuedQtyStr, out decimal issuedQty))
-                                continue;
-
-                            // Find matching row in locationTable
-                            var matches = locationTable.AsEnumerable()
-                                .Where(row =>
-                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
-                                );
-
-                            foreach (var match in matches)
-                            {
-                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
-                                {
-                                    // Subtract issued_qty from stock_qty
-                                    match["stock_qty"] = Math.Max(stockQty - issuedQty, 0);
-
-                                }
-                            }
-                        }
-                    }
-
-                    // Adjust stock_qty based on PassedItemLocation
-                    if (PassedPAItemLocation != null && PassedPAItemLocation.Rows.Count > 0)
-                    {
-                        foreach (DataRow passedRow in PassedPAItemLocation.Rows)
-                        {
-                            string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
-                            string passedLocation = passedRow["location"]?.ToString()?.Trim();
-                            string passedItemId = passedRow["item_id"]?.ToString()?.Trim();
-                            string actualQtyStr = passedRow["actual_qty"]?.ToString()?.Trim();
-
-                            if (!decimal.TryParse(actualQtyStr, out decimal actualQty))
-                                continue;
-
-                            // Find matching row in locationTable
-                            var matches = locationTable.AsEnumerable()
-                                .Where(row =>
-                                    string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
-                                    string.Equals(row["item_id"]?.ToString()?.Trim(), passedItemId, StringComparison.OrdinalIgnoreCase)
-                                );
-
-                            foreach (var match in matches)
-                            {
-                                if (decimal.TryParse(match["stock_qty"]?.ToString(), out decimal stockQty))
-                                {
-                                    // Subtract issued_qty from stock_qty
-                                    match["stock_qty"] = Math.Max(stockQty - actualQty, 0);
-                                }
-                            }
-                        }
-                    }
-
                     // After subtraction
                     // Refilter rows with stock_qty > 0
                     var finalFilteredRows = locationTable.AsEnumerable()
@@ -184,7 +124,7 @@ namespace smpc_engineering_app.Pages.Components
 
                     if (finalFilteredRows.Count == 0)
                     {
-                        Helpers.ShowDialogMessage("warning", "No available stock after allocation.");
+                        Helpers.ShowDialogMessage("error", "No available stock after allocation.");
                         dgv_pick_qty.DataSource = null;
                         return;
                     }
@@ -197,31 +137,32 @@ namespace smpc_engineering_app.Pages.Components
                 else
                 {
                     dgv_pick_qty.DataSource = null;
-                    MessageBox.Show("No item list found.");
+                    Helpers.ShowDialogMessage("error", "No item list found.");
                 }
             }
             catch (NullReferenceException)
             {
-                Helpers.ShowDialogMessage("error", "The item has no available bin location yet.");
-                this.Close();
+                Helpers.ShowDialogMessage("error", "No available stock after allocation.");
             }
         }
 
-        private void ApplyPassedIRLocation()
+        private void ApplyPassedLocation(DataTable passedTable, string qtyColumn)
         {
-            if (PassedIRLocation == null || PassedIRLocation.Rows.Count == 0)
+            if (passedTable == null || passedTable.Rows.Count == 0)
                 return;
 
-            foreach (DataRow passedRow in PassedIRLocation.Rows)
+            foreach (DataRow passedRow in passedTable.Rows)
             {
+                string passedId = passedRow["id"]?.ToString()?.Trim();
                 string passedLocation = passedRow["location"]?.ToString()?.Trim();
                 string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
-                string passedIssuedQty = passedRow["issued_qty"]?.ToString()?.Trim();
+                string passedQtyStr = passedRow[qtyColumn]?.ToString()?.Trim();
 
                 if (string.IsNullOrEmpty(passedLocation) || string.IsNullOrEmpty(passedWarehouseId))
                     continue;
 
-                // Find matching rows in the main locationTable
+                decimal.TryParse(passedQtyStr, out decimal passedQty);
+
                 var matches = locationTable.AsEnumerable()
                     .Where(row =>
                         string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
@@ -230,37 +171,11 @@ namespace smpc_engineering_app.Pages.Components
 
                 foreach (var match in matches)
                 {
-                    // Set issued_qty to the one from PassedIRLocation
-                    match["issued_qty"] = passedIssuedQty;
-                }
-            }
-        }
+                    // Set issued or actual qty
+                    match[qtyColumn] = passedQty;
 
-        private void ApplyPassedPALocation()
-        {
-            if (PassedPALocation == null || PassedPALocation.Rows.Count == 0)
-                return;
-
-            foreach (DataRow passedRow in PassedPALocation.Rows)
-            {
-                string passedLocation = passedRow["location"]?.ToString()?.Trim();
-                string passedWarehouseId = passedRow["warehouse_id"]?.ToString()?.Trim();
-                string passedActualQty = passedRow["actual_qty"]?.ToString()?.Trim();
-
-                if (string.IsNullOrEmpty(passedLocation) || string.IsNullOrEmpty(passedWarehouseId))
-                    continue;
-
-                // Find matching rows in the main locationTable
-                var matches = locationTable.AsEnumerable()
-                    .Where(row =>
-                        string.Equals(row["location"]?.ToString()?.Trim(), passedLocation, StringComparison.OrdinalIgnoreCase) &&
-                        string.Equals(row["warehouse_id"]?.ToString()?.Trim(), passedWarehouseId, StringComparison.OrdinalIgnoreCase)
-                    );
-
-                foreach (var match in matches)
-                {
-                    // Set issued_qty to the one from PassedIRLocation
-                    match["actual_qty"] = passedActualQty;
+                    // Keep ID
+                    match["id"] = passedId;
                 }
             }
         }
@@ -316,7 +231,7 @@ namespace smpc_engineering_app.Pages.Components
 
                 if (sourceTable == null)
                 {
-                    Helpers.ShowDialogMessage("warning", "No data available.");
+                    Helpers.ShowDialogMessage("error", "No data available.");
                     return;
                 }
 
@@ -421,6 +336,5 @@ namespace smpc_engineering_app.Pages.Components
                 Helpers.ShowDialogMessage("error", $"Failed to apply grouping: {ex.Message}");
             }
         }
-
     }
 }

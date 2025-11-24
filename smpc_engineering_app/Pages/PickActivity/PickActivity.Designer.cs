@@ -77,6 +77,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.actual_qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.actual_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bin_location = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmb_bin_location = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -422,7 +423,8 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.pick_uom,
             this.actual_qty,
             this.actual_uom,
-            this.bin_location});
+            this.bin_location,
+            this.cmb_bin_location});
             this.dgv_main.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv_main.EnableHeadersVisualStyles = false;
             this.dgv_main.Location = new System.Drawing.Point(0, 215);
@@ -430,6 +432,8 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.dgv_main.Size = new System.Drawing.Size(1400, 610);
             this.dgv_main.TabIndex = 3;
             this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
+            this.dgv_main.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellEndEdit);
+            this.dgv_main.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgv_main_DataError);
             this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
             this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
             // 
@@ -571,6 +575,18 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.bin_location.ReadOnly = true;
             this.bin_location.Width = 250;
             // 
+            // cmb_bin_location
+            // 
+            this.cmb_bin_location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.cmb_bin_location.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmb_bin_location.HeaderText = "NEW BIN LOCATION";
+            this.cmb_bin_location.MinimumWidth = 250;
+            this.cmb_bin_location.Name = "cmb_bin_location";
+            this.cmb_bin_location.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.cmb_bin_location.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.cmb_bin_location.Visible = false;
+            this.cmb_bin_location.Width = 250;
+            // 
             // PickActivity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -641,5 +657,6 @@ namespace smpc_engineering_app.Pages.PickActivity
         private System.Windows.Forms.DataGridViewTextBoxColumn actual_qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn actual_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn bin_location;
+        private System.Windows.Forms.DataGridViewComboBoxColumn cmb_bin_location;
     }
 }
