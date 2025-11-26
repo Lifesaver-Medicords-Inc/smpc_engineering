@@ -27,7 +27,17 @@ namespace smpc_engineering_app.Pages.PickActivity
             { "ACTUAL PICK QTY", new string[] { "actual_qty", "actual_uom" } },
         };
 
+        private class CascadingTag
+        {
+            public string Zone { get; set; }
+            public string Area { get; set; }
+            public string Rack { get; set; }
+            public string Level { get; set; }
+            public string Bin { get; set; }
+        }
+
         readonly PickActivityService pickActivityService = new PickActivityService();
+        readonly WarehouseAreaService warehouseAreaService = new WarehouseAreaService();
         readonly SalesOrderPAViewService salesOrderViewService = new SalesOrderPAViewService();
         private string userDepartment = CacheData.CurrentUser.department.ToLower();
         private bool _isNewMode = false;
@@ -36,12 +46,20 @@ namespace smpc_engineering_app.Pages.PickActivity
         private int _currentPAIndex = -1;
         private int _previousPAIndex = -1;
         private List<PickActivityModel> _pickActivities;
+        private List<string> _zone;
+        private List<string> _area;
+        private List<string> _rack;
+        private List<string> _level;
+        private List<string> _bins;
+        private List<string> _location_code;
+        private List<WarehouseAreaModel> _warehouseAreas;
         private PickActivityList _padata;
         private DataTable _sotable;
         private DataTable _paltable;
         private DataTable _paTable;
         private string _userName;
-
+        // Holds a ComboBox for every row (rowIndex → ComboBox)
+        private Dictionary<int, ComboBox> rowComboBoxes = new Dictionary<int, ComboBox>();
         public PickActivity()
         {
             InitializeComponent();
@@ -57,7 +75,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         private void SetEditableColumns(bool isEdit)
         {
             var editableColumns = !_isWarehouseUser
-                ? new[] { "pick_qty" }
+                ? new[] { "pick_qty", "bin_location" }
                 : new[] { "actual_qty"};
 
             foreach (var colName in editableColumns)
@@ -65,15 +83,9 @@ namespace smpc_engineering_app.Pages.PickActivity
                 if (dgv_main.Columns.Contains(colName))
                     dgv_main.Columns[colName].ReadOnly = !isEdit;
             }
-
-            if (dgv_main.Columns.Contains("bin_location"))
-                dgv_main.Columns["bin_location"].Visible = !isEdit;
-
-            if (dgv_main.Columns.Contains("cmb_bin_location"))
-                dgv_main.Columns["cmb_bin_location"].Visible = isEdit;
         }
 
-        private void SetEditMode(bool enable, bool isNewMode = false)
+        private async void SetEditMode(bool enable, bool isNewMode = false)
         {
             SetEditableColumns(enable);
             _isNewMode = isNewMode;
@@ -92,6 +104,18 @@ namespace smpc_engineering_app.Pages.PickActivity
                 visibleButtons: enable ? editButtons : navButtons,
                 hiddenButtons: enable ? navButtons : editButtons
             );
+
+            if (enable && _isWarehouseUser && _isEditMode)
+            {
+                // Load Warehouse Areas only when warehouse user enters EDIT MODE
+                _warehouseAreas = await warehouseAreaService.GetAsList();
+                _zone = _warehouseAreas.Select(x => x.zone).Where(z => !string.IsNullOrWhiteSpace(z)).Distinct().ToList();
+                _area = _warehouseAreas.Select(x => x.area).Where(a => !string.IsNullOrWhiteSpace(a)).Distinct().ToList();
+                _rack = _warehouseAreas.Select(x => x.rack).Where(r => !string.IsNullOrWhiteSpace(r)).Distinct().ToList();
+                _level = _warehouseAreas.Select(x => x.level).Where(l => !string.IsNullOrWhiteSpace(l)).Distinct().ToList();
+                _bins = _warehouseAreas.Select(x => x.bins).Where(b => !string.IsNullOrWhiteSpace(b)).Distinct().ToList();
+                _location_code = _warehouseAreas.Select(x => x.location_code).Where(b => !string.IsNullOrWhiteSpace(b)).Distinct().ToList();
+            }
 
             // btn_new visibility
             btn_new.Visible = !_isWarehouseUser && !enable;
@@ -245,9 +269,7 @@ namespace smpc_engineering_app.Pages.PickActivity
                 return;
             }
 
-            string[] columnsToValidate = _isWarehouseUser
-                ? new[] { "actual_qty", "cmb_bin_location" }
-                : new[] { "pick_qty"};
+            string[] columnsToValidate = new[] { "pick_qty"};
 
             if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
                 return;
@@ -260,6 +282,24 @@ namespace smpc_engineering_app.Pages.PickActivity
             var pickActivityParent = Helpers.BuildModelFromPanels<PickActivityModel>(new Panel[] { pnl_top });
             var pickActivityDetails = Helpers.BuildModelsFromData<PickActivityDetailsModel>(dgv_main);
             var pickActivityLocation = Helpers.BuildModelsFromData<PickActivityLocationModel>(_paltable);
+
+            // Sanitize pickActivityLocation before saving
+            foreach (var loc in pickActivityDetails)
+            {
+                if (string.IsNullOrWhiteSpace(loc.bin_location)) continue;
+
+                // Remove all trailing '-' characters
+                loc.bin_location = loc.bin_location.TrimEnd('-');
+
+                // Count number of '-' in the location
+                int dashCount = loc.bin_location.Count(c => c == '-');
+
+                // Append "-OPEN" only if less than 4 dashes AND doesn't already end with "OPEN"
+                if (dashCount < 4 && !loc.bin_location.EndsWith("OPEN", StringComparison.OrdinalIgnoreCase))
+                {
+                    loc.bin_location += "-OPEN";
+                }
+            }
 
             //Check if pick activity Details is null or empty
             if (pickActivityDetails == null || pickActivityDetails.Count == 0)
@@ -276,6 +316,10 @@ namespace smpc_engineering_app.Pages.PickActivity
                 decimal pickQty = 0, leftQty = 0;
                 decimal.TryParse(row.Cells["pick_qty"]?.Value?.ToString(), out pickQty);
                 decimal.TryParse(row.Cells["left_qty"]?.Value?.ToString(), out leftQty);
+                string actualQtyStr = row.Cells["actual_qty"]?.Value?.ToString()?.Trim();
+                string binLocation = row.Cells["bin_location"]?.Value?.ToString()?.Trim();
+                decimal actualQty = 0;
+                decimal.TryParse(actualQtyStr, out actualQty);
 
                 // Compare values
                 if (pickQty > leftQty)
@@ -284,6 +328,19 @@ namespace smpc_engineering_app.Pages.PickActivity
                      Helpers.ShowDialogMessage("error",
                         $"Requested quantity for '{itemDesc}' cannot exceed the ordered quantity ({leftQty}).");
                      return;
+                }
+
+                // If actual_qty has value AND > 0, bin_location is required
+                if (!string.IsNullOrEmpty(actualQtyStr) && actualQty > 0)
+                {
+                    if (string.IsNullOrWhiteSpace(binLocation))
+                    {
+                        string itemDesc = row.Cells["item_description"]?.Value?.ToString() ?? "Unknown Item";
+
+                        Helpers.ShowDialogMessage("error", $"Bin Location is required for item '{itemDesc}' because Actual Qty is entered.");
+
+                        return;
+                    }
                 }
             }
 
@@ -435,6 +492,12 @@ namespace smpc_engineering_app.Pages.PickActivity
             if (_currentPAIndex < 0 || _padata == null || _padata.pick_activity == null || !_padata.pick_activity.Any())
                 return;
 
+            foreach (var cb in rowComboBoxes.Values)
+            {
+                dgv_main.Controls.Remove(cb);
+            }
+            rowComboBoxes.Clear();
+
             // Convert receiving report list to DataTable using helper
             _paTable = Helpers.ToDataTable(_padata.pick_activity);
             _paltable = Helpers.ToDataTable(_padata.pick_activity_location);
@@ -507,42 +570,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             {
                 // Remove handler for all other columns
                 e.Control.KeyPress -= new KeyPressEventHandler(NumericColumn_KeyPress);
-            }
-
-            if (dgv_main.CurrentCell.ColumnIndex == dgv_main.Columns["cmb_bin_location"].Index)
-            {
-                if (e.Control is ComboBox cb)
-                {
-                    cb.DropDownStyle = ComboBoxStyle.DropDown; // allow typing
-                    cb.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
-                    cb.AutoCompleteSource = AutoCompleteSource.ListItems;
-
-                    // Remove previous handler to avoid multiple subscriptions
-                    cb.Validating -= Cb_Validating;
-                    cb.Validating += Cb_Validating;
-                }
-            }
-        }
-
-        private void Cb_Validating(object sender, CancelEventArgs e)
-        {
-            if (sender is ComboBox cb)
-            {
-                string typedValue = cb.Text;
-
-                if (!string.IsNullOrWhiteSpace(typedValue))
-                {
-                    var cell = dgv_main.CurrentCell;
-                    if (cell != null)
-                    {
-                        // Add to ComboBox items if not already present
-                        if (!cb.Items.Contains(typedValue))
-                            cb.Items.Add(typedValue);
-
-                        // Save typed value to the cell
-                        cell.Value = typedValue;
-                    }
-                }
             }
         }
 
@@ -641,6 +668,207 @@ namespace smpc_engineering_app.Pages.PickActivity
                     }
                 }
             }
+
+            if (columnName == "bin_location")
+            {
+                ShowRowSpecificCombo(e.RowIndex, e.ColumnIndex);
+            }
+            else
+            {
+                HideAllRowCombos();
+            }
+        }
+
+        private void ShowRowSpecificCombo(int rowIndex, int colIndex)
+        {
+            if (!rowComboBoxes.ContainsKey(rowIndex))
+            {
+                ComboBox cb = new ComboBox();
+                cb.Visible = false;
+                cb.DropDownStyle = ComboBoxStyle.DropDown;
+                cb.AutoCompleteMode = AutoCompleteMode.None;
+                cb.AutoCompleteSource = AutoCompleteSource.None;
+
+                // Initially fill ComboBox with zones
+                if (_zone != null && _zone.Count > 0)
+                    cb.Items.AddRange(_zone.ToArray());
+
+                // Event handler for selection
+                cb.SelectedIndexChanged += (s, e) => OnRowComboSelected(rowIndex, cb, e);
+                cb.KeyDown += (s, e) => OnRowComboKeyDown(rowIndex, cb, e);
+
+                rowComboBoxes[rowIndex] = cb;
+                dgv_main.Controls.Add(cb);
+            }
+
+            ComboBox combo = rowComboBoxes[rowIndex];
+
+            // Position it
+            Rectangle rect = dgv_main.GetCellDisplayRectangle(colIndex, rowIndex, true);
+            combo.SetBounds(rect.X, rect.Y, rect.Width, rect.Height);
+
+            // Preload existing value
+            var cell = dgv_main.Rows[rowIndex].Cells[colIndex];
+            combo.Text = cell.Value?.ToString() ?? "";
+
+            HideAllRowCombos();
+            combo.Visible = true;
+            combo.BringToFront();
+            combo.Focus();
+            combo.DroppedDown = true;
+        }
+
+        private void OnRowComboKeyDown(int rowIndex, ComboBox combo, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back)
+            {
+                // ✔ CLEAR displayed text
+                combo.Text = "";
+
+                // ✔ Reset cascading level
+                combo.Items.Clear();
+                combo.Items.AddRange(_zone.ToArray()); // start again from zone
+
+                // ✔ Reset the tag
+                combo.Tag = new CascadingTag();
+
+                // ✔ Clear bin_location cell
+                dgv_main.Rows[rowIndex].Cells["bin_location"].Value = "";
+
+                e.SuppressKeyPress = true; // prevent default deletion sound
+            }
+        }
+
+        private int? GetWarehouseIdByZone(string zone)
+        {
+            var area = _warehouseAreas.FirstOrDefault(w => w.zone == zone);
+            return area != null ? area.warehouse_name_id : (int?)null;
+        }
+
+        private void OnRowComboSelected(int rowIndex, ComboBox combo, EventArgs e)
+        {
+            var cell = dgv_main.Rows[rowIndex].Cells["bin_location"];
+            var warehouseCell = dgv_main.Rows[rowIndex].Cells["warehouse_id"];
+
+            // Load tag state
+            CascadingTag tag = combo.Tag as CascadingTag ?? new CascadingTag();
+
+            string selected = combo.Text;
+
+            // Zone → Area
+            if (_zone.Contains(selected))
+            {
+                // Write warehouse_id for selected zone
+                int? warehouseId = GetWarehouseIdByZone(selected);
+                warehouseCell.Value = warehouseId.HasValue ? warehouseId.Value : (object)DBNull.Value;
+
+                combo.Items.Clear();
+                var areas = _warehouseAreas
+                    .Where(w => w.zone == selected)
+                    .Select(w => w.area)
+                    .Distinct()
+                    .ToList();
+
+                combo.Items.AddRange(areas.ToArray());
+                if (areas.Count > 0) combo.DroppedDown = true;
+
+                tag.Zone = selected;
+                tag.Area = tag.Rack = tag.Level = tag.Bin = "";
+            }
+            // Area → Rack
+            else if (_area.Contains(selected))
+            {
+                combo.Items.Clear();
+                var racks = _warehouseAreas
+                    .Where(w => w.zone == tag.Zone && w.area == selected)
+                    .Select(w => w.rack)
+                    .Distinct()
+                    .ToList();
+
+                combo.Items.AddRange(racks.ToArray());
+                if (racks.Count > 0) combo.DroppedDown = true;
+
+                tag.Area = selected;
+                tag.Rack = tag.Level = tag.Bin = "";
+            }
+            // Rack → Level
+            else if (_rack.Contains(selected))
+            {
+                combo.Items.Clear();
+                var levels = _warehouseAreas
+                    .Where(w => w.zone == tag.Zone && w.area == tag.Area && w.rack == selected)
+                    .Select(w => w.level)
+                    .Distinct()
+                    .ToList();
+
+                combo.Items.AddRange(levels.ToArray());
+                if (levels.Count > 0) combo.DroppedDown = true;
+
+                tag.Rack = selected;
+                tag.Level = tag.Bin = "";
+            }
+            // Level → Bin
+            else if (_level.Contains(selected))
+            {
+                combo.Items.Clear();
+                var bins = _warehouseAreas
+                    .Where(w => w.zone == tag.Zone && w.area == tag.Area && w.rack == tag.Rack && w.level == selected)
+                    .Select(w => w.bins)
+                    .Distinct()
+                    .ToList();
+
+                combo.Items.AddRange(bins.ToArray());
+                if (bins.Count > 0) combo.DroppedDown = true;
+
+                tag.Level = selected;
+                tag.Bin = "";
+            }
+            // Bin selected → final path
+            else if (_bins.Contains(selected))
+            {
+                tag.Bin = selected;
+            }
+
+            // Update tag
+            combo.Tag = tag;
+
+            // Write current partial/full path to bin_location
+            string path = $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}".Trim('-').Replace("--", "-");
+            cell.Value = path;
+        }
+
+        private void LoadComboItems(ComboBox combo, List<string> items)
+        {
+            combo.Items.Clear();
+
+            if (items != null && items.Count > 0)
+            {
+                combo.Items.AddRange(items.ToArray());
+
+                // ✔ Open only if items exist
+                combo.DroppedDown = true;
+            }
+            else
+            {
+                // ✔ Do NOT open dropdown (empty)
+                combo.DroppedDown = false;
+            }
+        }
+
+        private void WritePathToRow(int rowIndex, CascadingTag tag)
+        {
+            string path =
+                $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}"
+                .Trim('-')                                // no leading/trailing dashes
+                .Replace("--", "-");                      // remove gaps if some levels empty
+
+            dgv_main.Rows[rowIndex].Cells["bin_location"].Value = path;
+        }
+
+        private void HideAllRowCombos()
+        {
+            foreach (var kvp in rowComboBoxes)
+                kvp.Value.Visible = false;
         }
 
         private void cmb_reference_so_SelectedIndexChanged(object sender, EventArgs e)
@@ -688,27 +916,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             catch (Exception ex)
             {
                 Helpers.ShowDialogMessage("error", $"Failed to load items for selected Reference Doc: {ex.Message}");
-            }
-        }
-
-        private void dgv_main_DataError(object sender, DataGridViewDataErrorEventArgs e)
-        {
-            if (e.ColumnIndex == dgv_main.Columns["cmb_bin_location"].Index)
-            {
-                e.Cancel = false;  // prevents exception
-            }
-        }
-
-        private void dgv_main_CellEndEdit(object sender, DataGridViewCellEventArgs e)
-        {
-            if (dgv_main.Columns[e.ColumnIndex].Name == "cmb_bin_location")
-            {
-                var cell = dgv_main.Rows[e.RowIndex].Cells[e.ColumnIndex];
-                if (cell.Value == null)
-                {
-                    if (dgv_main.EditingControl is ComboBox cb)
-                        cell.Value = cb.Text;
-                }
             }
         }
     }

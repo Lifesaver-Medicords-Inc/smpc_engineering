@@ -106,6 +106,7 @@
     <Compile Include="Models\SalesOrderViewEngModel.cs" />
     <Compile Include="Models\SalesOrderViewModel.cs" />
     <Compile Include="Models\UserListModel.cs" />
+    <Compile Include="Models\WarehouseAreaModel.cs" />
     <Compile Include="Pages\Components\PickQtyModal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -195,6 +196,7 @@
     <Compile Include="Services\Setup\SalesOrderIRViewService.cs" />
     <Compile Include="Services\Setup\SalesOrderPAViewService.cs" />
     <Compile Include="Services\Setup\UserListService.cs" />
+    <Compile Include="Services\Setup\WarehouseAreaService.cs" />
     <Compile Include="Services\Transaction\ItemRequestService.cs" />
     <Compile Include="Services\Transaction\JobOrderService.cs" />
     <Compile Include="Services\Transaction\PickActivityService.cs" />

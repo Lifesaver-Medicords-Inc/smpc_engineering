@@ -66,6 +66,9 @@ namespace smpc_engineering_app.Shared
         //Bin Location List
         public const string BIN_LOCATION = "/setup/item/all_binloc";
 
+        //Warehouse Area List
+        public const string WAREHOUSE_AREA = "/setup/pickAct/binloc";
+
         //All Item List
         public const string USER_LIST = "/setup/item/all_user";
 

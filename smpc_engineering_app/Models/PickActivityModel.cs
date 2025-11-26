@@ -35,6 +35,7 @@ namespace smpc_engineering_app.Models
         public string actual_uom { get; set; }
         public string bin_location { get; set; }
         public int order_qty { get; set; }
+        public int warehouse_id { get; set; }
     }
 
     public class PickActivityLocationModel

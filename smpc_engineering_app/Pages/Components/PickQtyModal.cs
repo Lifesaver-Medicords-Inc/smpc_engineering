@@ -97,8 +97,27 @@ namespace smpc_engineering_app.Pages.Components
                             Location = row["location"]?.ToString()?.Trim(),
                             WarehouseId = row["warehouse_id"]?.ToString()?.Trim()
                         })
-                        .Select(g => g.First()) // keep the first unique combination
+                        .Select(g =>
+                        {
+                            // Create a new row based on first row structure
+                            var newRow = g.First().Table.NewRow();
+
+                            foreach (DataColumn col in g.First().Table.Columns)
+                                newRow[col.ColumnName] = g.First()[col.ColumnName];
+
+                            // SUM stock_qty of grouped rows
+                            decimal totalStock = g.Sum(r =>
+                            {
+                                var val = r["stock_qty"].ToString().Trim();
+                                return decimal.TryParse(val, out decimal qty) ? qty : 0;
+                            });
+
+                            newRow["stock_qty"] = totalStock;
+
+                            return newRow;
+                        })
                         .CopyToDataTable();
+
 
                     //Set UOM and related fields
                     foreach (DataRow row in locationTable.Rows)

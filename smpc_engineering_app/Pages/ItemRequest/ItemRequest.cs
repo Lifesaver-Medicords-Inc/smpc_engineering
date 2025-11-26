@@ -337,9 +337,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 return;
             }
 
-            string[] columnsToValidate = _isWarehouseUser
-                ? new[] { "issued_qty" }
-                : new[] { "item_description", "req_qty" };
+            string[] columnsToValidate = new[] { "item_description", "req_qty" };
 
             if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
                 return;
