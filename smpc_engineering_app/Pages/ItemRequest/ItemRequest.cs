@@ -656,6 +656,26 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
         }
 
+        private bool IsDuplicateItem(int itemId, int currentRowIndex)
+        {
+            foreach (DataGridViewRow row in dgv_main.Rows)
+            {
+                if (row.Index == currentRowIndex)
+                    continue; // skip same row
+
+                if (row.Cells["item_id"].Value == null)
+                    continue;
+
+                if (int.TryParse(row.Cells["item_id"].Value.ToString(), out int existingId))
+                {
+                    if (existingId == itemId)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
         private void dgv_main_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             // Ignore header and invalid clicks
@@ -694,6 +714,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     if (itemForm.ShowDialog(this) == DialogResult.OK &&
                         !string.IsNullOrEmpty(itemForm.SelectedItemId))
                     {
+                        int selectedItemId = int.Parse(itemForm.SelectedItemId);
+
+                        if (IsDuplicateItem(selectedItemId, e.RowIndex))
+                        {
+                            Helpers.ShowDialogMessage("error", "This item is already added.");
+                            return;
+                        }
+
                         currentRow.Cells["item_id"].Value = itemForm.SelectedItemId;
                         currentRow.Cells["item_description"].Value = itemForm.SelectedItemDesc;
                         currentRow.Cells["req_uom"].Value = itemForm.SelectedItemUom;

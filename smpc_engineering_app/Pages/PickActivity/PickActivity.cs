@@ -669,7 +669,7 @@ namespace smpc_engineering_app.Pages.PickActivity
                 }
             }
 
-            if (columnName == "bin_location")
+            if (columnName == "bin_location" && _isWarehouseUser)
             {
                 ShowRowSpecificCombo(e.RowIndex, e.ColumnIndex);
             }
@@ -722,17 +722,17 @@ namespace smpc_engineering_app.Pages.PickActivity
         {
             if (e.KeyCode == Keys.Back)
             {
-                // ✔ CLEAR displayed text
+                //CLEAR displayed text
                 combo.Text = "";
 
-                // ✔ Reset cascading level
+                //Reset cascading level
                 combo.Items.Clear();
                 combo.Items.AddRange(_zone.ToArray()); // start again from zone
 
-                // ✔ Reset the tag
+                //Reset the tag
                 combo.Tag = new CascadingTag();
 
-                // ✔ Clear bin_location cell
+                //Clear bin_location cell
                 dgv_main.Rows[rowIndex].Cells["bin_location"].Value = "";
 
                 e.SuppressKeyPress = true; // prevent default deletion sound
@@ -769,8 +769,14 @@ namespace smpc_engineering_app.Pages.PickActivity
                     .Distinct()
                     .ToList();
 
-                combo.Items.AddRange(areas.ToArray());
-                if (areas.Count > 0) combo.DroppedDown = true;
+                var cleaned = areas
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToArray();
+
+                combo.Items.AddRange(cleaned);
+                if (areas.Any(a => !string.IsNullOrWhiteSpace(a)))
+                    combo.DroppedDown = true;
 
                 tag.Zone = selected;
                 tag.Area = tag.Rack = tag.Level = tag.Bin = "";
@@ -785,8 +791,14 @@ namespace smpc_engineering_app.Pages.PickActivity
                     .Distinct()
                     .ToList();
 
-                combo.Items.AddRange(racks.ToArray());
-                if (racks.Count > 0) combo.DroppedDown = true;
+                var cleaned = racks
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToArray();
+
+                combo.Items.AddRange(cleaned);
+                if (racks.Any(r => !string.IsNullOrWhiteSpace(r)))
+                    combo.DroppedDown = true;
 
                 tag.Area = selected;
                 tag.Rack = tag.Level = tag.Bin = "";
@@ -801,24 +813,59 @@ namespace smpc_engineering_app.Pages.PickActivity
                     .Distinct()
                     .ToList();
 
-                combo.Items.AddRange(levels.ToArray());
-                if (levels.Count > 0) combo.DroppedDown = true;
+                var cleaned = levels
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Distinct()
+                    .ToArray();
+
+                combo.Items.AddRange(cleaned);
+                if (levels.Any(l => !string.IsNullOrWhiteSpace(l)))
+                    combo.DroppedDown = true;
 
                 tag.Rack = selected;
                 tag.Level = tag.Bin = "";
             }
-            // Level → Bin
+            // Level → Bin (generate numbers 1..max IF bins exist)
             else if (_level.Contains(selected))
             {
                 combo.Items.Clear();
-                var bins = _warehouseAreas
-                    .Where(w => w.zone == tag.Zone && w.area == tag.Area && w.rack == tag.Rack && w.level == selected)
+
+                // Get bin values for this zone/area/rack/level
+                var binStrings = _warehouseAreas
+                    .Where(w => w.zone == tag.Zone &&
+                                w.area == tag.Area &&
+                                w.rack == tag.Rack &&
+                                w.level == selected)
                     .Select(w => w.bins)
+                    .Where(b => !string.IsNullOrWhiteSpace(b))
                     .Distinct()
                     .ToList();
 
-                combo.Items.AddRange(bins.ToArray());
-                if (bins.Count > 0) combo.DroppedDown = true;
+                // Parse valid numbers
+                var binNumbers = new List<int>();
+                foreach (var b in binStrings)
+                {
+                    if (int.TryParse(b, out int binNum))
+                        binNumbers.Add(binNum);
+                }
+
+                //Nothing found? -> leave combo completely empty
+                if (binNumbers.Count == 0)
+                {
+                    tag.Level = selected;
+                    tag.Bin = "";
+                    return;   // do not open dropdown
+                }
+
+                //Found bins -> generate 1..max
+                int maxBin = binNumbers.Max();
+
+                var binList = Enumerable.Range(1, maxBin)
+                                        .Select(n => n.ToString())
+                                        .ToArray();
+
+                combo.Items.AddRange(binList);
+                combo.DroppedDown = true;
 
                 tag.Level = selected;
                 tag.Bin = "";
@@ -835,34 +882,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             // Write current partial/full path to bin_location
             string path = $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}".Trim('-').Replace("--", "-");
             cell.Value = path;
-        }
-
-        private void LoadComboItems(ComboBox combo, List<string> items)
-        {
-            combo.Items.Clear();
-
-            if (items != null && items.Count > 0)
-            {
-                combo.Items.AddRange(items.ToArray());
-
-                // ✔ Open only if items exist
-                combo.DroppedDown = true;
-            }
-            else
-            {
-                // ✔ Do NOT open dropdown (empty)
-                combo.DroppedDown = false;
-            }
-        }
-
-        private void WritePathToRow(int rowIndex, CascadingTag tag)
-        {
-            string path =
-                $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}"
-                .Trim('-')                                // no leading/trailing dashes
-                .Replace("--", "-");                      // remove gaps if some levels empty
-
-            dgv_main.Rows[rowIndex].Cells["bin_location"].Value = path;
         }
 
         private void HideAllRowCombos()
