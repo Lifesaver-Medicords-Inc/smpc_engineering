@@ -10,7 +10,7 @@ using System.Net.Http;
 
 namespace smpc_engineering_app.Services
 {
-    class ServiceBase<T> where T:class
+    abstract class ServiceBase<T> where T:class
     {
         private readonly string url ;
 
@@ -20,7 +20,7 @@ namespace smpc_engineering_app.Services
         }
 
         // GET
-        public   virtual async Task<DataTable> GetAsDatatable()
+        public virtual async Task<DataTable> GetAsDatatable()
         {
             try
             {
@@ -67,7 +67,7 @@ namespace smpc_engineering_app.Services
             }
         }
 
-        public   virtual async Task<DataTable> GetAsDatatable(Func<DataTable, DataTable> filter)
+        public virtual async Task<DataTable> GetAsDatatable(Func<DataTable, DataTable> filter)
         {
             var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);
 
@@ -84,7 +84,7 @@ namespace smpc_engineering_app.Services
         }
 
         // DELETE
-        public async Task<bool> Delete(Dictionary<string, dynamic> data)
+        public virtual async Task<bool> Delete(Dictionary<string, dynamic> data)
         {
             var response = await ApiService<ApiResponseModel<T>>.Delete(url, data);
             bool isSuccess = response.success;

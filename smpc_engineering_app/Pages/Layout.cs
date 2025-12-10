@@ -88,7 +88,7 @@ namespace smpc_engineering_app
                 //control.Width = this.Width - 235; 
                 container.Height = this.Height * 2;
                 //control.Height = this.Height;
-                control.Width = this.Width - 550;
+                control.Width = this.Width - 570;
                 newTab.Controls.Add(control);
                 newTab.AutoScroll = true;
                 tabContainer.TabPages.Add(newTab);

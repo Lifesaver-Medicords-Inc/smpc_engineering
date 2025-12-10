@@ -280,7 +280,7 @@ namespace smpc_engineering_app
             // Sidebar
             // 
             this.Sidebar.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.Sidebar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F);
+            this.Sidebar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Sidebar.Location = new System.Drawing.Point(0, 0);
             this.Sidebar.Name = "Sidebar";
             treeNode1.Name = "Job Orders";
@@ -300,7 +300,7 @@ namespace smpc_engineering_app
             treeNode4,
             treeNode5});
             this.Sidebar.Size = new System.Drawing.Size(200, 615);
-            this.Sidebar.TabIndex = 10;
+            this.Sidebar.TabIndex = 0;
             this.Sidebar.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Sidebar_NodeMouseClick);
             // 
             // SMPC

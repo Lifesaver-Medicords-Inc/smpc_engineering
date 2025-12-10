@@ -58,7 +58,6 @@ namespace smpc_engineering_app.Pages.PickActivity
         private DataTable _paltable;
         private DataTable _paTable;
         private string _userName;
-        // Holds a ComboBox for every row (rowIndex → ComboBox)
         private Dictionary<int, ComboBox> rowComboBoxes = new Dictionary<int, ComboBox>();
         public PickActivity()
         {
@@ -75,7 +74,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         private void SetEditableColumns(bool isEdit)
         {
             var editableColumns = !_isWarehouseUser
-                ? new[] { "pick_qty", "bin_location" }
+                ? new[] { "pick_qty"}
                 : new[] { "actual_qty"};
 
             foreach (var colName in editableColumns)
