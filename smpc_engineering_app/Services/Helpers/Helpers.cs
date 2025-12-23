@@ -21,88 +21,161 @@ namespace smpc_engineering_app.Services.Helpers
 {
     public static class Helpers
     {
-        //Model mapper for datagridview
-        public static List<T> BuildModelsFromData<T>(object dataSource) where T : new()
+        /// <summary>
+        /// Restricts specified DataGridView columns to numeric input only.
+        /// </summary>
+        public static void HandleNumericColumns(
+            DataGridView dgv,
+            DataGridViewEditingControlShowingEventArgs e,
+            params string[] numericColumnNames)
         {
-            var models = new List<T>();
-            var modelType = typeof(T);
-            var properties = modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-            // --- CASE 1: DataGridView ---
-            if (dataSource is DataGridView dgv)
-            {
-                if (dgv.Rows.Count == 0)
-                    return models; // return empty list
-
-                foreach (DataGridViewRow row in dgv.Rows)
-                {
-                    if (row.IsNewRow)
-                        continue;
-
-                    var model = new T();
-
-                    foreach (var prop in properties)
-                    {
-                        if (!dgv.Columns.Contains(prop.Name))
-                            continue;
-
-                        var value = row.Cells[prop.Name].Value;
-                        SetModelPropertyValue(model, prop, value);
-                    }
-
-                    models.Add(model);
-                }
-
-                return models;
-            }
-
-            // --- CASE 2: DataTable ---
-            if (dataSource is DataTable dt)
-            {
-                if (dt.Rows.Count == 0)
-                    return models; // return empty list
-
-                foreach (DataRow dr in dt.Rows)
-                {
-                    var model = new T();
-
-                    foreach (var prop in properties)
-                    {
-                        if (!dt.Columns.Contains(prop.Name))
-                            continue;
-
-                        var value = dr[prop.Name];
-                        SetModelPropertyValue(model, prop, value);
-                    }
-
-                    models.Add(model);
-                }
-
-                return models;
-            }
-
-            // If unsupported input, return empty list instead of throwing
-            return models;
-        }
-
-        // Helper method for safe conversion and assignment
-        private static void SetModelPropertyValue<T>(T model, PropertyInfo prop, object value)
-        {
-            if (value == null || value == DBNull.Value)
+            if (dgv.CurrentCell == null)
                 return;
 
-            try
-            {
-                object convertedValue = Convert.ChangeType(
-                    value,
-                    Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType
-                );
+            string columnName = dgv.Columns[dgv.CurrentCell.ColumnIndex].Name;
 
-                prop.SetValue(model, convertedValue);
-            }
-            catch
+            // Always remove first to prevent duplicate handlers
+            e.Control.KeyPress -= NumericColumn_KeyPress;
+
+            // Attach only if column is numeric
+            if (numericColumnNames.Contains(columnName))
             {
-                // Ignore conversion errors or handle as needed
+                e.Control.KeyPress += NumericColumn_KeyPress;
+            }
+        }
+
+        /// <summary>
+        /// Allows only digits, control keys, and a single decimal point.
+        /// </summary>
+        private static void NumericColumn_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // Block non-numeric characters
+            if (!char.IsControl(e.KeyChar) &&
+                !char.IsDigit(e.KeyChar) &&
+                e.KeyChar != '.')
+            {
+                e.Handled = true;
+                return;
+            }
+
+            // Allow only one decimal point
+            if (e.KeyChar == '.' &&
+                sender is TextBox tb &&
+                tb.Text.Contains("."))
+            {
+                e.Handled = true;
+            }
+        }
+
+        public static class DatagridviewMapper
+        {
+            // Model mapper for DataGridView / DataTable
+            public static List<T> BuildModelsFromData<T>(object dataSource) where T : new()
+            {
+                var models = new List<T>();
+                var modelType = typeof(T);
+                var properties = modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+                // --- CASE 1: DataGridView ---
+                if (dataSource is DataGridView dgv)
+                {
+                    if (dgv.Rows.Count == 0)
+                        return models;
+
+                    foreach (DataGridViewRow row in dgv.Rows)
+                    {
+                        if (row.IsNewRow)
+                            continue;
+
+                        // 🔹 Check if row has ANY data in mapped columns
+                        bool rowHasData = false;
+
+                        foreach (var prop in properties)
+                        {
+                            if (!dgv.Columns.Contains(prop.Name))
+                                continue;
+
+                            var cellValue = row.Cells[prop.Name].Value;
+
+                            if (cellValue != null &&
+                                !string.IsNullOrWhiteSpace(cellValue.ToString()))
+                            {
+                                rowHasData = true;
+                                break;
+                            }
+                        }
+
+                        // ⛔ Skip completely empty rows
+                        if (!rowHasData)
+                            continue;
+
+                        var model = new T();
+
+                        foreach (var prop in properties)
+                        {
+                            if (!dgv.Columns.Contains(prop.Name))
+                                continue;
+
+                            var value = row.Cells[prop.Name].Value;
+                            SetModelPropertyValue(model, prop, value);
+                        }
+
+                        models.Add(model);
+                    }
+
+                    return models;
+                }
+
+                // --- CASE 2: DataTable ---
+                if (dataSource is DataTable dt)
+                {
+                    if (dt.Rows.Count == 0)
+                        return models;
+
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        var model = new T();
+
+                        foreach (var prop in properties)
+                        {
+                            if (!dt.Columns.Contains(prop.Name))
+                                continue;
+
+                            var value = dr[prop.Name];
+                            SetModelPropertyValue(model, prop, value);
+                        }
+
+                        models.Add(model);
+                    }
+
+                    return models;
+                }
+
+                return models;
+            }
+
+            // Helper method for safe conversion and assignment
+            private static void SetModelPropertyValue<T>(
+                T model,
+                PropertyInfo prop,
+                object value)
+            {
+                if (value == null || value == DBNull.Value)
+                    return;
+
+                try
+                {
+                    object convertedValue = Convert.ChangeType(
+                        value,
+                        Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType
+                    );
+
+                    prop.SetValue(model, convertedValue);
+                }
+                catch
+                {
+                    // Intentionally ignored
+                }
             }
         }
 
@@ -386,6 +459,11 @@ namespace smpc_engineering_app.Services.Helpers
                     else if(control is ComboBox combobox)
                     {
                         combobox.SelectedIndex = -1;
+                    }
+                    // Reset DateTimePicker to current date
+                    else if (control is DateTimePicker datePicker)
+                    {
+                        datePicker.Value = DateTime.Now;   // or DateTime.Today
                     }
                 }
             }
@@ -1513,24 +1591,20 @@ namespace smpc_engineering_app.Services.Helpers
                             // Check if the control is a DATETIME PICKER
                             if (control is DateTimePicker dateTimePicker)
                             {
-                                string key = dateTimePicker.Name.Replace("dtp_", "");
-                                string val = String.Format("'{0}'", dateTimePicker.Value);
-                                object valueFromDataTable = dt.Rows[selectedIndex][column_name];
+                                if (selectedIndex < 0 || selectedIndex >= dt.Rows.Count)
+                                    return;
 
-                                if (valueFromDataTable != DBNull.Value && valueFromDataTable is DateTime dateTimeValue)
+                                object rawValue = dt.Rows[selectedIndex][column_name];
+
+                                if (rawValue != DBNull.Value &&
+                                    DateTime.TryParse(rawValue.ToString(), out DateTime parsedDate))
                                 {
-                                    dateTimePicker.Value = dateTimeValue;
+                                    dateTimePicker.Value = parsedDate;
                                 }
                                 else
                                 {
-                                    dateTimePicker.Value = DateTime.Now;
+                                    dateTimePicker.Value = DateTime.Now; // or MinDate if you prefer
                                 }
-                            }
-                            // Check if the control is a NUMERIC
-                            if (control is NumericUpDown numericUpDown)
-                            {
-                                string key = numericUpDown.Name.Replace("txt_", "");
-                                numericUpDown.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
                             }
                         }
                     }

@@ -59,6 +59,9 @@ namespace smpc_engineering_app.Pages.PickActivity
         private DataTable _paTable;
         private string _userName;
         private Dictionary<int, ComboBox> rowComboBoxes = new Dictionary<int, ComboBox>();
+        private Dictionary<int, TextBox> rowTextBoxes = new Dictionary<int, TextBox>();
+        private bool _isProgrammaticChange = false;
+
         public PickActivity()
         {
             InitializeComponent();
@@ -106,14 +109,61 @@ namespace smpc_engineering_app.Pages.PickActivity
 
             if (enable && _isWarehouseUser && _isEditMode)
             {
-                // Load Warehouse Areas only when warehouse user enters EDIT MODE
                 _warehouseAreas = await warehouseAreaService.GetAsList();
-                _zone = _warehouseAreas.Select(x => x.zone).Where(z => !string.IsNullOrWhiteSpace(z)).Distinct().ToList();
-                _area = _warehouseAreas.Select(x => x.area).Where(a => !string.IsNullOrWhiteSpace(a)).Distinct().ToList();
-                _rack = _warehouseAreas.Select(x => x.rack).Where(r => !string.IsNullOrWhiteSpace(r)).Distinct().ToList();
-                _level = _warehouseAreas.Select(x => x.level).Where(l => !string.IsNullOrWhiteSpace(l)).Distinct().ToList();
-                _bins = _warehouseAreas.Select(x => x.bins).Where(b => !string.IsNullOrWhiteSpace(b)).Distinct().ToList();
-                _location_code = _warehouseAreas.Select(x => x.location_code).Where(b => !string.IsNullOrWhiteSpace(b)).Distinct().ToList();
+
+                // --- SPECIAL LOGIC FOR ZONE + WAREHOUSE NAME ---
+                var zoneGroups = _warehouseAreas
+                    .Where(x => !string.IsNullOrWhiteSpace(x.zone))
+                    .GroupBy(x => x.zone)
+                    .ToList();
+
+                var newZoneList = new List<string>();
+
+                foreach (var group in zoneGroups)
+                {
+                    // If zone is unique → keep zone name only
+                    if (group.Select(x => x.warehouse_name_id).Distinct().Count() == 1)
+                    {
+                        newZoneList.Add(group.Key);
+                    }
+                    else
+                    {
+                        // Duplicate zone but different warehouses → append warehouse name
+                        foreach (var item in group)
+                        {
+                            // Do not modify warehouse_name even if it already contains parentheses
+                            newZoneList.Add($"{item.zone} [{item.warehouse_name}]");
+                        }
+                    }
+                }
+
+                _zone = newZoneList.Distinct().ToList();
+
+                // other lists remain the same
+                _area = _warehouseAreas.Select(x => x.area)
+                    .Where(a => !string.IsNullOrWhiteSpace(a))
+                    .Distinct()
+                    .ToList();
+
+                _rack = _warehouseAreas.Select(x => x.rack)
+                    .Where(r => !string.IsNullOrWhiteSpace(r))
+                    .Distinct()
+                    .ToList();
+
+                _level = _warehouseAreas.Select(x => x.level)
+                    .Where(l => !string.IsNullOrWhiteSpace(l))
+                    .Distinct()
+                    .ToList();
+
+                _bins = _warehouseAreas.Select(x => x.bins)
+                    .Where(b => !string.IsNullOrWhiteSpace(b))
+                    .Distinct()
+                    .ToList();
+
+                _location_code = _warehouseAreas.Select(x => x.location_code)
+                    .Where(b => !string.IsNullOrWhiteSpace(b))
+                    .Distinct()
+                    .ToList();
             }
 
             // btn_new visibility
@@ -279,8 +329,8 @@ namespace smpc_engineering_app.Pages.PickActivity
             }
 
             var pickActivityParent = Helpers.BuildModelFromPanels<PickActivityModel>(new Panel[] { pnl_top });
-            var pickActivityDetails = Helpers.BuildModelsFromData<PickActivityDetailsModel>(dgv_main);
-            var pickActivityLocation = Helpers.BuildModelsFromData<PickActivityLocationModel>(_paltable);
+            var pickActivityDetails = Helpers.DatagridviewMapper.BuildModelsFromData<PickActivityDetailsModel>(dgv_main);
+            var pickActivityLocation = Helpers.DatagridviewMapper.BuildModelsFromData<PickActivityLocationModel>(_paltable);
 
             // Sanitize pickActivityLocation before saving
             foreach (var loc in pickActivityDetails)
@@ -550,42 +600,7 @@ namespace smpc_engineering_app.Pages.PickActivity
 
         private void dgv_main_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            // Get the name of the current column
-            string columnName = dgv_main.Columns[dgv_main.CurrentCell.ColumnIndex].Name;
-
-            // List of column names that should accept only numbers
-            string[] numericColumns = { "pick_qty", "actual_qty" };
-
-            // Check if the current column is one of them
-            if (numericColumns.Contains(columnName))
-            {
-                // Remove any existing handler first (to avoid duplicates)
-                e.Control.KeyPress -= new KeyPressEventHandler(NumericColumn_KeyPress);
-
-                // Add our numeric-only handler
-                e.Control.KeyPress += new KeyPressEventHandler(NumericColumn_KeyPress);
-            }
-            else
-            {
-                // Remove handler for all other columns
-                e.Control.KeyPress -= new KeyPressEventHandler(NumericColumn_KeyPress);
-            }
-        }
-
-        // Allow only numbers (and optional decimal point)
-        private void NumericColumn_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            // Allow digits, control keys, and one decimal point
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar) && e.KeyChar != '.')
-            {
-                e.Handled = true; // block
-            }
-
-            // Allow only one decimal point
-            if (e.KeyChar == '.' && (sender as TextBox).Text.Contains("."))
-            {
-                e.Handled = true;
-            }
+            Helpers.HandleNumericColumns(dgv_main, e, "pick_qty","actual_qty");
         }
 
         private void dgv_main_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -682,211 +697,260 @@ namespace smpc_engineering_app.Pages.PickActivity
         {
             if (!rowComboBoxes.ContainsKey(rowIndex))
             {
-                ComboBox cb = new ComboBox();
-                cb.Visible = false;
-                cb.DropDownStyle = ComboBoxStyle.DropDown;
-                cb.AutoCompleteMode = AutoCompleteMode.None;
-                cb.AutoCompleteSource = AutoCompleteSource.None;
+                ComboBox cb = new ComboBox
+                {
+                    Visible = false,
+                    DropDownStyle = ComboBoxStyle.DropDown,
+                    AutoCompleteMode = AutoCompleteMode.None,
+                    AutoCompleteSource = AutoCompleteSource.None,
+                    Tag = new CascadingTag()
+                };
 
-                // Initially fill ComboBox with zones
-                if (_zone != null && _zone.Count > 0)
+                if (_zone?.Count > 0)
                     cb.Items.AddRange(_zone.ToArray());
 
-                // Event handler for selection
-                cb.SelectedIndexChanged += (s, e) => OnRowComboSelected(rowIndex, cb, e);
+                cb.SelectionChangeCommitted += (s, e) =>
+                {
+                    if (!_isProgrammaticChange)
+                        OnRowComboCommitted(rowIndex, cb);
+                };
+
                 cb.KeyDown += (s, e) => OnRowComboKeyDown(rowIndex, cb, e);
 
-                rowComboBoxes[rowIndex] = cb;
                 dgv_main.Controls.Add(cb);
+                rowComboBoxes[rowIndex] = cb;
+
+                // Overlay TextBox
+                TextBox tb = new TextBox
+                {
+                    ReadOnly = true,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    BackColor = Color.White,
+                    Visible = false
+                };
+
+                tb.KeyDown += (s, e) => OnRowComboKeyDown(rowIndex, cb, e);
+
+                dgv_main.Controls.Add(tb);
+                rowTextBoxes[rowIndex] = tb;
             }
 
             ComboBox combo = rowComboBoxes[rowIndex];
+            TextBox textBox = rowTextBoxes[rowIndex];
 
-            // Position it
             Rectangle rect = dgv_main.GetCellDisplayRectangle(colIndex, rowIndex, true);
-            combo.SetBounds(rect.X, rect.Y, rect.Width, rect.Height);
 
-            // Preload existing value
+            combo.SetBounds(rect.X, rect.Y, rect.Width, rect.Height);
+            textBox.SetBounds(rect.X, rect.Y, rect.Width - 17, rect.Height);
+
             var cell = dgv_main.Rows[rowIndex].Cells[colIndex];
+
+            _isProgrammaticChange = true;
             combo.Text = cell.Value?.ToString() ?? "";
+            _isProgrammaticChange = false;
+
+            textBox.Text = combo.Text;
 
             HideAllRowCombos();
+
             combo.Visible = true;
             combo.BringToFront();
             combo.Focus();
             combo.DroppedDown = true;
+
+            textBox.Visible = true;
+            textBox.BringToFront();
         }
 
         private void OnRowComboKeyDown(int rowIndex, ComboBox combo, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Back)
+            if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Delete)
             {
-                //CLEAR displayed text
                 combo.Text = "";
 
-                //Reset cascading level
                 combo.Items.Clear();
-                combo.Items.AddRange(_zone.ToArray()); // start again from zone
+                combo.Items.AddRange(_zone.ToArray());
 
-                //Reset the tag
                 combo.Tag = new CascadingTag();
-
-                //Clear bin_location cell
                 dgv_main.Rows[rowIndex].Cells["bin_location"].Value = "";
 
-                e.SuppressKeyPress = true; // prevent default deletion sound
+                if (rowTextBoxes.ContainsKey(rowIndex))
+                    rowTextBoxes[rowIndex].Text = "";
+
+                e.SuppressKeyPress = true;
             }
         }
 
-        private int? GetWarehouseIdByZone(string zone)
+        private int? GetWarehouseIdByZone(string selectedText)
         {
-            var area = _warehouseAreas.FirstOrDefault(w => w.zone == zone);
-            return area != null ? area.warehouse_name_id : (int?)null;
-        }
-
-        private void OnRowComboSelected(int rowIndex, ComboBox combo, EventArgs e)
-        {
-            var cell = dgv_main.Rows[rowIndex].Cells["bin_location"];
-            var warehouseCell = dgv_main.Rows[rowIndex].Cells["warehouse_id"];
-
-            // Load tag state
-            CascadingTag tag = combo.Tag as CascadingTag ?? new CascadingTag();
-
-            string selected = combo.Text;
-
-            // Zone → Area
-            if (_zone.Contains(selected))
+            // If no warehouse suffix, use zone only
+            if (!selectedText.Contains("["))
             {
-                // Write warehouse_id for selected zone
-                int? warehouseId = GetWarehouseIdByZone(selected);
-                warehouseCell.Value = warehouseId.HasValue ? warehouseId.Value : (object)DBNull.Value;
+                var match = _warehouseAreas.FirstOrDefault(w =>
+                    w.zone.Equals(selectedText, StringComparison.OrdinalIgnoreCase));
 
-                combo.Items.Clear();
-                var areas = _warehouseAreas
-                    .Where(w => w.zone == selected)
-                    .Select(w => w.area)
-                    .Distinct()
-                    .ToList();
-
-                var cleaned = areas
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .ToArray();
-
-                combo.Items.AddRange(cleaned);
-                if (areas.Any(a => !string.IsNullOrWhiteSpace(a)))
-                    combo.DroppedDown = true;
-
-                tag.Zone = selected;
-                tag.Area = tag.Rack = tag.Level = tag.Bin = "";
+                return match?.warehouse_name_id;
             }
-            // Area → Rack
+
+            // Otherwise extract
+            string pureZone = ExtractPureZone(selectedText);
+            string warehouseName = ExtractWarehouseName(selectedText);
+
+            var exactMatch = _warehouseAreas.FirstOrDefault(w =>
+                w.zone.Equals(pureZone, StringComparison.OrdinalIgnoreCase) &&
+                w.warehouse_name.Equals(warehouseName, StringComparison.OrdinalIgnoreCase));
+
+            return exactMatch?.warehouse_name_id;
+        }
+
+        private string ExtractWarehouseName(string zoneText)
+        {
+            int start = zoneText.IndexOf("[");
+            int end = zoneText.LastIndexOf("]");
+
+            if (start >= 0 && end > start)
+                return zoneText.Substring(start + 1, end - start - 1).Trim();
+
+            return null;
+        }
+
+        private string ExtractPureZone(string zoneText)
+        {
+            int idx = zoneText.IndexOf("[");
+            if (idx > 0)
+                return zoneText.Substring(0, idx).Trim();
+
+            return zoneText;
+        }
+
+        private void OnRowComboCommitted(int rowIndex, ComboBox combo)
+        {
+            if (!rowTextBoxes.ContainsKey(rowIndex))
+                return;
+
+            string selected = combo.SelectedItem?.ToString();
+            if (string.IsNullOrWhiteSpace(selected))
+                return;
+
+            var tag = combo.Tag as CascadingTag ?? new CascadingTag();
+
+            // ---------- ZONE ----------
+            if (_zone.Any(z => selected.StartsWith(z)))
+            {
+                string pureZone = ExtractPureZone(selected);
+
+                int? warehouseId = GetWarehouseIdByZone(selected);
+
+                // Store warehouse_id in grid
+                dgv_main.Rows[rowIndex].Cells["warehouse_id"].Value =
+                    warehouseId ?? (object)DBNull.Value;
+
+                tag.Zone = pureZone;
+                tag.Area = tag.Rack = tag.Level = tag.Bin = "";
+
+                CommitValue(rowIndex, tag);
+
+                LoadNext(combo, _warehouseAreas
+                    .Where(w =>
+                        w.zone == pureZone &&
+                        (warehouseId == null || w.warehouse_name_id == warehouseId))
+                    .Select(w => w.area));
+            }
+            // ---------- AREA ----------
             else if (_area.Contains(selected))
             {
-                combo.Items.Clear();
-                var racks = _warehouseAreas
-                    .Where(w => w.zone == tag.Zone && w.area == selected)
-                    .Select(w => w.rack)
-                    .Distinct()
-                    .ToList();
-
-                var cleaned = racks
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .ToArray();
-
-                combo.Items.AddRange(cleaned);
-                if (racks.Any(r => !string.IsNullOrWhiteSpace(r)))
-                    combo.DroppedDown = true;
-
                 tag.Area = selected;
                 tag.Rack = tag.Level = tag.Bin = "";
+
+                CommitValue(rowIndex, tag);
+                LoadNext(combo, _warehouseAreas
+                    .Where(w => w.zone == tag.Zone && w.area == selected)
+                    .Select(w => w.rack));
             }
-            // Rack → Level
+            // ---------- RACK ----------
             else if (_rack.Contains(selected))
             {
-                combo.Items.Clear();
-                var levels = _warehouseAreas
-                    .Where(w => w.zone == tag.Zone && w.area == tag.Area && w.rack == selected)
-                    .Select(w => w.level)
-                    .Distinct()
-                    .ToList();
-
-                var cleaned = levels
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-                    .Distinct()
-                    .ToArray();
-
-                combo.Items.AddRange(cleaned);
-                if (levels.Any(l => !string.IsNullOrWhiteSpace(l)))
-                    combo.DroppedDown = true;
-
                 tag.Rack = selected;
                 tag.Level = tag.Bin = "";
+
+                CommitValue(rowIndex, tag);
+                LoadNext(combo, _warehouseAreas
+                    .Where(w => w.zone == tag.Zone &&
+                                w.area == tag.Area &&
+                                w.rack == selected)
+                    .Select(w => w.level));
             }
-            // Level → Bin (generate numbers 1..max IF bins exist)
+            // ---------- LEVEL ----------
             else if (_level.Contains(selected))
             {
-                combo.Items.Clear();
+                tag.Level = selected;
+                tag.Bin = "";
 
-                // Get bin values for this zone/area/rack/level
-                var binStrings = _warehouseAreas
+                CommitValue(rowIndex, tag);
+
+                var bins = _warehouseAreas
                     .Where(w => w.zone == tag.Zone &&
                                 w.area == tag.Area &&
                                 w.rack == tag.Rack &&
                                 w.level == selected)
                     .Select(w => w.bins)
-                    .Where(b => !string.IsNullOrWhiteSpace(b))
-                    .Distinct()
+                    .Where(b => int.TryParse(b, out _))
+                    .Select(int.Parse)
                     .ToList();
 
-                // Parse valid numbers
-                var binNumbers = new List<int>();
-                foreach (var b in binStrings)
-                {
-                    if (int.TryParse(b, out int binNum))
-                        binNumbers.Add(binNum);
-                }
+                if (bins.Count == 0)
+                    return;
 
-                //Nothing found? -> leave combo completely empty
-                if (binNumbers.Count == 0)
-                {
-                    tag.Level = selected;
-                    tag.Bin = "";
-                    return;   // do not open dropdown
-                }
+                combo.Items.Clear();
+                combo.Items.AddRange(
+                    Enumerable.Range(1, bins.Max()).Select(n => n.ToString()).ToArray()
+                );
 
-                //Found bins -> generate 1..max
-                int maxBin = binNumbers.Max();
-
-                var binList = Enumerable.Range(1, maxBin)
-                                        .Select(n => n.ToString())
-                                        .ToArray();
-
-                combo.Items.AddRange(binList);
                 combo.DroppedDown = true;
-
-                tag.Level = selected;
-                tag.Bin = "";
             }
-            // Bin selected → final path
-            else if (_bins.Contains(selected))
+            // ---------- BIN ----------
+            else
             {
                 tag.Bin = selected;
+                CommitValue(rowIndex, tag);
             }
 
-            // Update tag
             combo.Tag = tag;
+        }
 
-            // Write current partial/full path to bin_location
-            string path = $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}".Trim('-').Replace("--", "-");
-            cell.Value = path;
+        private void CommitValue(int rowIndex, CascadingTag tag)
+        {
+            string path = $"{tag.Zone}-{tag.Area}-{tag.Rack}-{tag.Level}-{tag.Bin}"
+                            .Trim('-')
+                            .Replace("--", "-");
+
+            dgv_main.Rows[rowIndex].Cells["bin_location"].Value = path;
+
+            if (rowTextBoxes.ContainsKey(rowIndex))
+                rowTextBoxes[rowIndex].Text = path;
+        }
+
+        private void LoadNext(ComboBox combo, IEnumerable<string> values)
+        {
+            var list = values
+                .Where(v => !string.IsNullOrWhiteSpace(v))
+                .Distinct()
+                .ToArray();
+
+            combo.Items.Clear();
+            if (list.Length == 0) return;
+
+            combo.Items.AddRange(list);
+            combo.BeginInvoke(new Action(() => combo.DroppedDown = true));
         }
 
         private void HideAllRowCombos()
         {
-            foreach (var kvp in rowComboBoxes)
-                kvp.Value.Visible = false;
+            foreach (var cb in rowComboBoxes.Values)
+                cb.Visible = false;
+
+            foreach (var tb in rowTextBoxes.Values)
+                tb.Visible = false;
         }
 
         private void cmb_reference_so_SelectedIndexChanged(object sender, EventArgs e)

@@ -16,5 +16,6 @@ namespace smpc_engineering_app.Models
         public string level { get; set; }
         public string bins { get; set; }
         public string location_code { get; set; }
+        public string warehouse_name { get; set; }
     }
 }

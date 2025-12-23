@@ -345,8 +345,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             var itemRequestParent = Helpers.BuildModelFromPanels<ItemRequestModel>(_panels);
             bool isForward = !btn_forward.Visible;
             itemRequestParent.is_forward = isForward;
-            var itemRequestDetails = Helpers.BuildModelsFromData<ItemRequestDetailsModel>(dgv_main);
-            var itemRequestLocations = Helpers.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
+            var itemRequestDetails = Helpers.DatagridviewMapper.BuildModelsFromData<ItemRequestDetailsModel>(dgv_main);
+            var itemRequestLocations = Helpers.DatagridviewMapper.BuildModelsFromData<ItemRequestLocationModel>(_irltable);
 
             //Validate department selection
             bool validDept = cmb_req_dept.Items.Cast<object>()
@@ -563,8 +563,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             _irltable = filteredLocations.Any()
                 ? Helpers.ToDataTable(filteredLocations)
                 : new DataTable();
-
-            Console.WriteLine(_irltable);
 
             if (_irTable.Rows.Count == 0 || _currentIRIndex >= _irTable.Rows.Count)
                 return;

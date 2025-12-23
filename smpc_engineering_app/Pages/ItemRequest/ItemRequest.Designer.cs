@@ -30,7 +30,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemRequest));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
             this.dtp_issue_date = new System.Windows.Forms.DateTimePicker();
             this.dtp_required_date = new System.Windows.Forms.DateTimePicker();
@@ -42,7 +42,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.txt_req_date = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cmb_req_dept = new System.Windows.Forms.ComboBox();
             this.txt_purpose = new System.Windows.Forms.TextBox();
@@ -86,6 +85,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dtp_req_date = new System.Windows.Forms.DateTimePicker();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -96,6 +96,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             // pnl_top
             // 
+            this.pnl_top.Controls.Add(this.dtp_req_date);
             this.pnl_top.Controls.Add(this.dtp_issue_date);
             this.pnl_top.Controls.Add(this.dtp_required_date);
             this.pnl_top.Controls.Add(this.txt_id);
@@ -106,7 +107,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.pnl_top.Controls.Add(this.label7);
             this.pnl_top.Controls.Add(this.label6);
             this.pnl_top.Controls.Add(this.label5);
-            this.pnl_top.Controls.Add(this.txt_req_date);
             this.pnl_top.Controls.Add(this.label4);
             this.pnl_top.Controls.Add(this.cmb_req_dept);
             this.pnl_top.Controls.Add(this.txt_purpose);
@@ -213,14 +213,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label5.Size = new System.Drawing.Size(99, 13);
             this.label5.TabIndex = 20;
             this.label5.Text = "REQUIRED DATE:";
-            // 
-            // txt_req_date
-            // 
-            this.txt_req_date.Location = new System.Drawing.Point(634, 88);
-            this.txt_req_date.Name = "txt_req_date";
-            this.txt_req_date.Size = new System.Drawing.Size(200, 20);
-            this.txt_req_date.TabIndex = 19;
-            this.txt_req_date.Tag = "";
             // 
             // label4
             // 
@@ -523,14 +515,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.AllowUserToAddRows = false;
             this.dgv_main.AllowUserToDeleteRows = false;
             this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgv_main.ColumnHeadersHeight = 50;
             this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -681,6 +673,16 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.remarks.Name = "remarks";
             this.remarks.ReadOnly = true;
             // 
+            // dtp_req_date
+            // 
+            this.dtp_req_date.Enabled = false;
+            this.dtp_req_date.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtp_req_date.Location = new System.Drawing.Point(634, 88);
+            this.dtp_req_date.Name = "dtp_req_date";
+            this.dtp_req_date.Size = new System.Drawing.Size(200, 20);
+            this.dtp_req_date.TabIndex = 98;
+            this.dtp_req_date.Tag = "REQUIRED";
+            // 
             // ItemRequest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -726,7 +728,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox cmb_req_dept;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txt_req_date;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txt_doc_no;
@@ -762,5 +763,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.DataGridViewTextBoxColumn issued_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn serial_no;
         private System.Windows.Forms.DataGridViewTextBoxColumn remarks;
+        private System.Windows.Forms.DateTimePicker dtp_req_date;
     }
 }
