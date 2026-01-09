@@ -254,7 +254,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         {
             SetEditMode(false);
 
-
             // Return to the previous record index if available
             if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
             {
@@ -307,6 +306,24 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
         }
 
+        private void ClearItemRequestsUI()
+        {
+            _itemRequests = new List<ItemRequestModel>();
+            _currentIRIndex = -1;
+            _previousIRIndex = -1;
+
+            // Clear panel fields
+            Helpers.ResetControls(_panels);
+
+            // Clear grid
+            dgv_main.DataSource = null;
+            dgv_main.Rows.Clear();
+
+            // Disable navigation buttons
+            btn_prev.Enabled = false;
+            btn_next.Enabled = false;
+        }
+
         private async void btn_save_Click(object sender, EventArgs e)
         {
             dgv_main.EndEdit();
@@ -323,16 +340,16 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 return;
             }
 
-            if (dtp_issue_date.Value.Date < DateTime.Now.Date)
+            if (dtp_issue_date.Value.Date > DateTime.Now.Date)
             {
-                Helpers.ShowDialogMessage("error", "Issue Date cannot be earlier than today.");
+                Helpers.ShowDialogMessage("error", "Issue Date cannot be later than today.");
                 dtp_issue_date.Focus();
                 return;
             }
 
-            if (dtp_required_date.Value.Date < DateTime.Now.Date)
+            if (dtp_required_date.Value.Date > DateTime.Now.Date)
             {
-                Helpers.ShowDialogMessage("error", "Required Date cannot be earlier than today.");
+                Helpers.ShowDialogMessage("error", "Required Date cannot be later than today.");
                 dtp_required_date.Focus();
                 return;
             }
@@ -409,7 +426,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 itemRequestParent.req_by = _userName;
             }
 
-            // Wrap everything into ReceivingReportPayload
+            // Wrap everything into Item Request Payload
             var irPayload = new ItemRequestPayload
             {
                 item_request = itemRequestParent,
@@ -470,7 +487,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // save current index before reload
             int oldIndex = _currentIRIndex;
 
-            //fill this declared value by the receiving reports data
+            //fill this declared value by the item requests data
             _irdata = await itemRequestService.GetAsModel();
             _userdata = await userListService.GetAsList();
 
@@ -524,7 +541,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                         .ToList();
                 }
 
-                //set this variable to the parent of the rr
+                //set this variable to the parent of the ir
                 _itemRequests = _irdata.item_request;
 
                 // restore old index if valid, otherwise fallback to 0
@@ -537,11 +554,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
             else
             {
-                _itemRequests = new List<ItemRequestModel>();
-                _currentIRIndex = -1;
-                dgv_main.DataSource = null;
-                btn_prev.Enabled = false;
-                btn_next.Enabled = false;
+                ClearItemRequestsUI();
             }
         }
 
@@ -553,9 +566,10 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // Convert receiving report list to DataTable using helper
              _irTable = Helpers.ToDataTable(_irdata.item_request);
             _irltable = Helpers.ToDataTable(_irdata.item_request_location);
+            
+            var current = _itemRequests[_currentIRIndex];
 
             //Clear and rebuild _irltable based on current record only
-            var current = _itemRequests[_currentIRIndex];
             var filteredLocations = _irdata.item_request_location
                 .Where(l => l.ir_id == current.id)
                 .ToList();

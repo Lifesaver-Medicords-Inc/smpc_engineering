@@ -1407,7 +1407,7 @@ namespace smpc_engineering_app.Services.Helpers
                     }
                     else
                     {
-                        control.BackColor = Color.White;
+                        control.BackColor = SystemColors.Window;
                     }
                 }
 
@@ -1422,7 +1422,7 @@ namespace smpc_engineering_app.Services.Helpers
                     }
                     else
                     {
-                        comboBox.BackColor = Color.White;
+                        comboBox.BackColor = SystemColors.Window;
                     }
                 }
 
@@ -1439,8 +1439,8 @@ namespace smpc_engineering_app.Services.Helpers
                         }
                         else
                         {
-                            dtp.CalendarMonthBackground = Color.White;
-                            dtp.BackColor = Color.White;
+                            dtp.CalendarMonthBackground = SystemColors.Window;
+                            dtp.BackColor = SystemColors.Window;
                         }
                     }
                 }
@@ -1451,7 +1451,7 @@ namespace smpc_engineering_app.Services.Helpers
 
         public static void FlashRed(Control control)
         {
-            Color originalColor = control.BackColor;
+            Color originalColor = SystemColors.Window;
             control.BackColor = Color.Red;
 
             var timer = new System.Windows.Forms.Timer();

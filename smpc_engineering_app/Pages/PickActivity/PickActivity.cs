@@ -305,6 +305,24 @@ namespace smpc_engineering_app.Pages.PickActivity
             }
         }
 
+        private void ClearPickActivitiesUI()
+        {
+            _pickActivities = new List<PickActivityModel>();
+            _currentPAIndex = -1;
+            _previousPAIndex = -1;
+
+            // Clear panel fields
+            Helpers.ResetControls(new Panel[] { pnl_top });
+
+            // Clear grid
+            dgv_main.DataSource = null;
+            dgv_main.Rows.Clear();
+
+            // Disable navigation buttons
+            btn_prev.Enabled = false;
+            btn_next.Enabled = false;
+        }
+
         private async void btn_save_Click(object sender, EventArgs e)
         {
             dgv_main.EndEdit();
@@ -528,11 +546,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             }
             else
             {
-                _pickActivities = new List<PickActivityModel>();
-                _currentPAIndex = -1;
-                dgv_main.DataSource = null;
-                btn_prev.Enabled = false;
-                btn_next.Enabled = false;
+                ClearPickActivitiesUI();
             }
         }
 

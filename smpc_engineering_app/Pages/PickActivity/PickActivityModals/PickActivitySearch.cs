@@ -70,7 +70,6 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             finally
             {
                 Helpers.Loading.HideLoading(dgv_pa_search);
-
             }
         }
 
