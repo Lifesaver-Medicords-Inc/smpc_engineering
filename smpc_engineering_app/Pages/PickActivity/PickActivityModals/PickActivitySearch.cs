@@ -79,7 +79,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
 
             PickActivity.pick_activity.Reverse();
 
-            // Convert receiving report list to DataTable using helper
+            // Convert pick activity list to DataTable using helper
             paTable = Helpers.ToDataTable(PickActivity.pick_activity);
 
             if (paTable?.Rows.Count > 0)
