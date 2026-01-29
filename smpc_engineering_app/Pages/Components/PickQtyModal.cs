@@ -145,6 +145,7 @@ namespace smpc_engineering_app.Pages.Components
                     {
                         Helpers.ShowDialogMessage("error", "No available stock after allocation.");
                         dgv_pick_qty.DataSource = null;
+                        this.Close();
                         return;
                     }
 
@@ -157,11 +158,13 @@ namespace smpc_engineering_app.Pages.Components
                 {
                     dgv_pick_qty.DataSource = null;
                     Helpers.ShowDialogMessage("error", "No item list found.");
+                    this.Close();
                 }
             }
             catch (NullReferenceException)
             {
                 Helpers.ShowDialogMessage("error", "No available stock after allocation.");
+                this.Close();
             }
         }
 

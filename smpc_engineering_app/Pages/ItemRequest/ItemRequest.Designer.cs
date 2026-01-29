@@ -37,7 +37,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dtp_required_date = new System.Windows.Forms.DateTimePicker();
             this.txt_id = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.cmb_ref_doc = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.txt_doc_no = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -86,6 +85,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmb_ref_doc = new System.Windows.Forms.ComboBox();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -96,12 +96,12 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             // pnl_top
             // 
+            this.pnl_top.Controls.Add(this.cmb_ref_doc);
             this.pnl_top.Controls.Add(this.dtp_req_date);
             this.pnl_top.Controls.Add(this.dtp_issue_date);
             this.pnl_top.Controls.Add(this.dtp_required_date);
             this.pnl_top.Controls.Add(this.txt_id);
             this.pnl_top.Controls.Add(this.label13);
-            this.pnl_top.Controls.Add(this.cmb_ref_doc);
             this.pnl_top.Controls.Add(this.label8);
             this.pnl_top.Controls.Add(this.txt_doc_no);
             this.pnl_top.Controls.Add(this.label7);
@@ -168,16 +168,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label13.TabIndex = 28;
             this.label13.Text = "ITEM REQUEST ID:";
             this.label13.Visible = false;
-            // 
-            // cmb_ref_doc
-            // 
-            this.cmb_ref_doc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmb_ref_doc.FormattingEnabled = true;
-            this.cmb_ref_doc.Location = new System.Drawing.Point(1137, 108);
-            this.cmb_ref_doc.Name = "cmb_ref_doc";
-            this.cmb_ref_doc.Size = new System.Drawing.Size(200, 21);
-            this.cmb_ref_doc.TabIndex = 27;
-            this.cmb_ref_doc.SelectedIndexChanged += new System.EventHandler(this.cmb_ref_doc_SelectedIndexChanged);
             // 
             // label8
             // 
@@ -683,6 +673,22 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.remarks.Name = "remarks";
             this.remarks.ReadOnly = true;
             // 
+            // cmb_ref_doc
+            // 
+            this.cmb_ref_doc.BackColor = System.Drawing.Color.White;
+            this.cmb_ref_doc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_ref_doc.Enabled = false;
+            this.cmb_ref_doc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmb_ref_doc.FormattingEnabled = true;
+            this.cmb_ref_doc.Location = new System.Drawing.Point(1137, 108);
+            this.cmb_ref_doc.MaxLength = 50;
+            this.cmb_ref_doc.MinimumSize = new System.Drawing.Size(200, 0);
+            this.cmb_ref_doc.Name = "cmb_ref_doc";
+            this.cmb_ref_doc.Size = new System.Drawing.Size(200, 21);
+            this.cmb_ref_doc.TabIndex = 303;
+            this.cmb_ref_doc.TabStop = false;
+            this.cmb_ref_doc.Tag = "REQUIRED";
+            // 
             // ItemRequest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -742,7 +748,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.TextBox txt_approved_by;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btn_forward;
-        private System.Windows.Forms.ComboBox cmb_ref_doc;
         private System.Windows.Forms.TextBox txt_id;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button btn_cancel;
@@ -764,5 +769,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.DataGridViewTextBoxColumn serial_no;
         private System.Windows.Forms.DataGridViewTextBoxColumn remarks;
         private System.Windows.Forms.DateTimePicker dtp_req_date;
+        private System.Windows.Forms.ComboBox cmb_ref_doc;
     }
 }

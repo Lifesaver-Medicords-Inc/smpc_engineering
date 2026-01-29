@@ -451,6 +451,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             {
                 SetEditMode(false);
                 await LoadPickActivities();
+                ClearRowEditors();
 
                 Helpers.Loading.HideLoading(dgv_main);
             }
@@ -1013,6 +1014,44 @@ namespace smpc_engineering_app.Pages.PickActivity
             {
                 Helpers.ShowDialogMessage("error", $"Failed to load items for selected Reference Doc: {ex.Message}");
             }
+        }
+
+        private void ClearRowEditors()
+        {
+            // Hide and clear ComboBoxes
+            foreach (var kvp in rowComboBoxes)
+            {
+                ComboBox cb = kvp.Value;
+
+                if (cb != null)
+                {
+                    cb.Visible = false;
+                    cb.Items.Clear();
+                    cb.Text = string.Empty;
+                    cb.Tag = null;
+
+                    if (dgv_main.Controls.Contains(cb))
+                        dgv_main.Controls.Remove(cb);
+                }
+            }
+
+            // Hide and clear TextBoxes
+            foreach (var kvp in rowTextBoxes)
+            {
+                TextBox tb = kvp.Value;
+
+                if (tb != null)
+                {
+                    tb.Visible = false;
+                    tb.Text = string.Empty;
+
+                    if (dgv_main.Controls.Contains(tb))
+                        dgv_main.Controls.Remove(tb);
+                }
+            }
+
+            rowComboBoxes.Clear();
+            rowTextBoxes.Clear();
         }
     }
 }

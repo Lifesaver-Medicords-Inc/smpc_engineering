@@ -86,7 +86,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             else
             {
                 dgv_all_item.DataSource = null;
-                Helpers.ShowDialogMessage("info", "No items found.");
+                Helpers.ShowDialogMessage("error", "No items found.");
             }
         }
 
