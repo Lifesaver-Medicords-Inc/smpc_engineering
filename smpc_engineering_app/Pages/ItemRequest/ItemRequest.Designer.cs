@@ -32,6 +32,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemRequest));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
+            this.cmb_ref_doc = new System.Windows.Forms.ComboBox();
             this.dtp_req_date = new System.Windows.Forms.DateTimePicker();
             this.dtp_issue_date = new System.Windows.Forms.DateTimePicker();
             this.dtp_required_date = new System.Windows.Forms.DateTimePicker();
@@ -85,7 +86,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cmb_ref_doc = new System.Windows.Forms.ComboBox();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -119,6 +119,23 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.pnl_top.Name = "pnl_top";
             this.pnl_top.Size = new System.Drawing.Size(1400, 215);
             this.pnl_top.TabIndex = 0;
+            // 
+            // cmb_ref_doc
+            // 
+            this.cmb_ref_doc.BackColor = System.Drawing.Color.White;
+            this.cmb_ref_doc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_ref_doc.Enabled = false;
+            this.cmb_ref_doc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmb_ref_doc.FormattingEnabled = true;
+            this.cmb_ref_doc.Location = new System.Drawing.Point(1137, 108);
+            this.cmb_ref_doc.MaxLength = 50;
+            this.cmb_ref_doc.MinimumSize = new System.Drawing.Size(200, 0);
+            this.cmb_ref_doc.Name = "cmb_ref_doc";
+            this.cmb_ref_doc.Size = new System.Drawing.Size(200, 21);
+            this.cmb_ref_doc.TabIndex = 303;
+            this.cmb_ref_doc.TabStop = false;
+            this.cmb_ref_doc.Tag = "REQUIRED";
+            this.cmb_ref_doc.SelectedIndexChanged += new System.EventHandler(this.cmb_ref_doc_SelectedIndexChanged);
             // 
             // dtp_req_date
             // 
@@ -672,22 +689,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.remarks.MinimumWidth = 180;
             this.remarks.Name = "remarks";
             this.remarks.ReadOnly = true;
-            // 
-            // cmb_ref_doc
-            // 
-            this.cmb_ref_doc.BackColor = System.Drawing.Color.White;
-            this.cmb_ref_doc.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmb_ref_doc.Enabled = false;
-            this.cmb_ref_doc.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmb_ref_doc.FormattingEnabled = true;
-            this.cmb_ref_doc.Location = new System.Drawing.Point(1137, 108);
-            this.cmb_ref_doc.MaxLength = 50;
-            this.cmb_ref_doc.MinimumSize = new System.Drawing.Size(200, 0);
-            this.cmb_ref_doc.Name = "cmb_ref_doc";
-            this.cmb_ref_doc.Size = new System.Drawing.Size(200, 21);
-            this.cmb_ref_doc.TabIndex = 303;
-            this.cmb_ref_doc.TabStop = false;
-            this.cmb_ref_doc.Tag = "REQUIRED";
             // 
             // ItemRequest
             // 
