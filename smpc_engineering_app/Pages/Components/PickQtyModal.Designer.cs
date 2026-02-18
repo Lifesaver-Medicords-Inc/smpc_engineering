@@ -103,6 +103,7 @@ namespace smpc_engineering_app.Pages.Components
             this.id.HeaderText = "ID";
             this.id.Name = "id";
             this.id.ReadOnly = true;
+            this.id.Visible = false;
             // 
             // pa_details_id
             // 

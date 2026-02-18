@@ -81,7 +81,7 @@ namespace smpc_engineering_app.Shared
 
 
         //Engr. Users
-        public const string ENGR_USERS = "/employee_users/Admin";
+        public const string ENGR_USERS = "/employee_users/Engineering";
 
     }
 }
