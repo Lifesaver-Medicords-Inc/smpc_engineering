@@ -507,6 +507,12 @@ namespace smpc_engineering_app.Pages.Transactions
 
                     Debug.WriteLine($"Updating row with ID: {job_order_id}");
 
+                    if (!response.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Job Order not created.");
+                        return (response.success, default(JobOrderModel));
+                    }
+
                     return (response.success, default(JobOrderModel));
                 });
 
@@ -530,6 +536,12 @@ namespace smpc_engineering_app.Pages.Transactions
                     }
 
                     var response = await jobOrderService.Save(data);
+
+                    if (!response.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Job Order not created.");
+                        return (response.success, default(JobOrderModel));
+                    }
 
                     Debug.WriteLine($"Updating row with ID: {job_order_id}");
 
@@ -564,6 +576,12 @@ namespace smpc_engineering_app.Pages.Transactions
                     Debug.WriteLine($"Updating row with ID: {job_order_id}");
                     foreach (var kv in cleanedData)
                         Debug.WriteLine($"{kv.Key}: {kv.Value}");
+
+                    if (!response.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Job Order not created.");
+                        return (response.success, default(JobOrderModel));
+                    }
 
                     return (response.success, default(JobOrderModel));
                 });

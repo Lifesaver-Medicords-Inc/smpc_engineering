@@ -290,7 +290,13 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     item_request = irModel
                 };
 
-                await itemRequestService.DeleteIRRecord(irPayload);
+                var result = await itemRequestService.DeleteIRRecord(irPayload);
+
+                if (!result.success)
+                {
+                    Helpers.ShowDialogMessage("error", "Item Request not deleted.");
+                    return;
+                }
 
                 Helpers.ShowDialogMessage("success", "Receiving Report deleted successfully.");
             }
@@ -441,11 +447,25 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 if (_isNewMode)
                 {
                     var result = await itemRequestService.CreateIRRecord(irPayload);
+
+                    if (!result.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Item Request not created.");
+                        return;
+                    }
+
                     Helpers.ShowDialogMessage("success", "Item Request created successfully.");
                 }
                 else
                 {
                     var result = await itemRequestService.UpdateIRRecord(irPayload);
+
+                    if (!result.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Item Request not updated.");
+                        return;
+                    }
+
                     Helpers.ShowDialogMessage("success", "Item Request updated successfully.");
                 }
             }

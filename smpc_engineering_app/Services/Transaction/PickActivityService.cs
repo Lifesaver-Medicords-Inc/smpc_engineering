@@ -14,7 +14,7 @@ namespace smpc_engineering_app.Services.Transaction
         public PickActivityService() : base(ApiEndPoints.PICK_ACTIVITY) { }
 
         // CREATE
-        public async Task<object> CreatePARecord(PickActivityPayload payload)
+        public async Task<ApiResponseModel<object>> CreatePARecord(PickActivityPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Post(ApiEndPoints.PICK_ACTIVITY, new Dictionary<string, dynamic>
                 {
@@ -24,11 +24,11 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
 
         // UPDATE
-        public async Task<object> UpdatePARecord(PickActivityPayload payload)
+        public async Task<ApiResponseModel<object>> UpdatePARecord(PickActivityPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Put(ApiEndPoints.PICK_ACTIVITY, new Dictionary<string, dynamic>
                 {
@@ -38,11 +38,11 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
 
         // DELETE
-        public async Task<object> DeletePARecord(PickActivityPayload payload)
+        public async Task<ApiResponseModel<object>> DeletePARecord(PickActivityPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Delete(ApiEndPoints.PICK_ACTIVITY, new Dictionary<string, dynamic>
                 {
@@ -52,7 +52,7 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
     }
 }

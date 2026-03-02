@@ -14,7 +14,7 @@ namespace smpc_engineering_app.Services.Transaction
         public ItemRequestService() : base(ApiEndPoints.ITEM_REQUEST) { }
 
         // CREATE
-        public async Task<object> CreateIRRecord(ItemRequestPayload payload)
+        public async Task<ApiResponseModel<object>> CreateIRRecord(ItemRequestPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Post(ApiEndPoints.ITEM_REQUEST, new Dictionary<string, dynamic>
                 {
@@ -24,11 +24,11 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
 
         // UPDATE
-        public async Task<object> UpdateIRRecord(ItemRequestPayload payload)
+        public async Task<ApiResponseModel<object>> UpdateIRRecord(ItemRequestPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Put(ApiEndPoints.ITEM_REQUEST, new Dictionary<string, dynamic>
                 {
@@ -38,11 +38,11 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
 
         // DELETE
-        public async Task<object> DeleteIRRecord(ItemRequestPayload payload)
+        public async Task<ApiResponseModel<object>> DeleteIRRecord(ItemRequestPayload payload)
         {
             var response = await ApiService<ApiResponseModel<object>>.Delete(ApiEndPoints.ITEM_REQUEST, new Dictionary<string, dynamic>
                 {
@@ -52,7 +52,7 @@ namespace smpc_engineering_app.Services.Transaction
                 }
             );
 
-            return response.data;
+            return response;
         }
     }
 }

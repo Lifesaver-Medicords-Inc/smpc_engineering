@@ -289,7 +289,13 @@ namespace smpc_engineering_app.Pages.PickActivity
                     pick_activity = paModel
                 };
 
-                await pickActivityService.DeletePARecord(paPayload);
+                var result = await pickActivityService.DeletePARecord(paPayload);
+
+                if (!result.success)
+                {
+                    Helpers.ShowDialogMessage("error", "Pick Activity not deleted.");
+                    return;
+                }
 
                 Helpers.ShowDialogMessage("success", "Pick Activity deleted successfully.");
             }
@@ -435,11 +441,25 @@ namespace smpc_engineering_app.Pages.PickActivity
                 if (_isNewMode)
                 {
                     var result = await pickActivityService.CreatePARecord(paPayload);
+
+                    if (!result.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Pick Activity not created.");
+                        return;
+                    }
+
                     Helpers.ShowDialogMessage("success", "Pick Activity created successfully.");
                 }
                 else
                 {
                     var result = await pickActivityService.UpdatePARecord(paPayload);
+
+                    if (!result.success)
+                    {
+                        Helpers.ShowDialogMessage("error", "Pick Activity not updated.");
+                        return;
+                    }
+
                     Helpers.ShowDialogMessage("success", "Pick Activity updated successfully.");
                 }
             }

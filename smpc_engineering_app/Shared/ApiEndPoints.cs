@@ -79,7 +79,6 @@ namespace smpc_engineering_app.Shared
         //Pick Activity
         public const string PICK_ACTIVITY = "/setup/pickAct/list";
 
-
         //Engr. Users
         public const string ENGR_USERS = "/employee_users/Engineering";
 
