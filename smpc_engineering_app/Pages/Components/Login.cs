@@ -28,8 +28,10 @@ namespace smpc_engineering_app.Pages
 
         private void Login_Load(object sender, EventArgs e)
         {
-            txt_employee_id.Text = "PURCH-PO-8";
-            txt_password.Text = "PURCH-PO-8";
+            //txt_employee_id.Text = "PURCH-PO-8";
+            //txt_password.Text = "PURCH-PO-8";
+            //txt_employee_id.Text = "IT-WD-1";
+            //txt_password.Text = "IT-WD-1";
         }
 
         private async void btn_login_Click(object sender, EventArgs e)

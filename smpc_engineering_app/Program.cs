@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ namespace smpc_engineering_app
 {
     static class Program
     {
+        public static string ApiBaseUrl { get; private set; }
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -20,6 +22,12 @@ namespace smpc_engineering_app
                 .MinimumLevel.Debug()
                 .WriteTo.File("logs\\engineering-logs-.log", rollingInterval: RollingInterval.Day) 
                 .CreateLogger();
+
+            string env = System.Configuration.ConfigurationManager.AppSettings["Environment"] ?? "Development";
+
+            // Resolve the correct API URL
+            ApiBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"ApiBaseUrl.{env}"]
+                         ?? throw new ConfigurationErrorsException($"No API URL configured for environment: {env}");
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, args) =>
