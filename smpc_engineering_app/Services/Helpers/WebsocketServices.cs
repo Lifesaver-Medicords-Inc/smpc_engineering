@@ -21,11 +21,13 @@ namespace smpc_engineering_app.Services.Helpers
         public event Action OnConnected;
         public event Action<string> OnError;
         public event Action OnDisconnected;
-
+        static string wssUrl => Program.WssBaseUrl ?? "ws://127.0.0.1:3000/api/ws";
         public async Task ConnectAndDeserialize<T>(string endpoint, Action<T> onDeserialized)
         {
             string token = CacheData.SessionToken;
-            string url = $"ws://127.0.0.1:3000/api/ws{endpoint}?Authorization={token}";
+
+
+            string url = $"{wssUrl}{endpoint}?Authorization={token}";
 
             if (IsConnected) return;
 
