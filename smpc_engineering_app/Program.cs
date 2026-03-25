@@ -11,6 +11,7 @@ namespace smpc_engineering_app
     static class Program
     {
         public static string ApiBaseUrl { get; private set; }
+        public static string WssBaseUrl { get; private set; }
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -27,6 +28,10 @@ namespace smpc_engineering_app
 
             // Resolve the correct API URL
             ApiBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"ApiBaseUrl.{env}"]
+                         ?? throw new ConfigurationErrorsException($"No API URL configured for environment: {env}");
+
+            // Resolve the correct API URL
+            WssBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"WssBaseUrl.{env}"]
                          ?? throw new ConfigurationErrorsException($"No API URL configured for environment: {env}");
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
