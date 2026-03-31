@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Management;
-using System.Data; 
+using System.Data;
 using System.Data.SqlTypes;
 using System.Windows.Forms;
 using System.Drawing;
@@ -545,7 +545,7 @@ namespace smpc_engineering_app.Services.Helpers
 
         public static void ResetControls(Panel[] pnls)
         {
-            foreach(Panel pnl in pnls)
+            foreach (Panel pnl in pnls)
             {
                 foreach (Control control in pnl.Controls)
                 {
@@ -555,7 +555,7 @@ namespace smpc_engineering_app.Services.Helpers
                         // Reset the TextBox's text
                         textBox.Text = "";
                     }
-                    else if(control is ComboBox combobox)
+                    else if (control is ComboBox combobox)
                     {
                         combobox.SelectedIndex = -1;
                     }
@@ -1126,12 +1126,12 @@ namespace smpc_engineering_app.Services.Helpers
             }
 
             return string.Empty;
-        }       
+        }
 
         public static Dictionary<string, dynamic> GetControlsValues(Panel pnl)
         {
 
-            Dictionary<string,dynamic> values = new Dictionary<string, dynamic>();
+            Dictionary<string, dynamic> values = new Dictionary<string, dynamic>();
 
             foreach (Control control in pnl.Controls)
             {
@@ -1151,7 +1151,7 @@ namespace smpc_engineering_app.Services.Helpers
                         val = String.Format("{0}", textBox.Text.ToString());
                     }
                     values.Add(key, val);
-                } 
+                }
 
                 // Check if the control is a Combobox
                 if (control is ComboBox comboBox)
@@ -1274,7 +1274,7 @@ namespace smpc_engineering_app.Services.Helpers
         }
 
         public static Dictionary<string, dynamic> GetControlsValues(Panel pnl1, Panel pnl2)
-        { 
+        {
 
             Dictionary<string, dynamic> values = new Dictionary<string, dynamic>();
 
@@ -1289,7 +1289,7 @@ namespace smpc_engineering_app.Services.Helpers
                     if (textBox.Tag.ToString() == "MONEY")
                     {
 
-                        val = String.Format("{0}", textBox.Text.ToString().Replace(",",""));
+                        val = String.Format("{0}", textBox.Text.ToString().Replace(",", ""));
                     }
                     else
                     {
@@ -1876,12 +1876,12 @@ namespace smpc_engineering_app.Services.Helpers
             }
             catch (Exception ex)
             {
-                
+
                 Console.WriteLine("Error: " + ex.Message);
                 return "";
             }
         }
-        public static void ShowDialogMessage(string status,string message="")
+        public static void ShowDialogMessage(string status, string message = "")
         {
             switch (status)
             {
@@ -1897,14 +1897,14 @@ namespace smpc_engineering_app.Services.Helpers
                     break;
             }
         }
-        public static void CopyFileTo(string filePath,string destinationPath)
+        public static void CopyFileTo(string filePath, string destinationPath)
         {
             try
             {
                 File.Copy(filePath, destinationPath, true);
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
@@ -1938,7 +1938,7 @@ namespace smpc_engineering_app.Services.Helpers
         public static string MoneyFormat(double money)
         {
             return String.Format("{0:N2}", money);
-        } 
+        }
         public static void GetModalData(TextBox textBox, DataView dataView)
         {
             int recordIndex = 0;
@@ -1991,7 +1991,7 @@ namespace smpc_engineering_app.Services.Helpers
             }
         }
         public static void LoadDirectory(string path, TreeView treeView)
-        { 
+        {
             // Clear any existing nodes
             treeView.Nodes.Clear();
 
@@ -2002,7 +2002,7 @@ namespace smpc_engineering_app.Services.Helpers
 
             // Load subdirectories and files recursively
             LoadSubdirectoriesAndFiles(rootNode, dirInfo.FullName);
-        } 
+        }
         private static void LoadSubdirectoriesAndFiles(TreeNode parentNode, string path)
         {
             try
@@ -2065,11 +2065,11 @@ namespace smpc_engineering_app.Services.Helpers
                     try
                     {
                         return Convert.ToDecimal(kvp.Value);
-            }
+                    }
                     catch
                     {
                         return kvp.Value; // Return original if conversion fails
-            }
+                    }
                 }
             );
         }
@@ -2163,4 +2163,4 @@ namespace smpc_engineering_app.Services.Helpers
 
     }
 
-} 
+}

@@ -29,41 +29,38 @@ namespace smpc_engineering_app.Pages.JobOrder
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle57 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle58 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle59 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle60 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle61 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle62 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle63 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle64 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle65 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle66 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle67 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle68 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle69 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle70 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle71 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle72 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle73 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle74 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle75 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle76 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle77 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle78 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle79 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle80 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle81 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle82 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle83 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle84 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(JobOrderPage));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle25 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle26 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle27 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle28 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btn_edit = new System.Windows.Forms.ToolStripButton();
-            this.btn_save = new System.Windows.Forms.ToolStripButton();
-            this.btn_cancel = new System.Windows.Forms.ToolStripButton();
             this.panel2 = new System.Windows.Forms.Panel();
             this.txt_search = new System.Windows.Forms.TextBox();
             this.tab_container = new System.Windows.Forms.TabControl();
@@ -133,6 +130,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.a_engr_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.type_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_edit = new System.Windows.Forms.ToolStripButton();
+            this.btn_save = new System.Windows.Forms.ToolStripButton();
+            this.btn_cancel = new System.Windows.Forms.ToolStripButton();
             this.panel6.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -177,35 +177,6 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 14;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btn_edit
-            // 
-            this.btn_edit.Image = ((System.Drawing.Image)(resources.GetObject("btn_edit.Image")));
-            this.btn_edit.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_edit.Name = "btn_edit";
-            this.btn_edit.Size = new System.Drawing.Size(47, 22);
-            this.btn_edit.Text = "Edit";
-            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
-            // 
-            // btn_save
-            // 
-            this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
-            this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(51, 22);
-            this.btn_save.Text = "Save";
-            this.btn_save.Visible = false;
-            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
-            // 
-            // btn_cancel
-            // 
-            this.btn_cancel.Image = ((System.Drawing.Image)(resources.GetObject("btn_cancel.Image")));
-            this.btn_cancel.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_cancel.Name = "btn_cancel";
-            this.btn_cancel.Size = new System.Drawing.Size(63, 22);
-            this.btn_cancel.Text = "Cancel";
-            this.btn_cancel.Visible = false;
-            this.btn_cancel.Click += new System.EventHandler(this.btn_cancel_Click);
             // 
             // panel2
             // 
@@ -257,14 +228,14 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_pending.AllowUserToDeleteRows = false;
             this.dgv_pl_pending.AllowUserToResizeColumns = false;
             this.dgv_pl_pending.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_pl_pending.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle57.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle57.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle57.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle57.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle57.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle57.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle57.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_pl_pending.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle57;
             this.dgv_pl_pending.ColumnHeadersHeight = 50;
             this.dgv_pl_pending.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_pl_pending.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -342,8 +313,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.date_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.date_pending.DataPropertyName = "date";
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
-            this.date_pending.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle58.BackColor = System.Drawing.Color.Gainsboro;
+            this.date_pending.DefaultCellStyle = dataGridViewCellStyle58;
             this.date_pending.HeaderText = "DATE";
             this.date_pending.MinimumWidth = 80;
             this.date_pending.Name = "date_pending";
@@ -354,10 +325,10 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.sales_order_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.sales_order_pending.DataPropertyName = "sales_order";
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.sales_order_pending.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle59.BackColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle59.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle59.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.sales_order_pending.DefaultCellStyle = dataGridViewCellStyle59;
             this.sales_order_pending.HeaderText = "SALES ORDER";
             this.sales_order_pending.MinimumWidth = 80;
             this.sales_order_pending.Name = "sales_order_pending";
@@ -367,8 +338,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.type_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.type_pending.DataPropertyName = "type";
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
-            this.type_pending.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle60.BackColor = System.Drawing.Color.Gainsboro;
+            this.type_pending.DefaultCellStyle = dataGridViewCellStyle60;
             this.type_pending.HeaderText = "TYPE";
             this.type_pending.MinimumWidth = 90;
             this.type_pending.Name = "type_pending";
@@ -378,8 +349,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.item_desc_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_desc_pending.DataPropertyName = "item_desc";
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_desc_pending.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle61.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_desc_pending.DefaultCellStyle = dataGridViewCellStyle61;
             this.item_desc_pending.HeaderText = "ITEM DESCRIPTION";
             this.item_desc_pending.MinimumWidth = 110;
             this.item_desc_pending.Name = "item_desc_pending";
@@ -389,10 +360,10 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.materials_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.materials_pending.DataPropertyName = "materials";
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.materials_pending.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle62.BackColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle62.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle62.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.materials_pending.DefaultCellStyle = dataGridViewCellStyle62;
             this.materials_pending.HeaderText = "MATERIALS";
             this.materials_pending.MinimumWidth = 80;
             this.materials_pending.Name = "materials_pending";
@@ -402,9 +373,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.quantity_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.quantity_pending.DataPropertyName = "quantity";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
-            this.quantity_pending.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle63.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle63.BackColor = System.Drawing.Color.Gainsboro;
+            this.quantity_pending.DefaultCellStyle = dataGridViewCellStyle63;
             this.quantity_pending.HeaderText = "QTY.";
             this.quantity_pending.MinimumWidth = 70;
             this.quantity_pending.Name = "quantity_pending";
@@ -415,8 +386,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.due_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.due_pending.DataPropertyName = "due";
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Gainsboro;
-            this.due_pending.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle64.BackColor = System.Drawing.Color.Gainsboro;
+            this.due_pending.DefaultCellStyle = dataGridViewCellStyle64;
             this.due_pending.HeaderText = "DUE";
             this.due_pending.MinimumWidth = 70;
             this.due_pending.Name = "due_pending";
@@ -434,8 +405,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.cmb_a_engr_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.cmb_a_engr_pending.DataPropertyName = "(none)";
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Gainsboro;
-            this.cmb_a_engr_pending.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle65.BackColor = System.Drawing.Color.Gainsboro;
+            this.cmb_a_engr_pending.DefaultCellStyle = dataGridViewCellStyle65;
             this.cmb_a_engr_pending.HeaderText = "ASSIGNED ENGR.";
             this.cmb_a_engr_pending.MinimumWidth = 100;
             this.cmb_a_engr_pending.Name = "cmb_a_engr_pending";
@@ -508,14 +479,14 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_ongoing.AllowUserToDeleteRows = false;
             this.dgv_pl_ongoing.AllowUserToResizeColumns = false;
             this.dgv_pl_ongoing.AllowUserToResizeRows = false;
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_pl_ongoing.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle66.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle66.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle66.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle66.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle66.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle66.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle66.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_pl_ongoing.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle66;
             this.dgv_pl_ongoing.ColumnHeadersHeight = 50;
             this.dgv_pl_ongoing.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_pl_ongoing.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -590,8 +561,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.date_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.date_ongoing.DataPropertyName = "date";
-            dataGridViewCellStyle11.BackColor = System.Drawing.Color.Gainsboro;
-            this.date_ongoing.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle67.BackColor = System.Drawing.Color.Gainsboro;
+            this.date_ongoing.DefaultCellStyle = dataGridViewCellStyle67;
             this.date_ongoing.HeaderText = "DATE";
             this.date_ongoing.MinimumWidth = 80;
             this.date_ongoing.Name = "date_ongoing";
@@ -602,8 +573,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.sales_order_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.sales_order_ongoing.DataPropertyName = "sales_order";
-            dataGridViewCellStyle12.BackColor = System.Drawing.Color.Gainsboro;
-            this.sales_order_ongoing.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle68.BackColor = System.Drawing.Color.Gainsboro;
+            this.sales_order_ongoing.DefaultCellStyle = dataGridViewCellStyle68;
             this.sales_order_ongoing.HeaderText = "SALES ORDER";
             this.sales_order_ongoing.MinimumWidth = 80;
             this.sales_order_ongoing.Name = "sales_order_ongoing";
@@ -613,8 +584,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.type_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.type_ongoing.DataPropertyName = "type";
-            dataGridViewCellStyle13.BackColor = System.Drawing.Color.Gainsboro;
-            this.type_ongoing.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle69.BackColor = System.Drawing.Color.Gainsboro;
+            this.type_ongoing.DefaultCellStyle = dataGridViewCellStyle69;
             this.type_ongoing.HeaderText = "TYPE";
             this.type_ongoing.MinimumWidth = 100;
             this.type_ongoing.Name = "type_ongoing";
@@ -624,8 +595,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.item_desc_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_desc_ongoing.DataPropertyName = "item_desc";
-            dataGridViewCellStyle14.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_desc_ongoing.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle70.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_desc_ongoing.DefaultCellStyle = dataGridViewCellStyle70;
             this.item_desc_ongoing.HeaderText = "ITEM DESCRIPTION";
             this.item_desc_ongoing.MinimumWidth = 120;
             this.item_desc_ongoing.Name = "item_desc_ongoing";
@@ -635,8 +606,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.materials_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.materials_ongoing.DataPropertyName = "materials";
-            dataGridViewCellStyle15.BackColor = System.Drawing.Color.Gainsboro;
-            this.materials_ongoing.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle71.BackColor = System.Drawing.Color.Gainsboro;
+            this.materials_ongoing.DefaultCellStyle = dataGridViewCellStyle71;
             this.materials_ongoing.HeaderText = "MATERIALS";
             this.materials_ongoing.MinimumWidth = 100;
             this.materials_ongoing.Name = "materials_ongoing";
@@ -646,9 +617,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.quantity_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.quantity_ongoing.DataPropertyName = "quantity";
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.BackColor = System.Drawing.Color.Gainsboro;
-            this.quantity_ongoing.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle72.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle72.BackColor = System.Drawing.Color.Gainsboro;
+            this.quantity_ongoing.DefaultCellStyle = dataGridViewCellStyle72;
             this.quantity_ongoing.HeaderText = "QTY.";
             this.quantity_ongoing.MinimumWidth = 70;
             this.quantity_ongoing.Name = "quantity_ongoing";
@@ -659,8 +630,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.item_rqst_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_rqst_ongoing.DataPropertyName = "item_rqst";
-            dataGridViewCellStyle17.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_rqst_ongoing.DefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle73.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_rqst_ongoing.DefaultCellStyle = dataGridViewCellStyle73;
             this.item_rqst_ongoing.HeaderText = "ITEM REQUEST #";
             this.item_rqst_ongoing.MinimumWidth = 90;
             this.item_rqst_ongoing.Name = "item_rqst_ongoing";
@@ -670,8 +641,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.due_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.due_ongoing.DataPropertyName = "due";
-            dataGridViewCellStyle18.BackColor = System.Drawing.Color.Gainsboro;
-            this.due_ongoing.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle74.BackColor = System.Drawing.Color.Gainsboro;
+            this.due_ongoing.DefaultCellStyle = dataGridViewCellStyle74;
             this.due_ongoing.HeaderText = "DUE";
             this.due_ongoing.MinimumWidth = 90;
             this.due_ongoing.Name = "due_ongoing";
@@ -681,8 +652,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.status_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.status_ongoing.DataPropertyName = "status";
-            dataGridViewCellStyle19.BackColor = System.Drawing.Color.Gainsboro;
-            this.status_ongoing.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle75.BackColor = System.Drawing.Color.Gainsboro;
+            this.status_ongoing.DefaultCellStyle = dataGridViewCellStyle75;
             this.status_ongoing.HeaderText = "STATUS";
             this.status_ongoing.MinimumWidth = 90;
             this.status_ongoing.Name = "status_ongoing";
@@ -753,14 +724,14 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_finished.AllowUserToDeleteRows = false;
             this.dgv_pl_finished.AllowUserToResizeColumns = false;
             this.dgv_pl_finished.AllowUserToResizeRows = false;
-            dataGridViewCellStyle20.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle20.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle20.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle20.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle20.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle20.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle20.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_pl_finished.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle76.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle76.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle76.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle76.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle76.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle76.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle76.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_pl_finished.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle76;
             this.dgv_pl_finished.ColumnHeadersHeight = 50;
             this.dgv_pl_finished.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_pl_finished.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -835,8 +806,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.date_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.date_finished.DataPropertyName = "date";
-            dataGridViewCellStyle21.BackColor = System.Drawing.Color.Gainsboro;
-            this.date_finished.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle77.BackColor = System.Drawing.Color.Gainsboro;
+            this.date_finished.DefaultCellStyle = dataGridViewCellStyle77;
             this.date_finished.HeaderText = "DATE";
             this.date_finished.MinimumWidth = 110;
             this.date_finished.Name = "date_finished";
@@ -847,8 +818,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.sales_order_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.sales_order_finished.DataPropertyName = "sales_order";
-            dataGridViewCellStyle22.BackColor = System.Drawing.Color.Gainsboro;
-            this.sales_order_finished.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle78.BackColor = System.Drawing.Color.Gainsboro;
+            this.sales_order_finished.DefaultCellStyle = dataGridViewCellStyle78;
             this.sales_order_finished.FillWeight = 478.6325F;
             this.sales_order_finished.HeaderText = "SALES ORDER";
             this.sales_order_finished.MinimumWidth = 110;
@@ -860,8 +831,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.general_name_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.general_name_finished.DataPropertyName = "general_name";
-            dataGridViewCellStyle23.BackColor = System.Drawing.Color.Gainsboro;
-            this.general_name_finished.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle79.BackColor = System.Drawing.Color.Gainsboro;
+            this.general_name_finished.DefaultCellStyle = dataGridViewCellStyle79;
             this.general_name_finished.FillWeight = 36.89459F;
             this.general_name_finished.HeaderText = "GENERAL NAME";
             this.general_name_finished.MinimumWidth = 80;
@@ -872,8 +843,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.item_desc_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_desc_finished.DataPropertyName = "item_desc";
-            dataGridViewCellStyle24.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_desc_finished.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle80.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_desc_finished.DefaultCellStyle = dataGridViewCellStyle80;
             this.item_desc_finished.FillWeight = 36.89459F;
             this.item_desc_finished.HeaderText = "ITEM DESCRIPTION";
             this.item_desc_finished.MinimumWidth = 110;
@@ -884,9 +855,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.quantity_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.quantity_finished.DataPropertyName = "quantity";
-            dataGridViewCellStyle25.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle25.BackColor = System.Drawing.Color.Gainsboro;
-            this.quantity_finished.DefaultCellStyle = dataGridViewCellStyle25;
+            dataGridViewCellStyle81.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle81.BackColor = System.Drawing.Color.Gainsboro;
+            this.quantity_finished.DefaultCellStyle = dataGridViewCellStyle81;
             this.quantity_finished.FillWeight = 36.89459F;
             this.quantity_finished.HeaderText = "QTY.";
             this.quantity_finished.MinimumWidth = 70;
@@ -898,8 +869,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.item_rqst_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_rqst_finished.DataPropertyName = "item_rqst";
-            dataGridViewCellStyle26.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_rqst_finished.DefaultCellStyle = dataGridViewCellStyle26;
+            dataGridViewCellStyle82.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_rqst_finished.DefaultCellStyle = dataGridViewCellStyle82;
             this.item_rqst_finished.FillWeight = 36.89459F;
             this.item_rqst_finished.HeaderText = "ITEM REQUEST #";
             this.item_rqst_finished.MinimumWidth = 90;
@@ -910,8 +881,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.serial_no_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.serial_no_finished.DataPropertyName = "serial_no";
-            dataGridViewCellStyle27.BackColor = System.Drawing.Color.Gainsboro;
-            this.serial_no_finished.DefaultCellStyle = dataGridViewCellStyle27;
+            dataGridViewCellStyle83.BackColor = System.Drawing.Color.Gainsboro;
+            this.serial_no_finished.DefaultCellStyle = dataGridViewCellStyle83;
             this.serial_no_finished.FillWeight = 36.89459F;
             this.serial_no_finished.HeaderText = "SERIAL NUMBER/S";
             this.serial_no_finished.MinimumWidth = 90;
@@ -930,8 +901,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             // 
             this.report_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.report_finished.DataPropertyName = "report";
-            dataGridViewCellStyle28.BackColor = System.Drawing.Color.Gainsboro;
-            this.report_finished.DefaultCellStyle = dataGridViewCellStyle28;
+            dataGridViewCellStyle84.BackColor = System.Drawing.Color.Gainsboro;
+            this.report_finished.DefaultCellStyle = dataGridViewCellStyle84;
             this.report_finished.FillWeight = 36.89459F;
             this.report_finished.HeaderText = "REPORT";
             this.report_finished.MinimumWidth = 90;
@@ -986,6 +957,35 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.type_finished.ReadOnly = true;
             this.type_finished.Visible = false;
             // 
+            // btn_edit
+            // 
+            this.btn_edit.Image = ((System.Drawing.Image)(resources.GetObject("btn_edit.Image")));
+            this.btn_edit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_edit.Name = "btn_edit";
+            this.btn_edit.Size = new System.Drawing.Size(47, 22);
+            this.btn_edit.Text = "Edit";
+            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
+            // 
+            // btn_save
+            // 
+            this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
+            this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_save.Name = "btn_save";
+            this.btn_save.Size = new System.Drawing.Size(51, 22);
+            this.btn_save.Text = "Save";
+            this.btn_save.Visible = false;
+            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
+            // 
+            // btn_cancel
+            // 
+            this.btn_cancel.Image = ((System.Drawing.Image)(resources.GetObject("btn_cancel.Image")));
+            this.btn_cancel.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_cancel.Name = "btn_cancel";
+            this.btn_cancel.Size = new System.Drawing.Size(63, 22);
+            this.btn_cancel.Text = "Cancel";
+            this.btn_cancel.Visible = false;
+            this.btn_cancel.Click += new System.EventHandler(this.btn_cancel_Click);
+            // 
             // JobOrderPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1020,9 +1020,6 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btn_edit;
-        private System.Windows.Forms.ToolStripButton btn_save;
-        private System.Windows.Forms.ToolStripButton btn_cancel;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.TextBox txt_search;
         private System.Windows.Forms.TabControl tab_container;
@@ -1092,5 +1089,8 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewTextBoxColumn a_engr_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn status_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn type_finished;
+        private System.Windows.Forms.ToolStripButton btn_edit;
+        private System.Windows.Forms.ToolStripButton btn_save;
+        private System.Windows.Forms.ToolStripButton btn_cancel;
     }
 }

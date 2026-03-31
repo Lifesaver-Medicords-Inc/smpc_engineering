@@ -24,7 +24,8 @@ namespace smpc_engineering_app.Pages
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            _bomId = bomId;        }
+            _bomId = bomId;
+        }
 
         private async void MaterialsForm_Load(object sender, EventArgs e)
         {

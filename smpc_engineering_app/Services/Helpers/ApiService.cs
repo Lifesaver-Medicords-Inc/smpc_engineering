@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 namespace smpc_engineering_app.Services.Helpers
-{  
+{
 
     public static class ApiService<T> where T : class
     {
@@ -19,7 +19,7 @@ namespace smpc_engineering_app.Services.Helpers
 
         static private async Task<T> SendRequestAsync(string url, HttpMethod method, string body = null)
         {
-            
+
             using (HttpClient client = new HttpClient())
             {
                 try

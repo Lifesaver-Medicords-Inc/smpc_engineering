@@ -96,9 +96,9 @@ namespace smpc_engineering_app
         {
             try
             {
-                tabCount++; 
+                tabCount++;
 
-                TabPage newTab = new TabPage(tabTitle); 
+                TabPage newTab = new TabPage(tabTitle);
 
                 //control.Width = this.Width - 235; 
                 container.Height = this.Height * 2;
@@ -109,7 +109,7 @@ namespace smpc_engineering_app
                 tabContainer.TabPages.Add(newTab);
                 tabContainer.SelectTab(newTab);
             }
-            catch (Exception  )
+            catch (Exception)
             {
 
                 throw;
@@ -125,13 +125,13 @@ namespace smpc_engineering_app
             {
 
                 throw;
-            }  
+            }
         }
 
         private void tabContainer_DrawItem(object sender, DrawItemEventArgs e)
         {
             var tabPage = tabContainer.TabPages[e.Index];
-            var tabRect = tabContainer.GetTabRect(e.Index); 
+            var tabRect = tabContainer.GetTabRect(e.Index);
             bool isSelected = (e.Index == tabContainer.SelectedIndex);
 
             // Draw the tab title

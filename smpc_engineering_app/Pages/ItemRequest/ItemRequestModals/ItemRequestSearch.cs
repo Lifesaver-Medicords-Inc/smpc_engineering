@@ -68,7 +68,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
                 Helpers.Loading.ShowLoading(dgv_ir_search, "Fetching data...");
                 await LoadItemRequests();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
             }

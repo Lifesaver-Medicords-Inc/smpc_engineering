@@ -14,7 +14,7 @@ namespace smpc_engineering_app.Shared
         public const string CHART_OF_ACCOUNT_SETUP = "/setup/chart_of_account";
         public const string CHART_OF_ACCOUNT_CLASSIFCATION_SETUP = "/setup/chart_of_account_classification/";
         public const string GENERAL_LEDGER_MAPPER_SETUP = "/setup/general_ledger";
-        public const string BANK_SETUP = "/setup/bank";   
+        public const string BANK_SETUP = "/setup/bank";
         public const string BOOK_SETUP = "/setup/book";
         public const string CURRENCY_SETUP = "/setup/currency";
 

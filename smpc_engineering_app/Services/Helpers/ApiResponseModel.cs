@@ -8,7 +8,7 @@ namespace smpc_engineering_app.Services.Helpers
 {
     public class ApiResponseModel<T>
     {
-        public bool success { get; set; } 
+        public bool success { get; set; }
         public T data { get; set; }
         public PaginationModel pagination { get; set; } = null;
     }

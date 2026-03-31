@@ -77,8 +77,8 @@ namespace smpc_engineering_app.Pages.PickActivity
         private void SetEditableColumns(bool isEdit)
         {
             var editableColumns = !_isWarehouseUser
-                ? new[] { "pick_qty"}
-                : new[] { "actual_qty"};
+                ? new[] { "pick_qty" }
+                : new[] { "actual_qty" };
 
             foreach (var colName in editableColumns)
             {
@@ -342,7 +342,7 @@ namespace smpc_engineering_app.Pages.PickActivity
                 return;
             }
 
-            string[] columnsToValidate = new[] { "pick_qty"};
+            string[] columnsToValidate = new[] { "pick_qty" };
 
             if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
                 return;
@@ -398,9 +398,9 @@ namespace smpc_engineering_app.Pages.PickActivity
                 if (pickQty > leftQty)
                 {
                     string itemDesc = row.Cells["item_description"]?.Value?.ToString() ?? "Unknown Item";
-                     Helpers.ShowDialogMessage("error",
-                        $"Requested quantity for '{itemDesc}' cannot exceed the ordered quantity ({leftQty}).");
-                     return;
+                    Helpers.ShowDialogMessage("error",
+                       $"Requested quantity for '{itemDesc}' cannot exceed the ordered quantity ({leftQty}).");
+                    return;
                 }
 
                 // If actual_qty has value AND > 0, bin_location is required
@@ -635,7 +635,7 @@ namespace smpc_engineering_app.Pages.PickActivity
 
         private void dgv_main_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
         {
-            Helpers.HandleNumericColumns(dgv_main, e, "pick_qty","actual_qty");
+            Helpers.HandleNumericColumns(dgv_main, e, "pick_qty", "actual_qty");
         }
 
         private void dgv_main_CellClick(object sender, DataGridViewCellEventArgs e)

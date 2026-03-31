@@ -152,7 +152,7 @@ namespace smpc_engineering_app.Pages.Components
                     dgv_pick_qty.DataSource = finalFilteredRows.CopyToDataTable();
 
                     //Apply column visibility and grouping rules
-                    ApplyColumnVisibilityAndGrouping();              
+                    ApplyColumnVisibilityAndGrouping();
                 }
                 else
                 {

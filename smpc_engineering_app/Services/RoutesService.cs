@@ -39,7 +39,7 @@ namespace smpc_engineering_app.Services
 
         public String GetTitle()
         {
-                return _pages.First(v => v.Key == this._selectedRoute).Key;
+            return _pages.First(v => v.Key == this._selectedRoute).Key;
         }
     }
 }

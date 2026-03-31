@@ -301,7 +301,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
                 Helpers.ShowDialogMessage("success", "Receiving Report deleted successfully.");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Helpers.ShowDialogMessage("error", $"Failed to delete: {ex.Message}");
             }
@@ -609,9 +609,9 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 return;
 
             // Convert receiving report list to DataTable using helper
-             _irTable = Helpers.ToDataTable(_irdata.item_request);
+            _irTable = Helpers.ToDataTable(_irdata.item_request);
             _irltable = Helpers.ToDataTable(_irdata.item_request_location);
-            
+
             var current = _itemRequests[_currentIRIndex];
 
             //Clear and rebuild _irltable based on current record only

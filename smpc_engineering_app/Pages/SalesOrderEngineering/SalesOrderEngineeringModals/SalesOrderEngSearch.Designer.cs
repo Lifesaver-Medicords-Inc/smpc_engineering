@@ -39,7 +39,6 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_so_search = new System.Windows.Forms.DataGridView();
-            this.txt_search = new System.Windows.Forms.TextBox();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.customer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -49,6 +48,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.delivery_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.delivery_to = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bill_to = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txt_search = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_so_search)).BeginInit();
             this.SuspendLayout();
             // 
@@ -80,13 +80,6 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.dgv_so_search.Size = new System.Drawing.Size(802, 389);
             this.dgv_so_search.TabIndex = 10;
             this.dgv_so_search.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_so_search_CellClick);
-            // 
-            // txt_search
-            // 
-            this.txt_search.Location = new System.Drawing.Point(350, 215);
-            this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(100, 20);
-            this.txt_search.TabIndex = 11;
             // 
             // id
             // 
@@ -177,6 +170,13 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.bill_to.HeaderText = "BILL TO";
             this.bill_to.Name = "bill_to";
             this.bill_to.ReadOnly = true;
+            // 
+            // txt_search
+            // 
+            this.txt_search.Location = new System.Drawing.Point(350, 215);
+            this.txt_search.Name = "txt_search";
+            this.txt_search.Size = new System.Drawing.Size(100, 20);
+            this.txt_search.TabIndex = 11;
             // 
             // SalesOrderEngSearch
             // 
