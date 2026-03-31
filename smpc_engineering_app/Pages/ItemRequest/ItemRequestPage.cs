@@ -17,7 +17,7 @@ using smpc_engineering_app.Services.Setup;
 
 namespace smpc_engineering_app.Pages.ItemRequest
 {
-    public partial class ItemRequest : UserControl
+    public partial class ItemRequestPage : UserControl
     {
         //Dictionaries for the column grouping of datagridviews
         Dictionary<string, string[]> columnGroupsMain = new Dictionary<string, string[]>()
@@ -45,8 +45,9 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private List<string> originalReqDeptItems;
         private bool _isFilteredByRefDoc = false;
         private string _userName;
+        public string SelectedIRId { get; private set; } = null;
 
-        public ItemRequest()
+        public ItemRequestPage()
         {
             InitializeComponent();
 
@@ -499,6 +500,30 @@ namespace smpc_engineering_app.Pages.ItemRequest
             finally
             {
                 Helpers.Loading.HideLoading(dgv_main);
+            }
+        }
+
+        public async void SetItemRequest(string irId)
+        {
+            SelectedIRId = irId;
+
+            // Ensure data is loaded
+            if (_itemRequests == null || _itemRequests.Count == 0)
+                await LoadItemRequests();
+
+            // Find the matching record by ir_id
+            if (int.TryParse(irId, out int id))
+            {
+                int index = _itemRequests.FindIndex(r => r.id == id);
+                if (index >= 0)
+                {
+                    _currentIRIndex = index;
+                    ShowCurrentRecord();
+                }
+                else
+                {
+                    Helpers.ShowDialogMessage("error", "Item Request record not found.");
+                }
             }
         }
 

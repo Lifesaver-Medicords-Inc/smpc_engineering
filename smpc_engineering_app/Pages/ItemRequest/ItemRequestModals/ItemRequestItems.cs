@@ -64,7 +64,11 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
                 Helpers.Loading.ShowLoading(dgv_all_item, "Fetching data...");
                 await LoadItemLists();
             }
-            catch(Exception ex)
+            catch (NullReferenceException)
+            {
+                Helpers.ShowDialogMessage("error", "No Items found.");
+            }
+            catch (Exception ex)
             {
                 Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
             }

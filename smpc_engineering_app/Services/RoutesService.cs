@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using smpc_engineering_app.Pages.PickActivity;
+using smpc_engineering_app.Pages.JobOrder;
+using smpc_engineering_app.Pages.SalesOrderEngineering;
 
 namespace smpc_engineering_app.Services
 {
@@ -17,11 +19,11 @@ namespace smpc_engineering_app.Services
         {
             //========================================================================
             // TRANSACTIONS   
-            {"Job Orders", new JobOrder() },
-            { "Sales Order", new SalesOrder() },
             { "Sales Quotation List", new SalesQuotationList() },
-            { "Item Request", new ItemRequest() },
-            { "Pick Activity", new PickActivity() },
+            { "Item Request", new ItemRequestPage() },
+            { "Pick Activity", new PickActivityPage() },
+            { "Job Order", new JobOrderPage() },
+            { "Sales Order", new SalesOrderEngPage() },
         };
 
         private string _selectedRoute;

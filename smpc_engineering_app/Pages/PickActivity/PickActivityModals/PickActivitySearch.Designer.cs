@@ -142,6 +142,8 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.dgv_pa_search);
             this.Controls.Add(this.txt_search);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "PickActivitySearch";
             this.Text = "PickActivitySearch";
             this.Load += new System.EventHandler(this.PickActivitySearch_Load);

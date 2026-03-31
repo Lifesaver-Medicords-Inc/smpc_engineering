@@ -21,6 +21,58 @@ namespace smpc_engineering_app.Services.Helpers
 {
     public static class Helpers
     {
+        public static class DataGridViewDocumentFormatter
+        {
+            private static readonly Dictionary<DataGridView, Tuple<string, string, int>> _docConfigs
+                = new Dictionary<DataGridView, Tuple<string, string, int>>();
+
+            public static void DataGridViewDocumentFormat(DataGridView dgv, string columnName, string prefix, int digits = 8)
+            {
+                if (dgv == null) return;
+
+                _docConfigs[dgv] = new Tuple<string, string, int>(columnName, prefix, digits);
+
+                dgv.DataBindingComplete -= Dgv_DataBindingComplete;
+                dgv.DataBindingComplete += Dgv_DataBindingComplete;
+
+                dgv.CellFormatting -= Dgv_CellFormatting;
+                dgv.CellFormatting += Dgv_CellFormatting;
+            }
+
+            private static void Dgv_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+            {
+                var dgv = sender as DataGridView;
+                if (dgv == null || !_docConfigs.ContainsKey(dgv)) return;
+
+                var tag = _docConfigs[dgv];
+
+                if (!dgv.Columns.Contains(tag.Item1)) return;
+
+                dgv.Columns[tag.Item1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            }
+
+            private static void Dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+            {
+                var dgv = sender as DataGridView;
+                if (dgv == null || !_docConfigs.ContainsKey(dgv)) return;
+
+                var tag = _docConfigs[dgv];
+
+                string columnName = tag.Item1;
+                string prefix = tag.Item2;
+                int digits = tag.Item3;
+
+                if (dgv.Columns[e.ColumnIndex].Name != columnName) return;
+                if (e.Value == null) return;
+
+                if (int.TryParse(e.Value.ToString(), out int number))
+                {
+                    e.Value = prefix + number.ToString($"D{digits}");
+                    e.FormattingApplied = true;
+                }
+            }
+        }
+
         /// <summary>
         /// Restricts specified DataGridView columns to numeric input only.
         /// </summary>
@@ -70,7 +122,7 @@ namespace smpc_engineering_app.Services.Helpers
         public static class DatagridviewMapper
         {
             // Model mapper for DataGridView / DataTable
-            public static List<T> BuildModelsFromData<T>(object dataSource) where T : new()
+            public static List<T> BuildModelsFromData<T>(object dataSource, HashSet<int> editedRowIndices = null) where T : new()
             {
                 var models = new List<T>();
                 var modelType = typeof(T);
@@ -84,37 +136,33 @@ namespace smpc_engineering_app.Services.Helpers
 
                     foreach (DataGridViewRow row in dgv.Rows)
                     {
-                        if (row.IsNewRow)
+                        if (row.IsNewRow) continue;
+
+                        // *** CHANGED: If editedRowIndices is provided, only process those rows ***
+                        if (editedRowIndices != null && !editedRowIndices.Contains(row.Index))
                             continue;
 
-                        // 🔹 Check if row has ANY data in mapped columns
+                        // Check if row has ANY data in mapped columns
                         bool rowHasData = false;
-
                         foreach (var prop in properties)
                         {
-                            if (!dgv.Columns.Contains(prop.Name))
-                                continue;
+                            if (!dgv.Columns.Contains(prop.Name)) continue;
 
                             var cellValue = row.Cells[prop.Name].Value;
-
-                            if (cellValue != null &&
-                                !string.IsNullOrWhiteSpace(cellValue.ToString()))
+                            if (cellValue != null && !string.IsNullOrWhiteSpace(cellValue.ToString()))
                             {
                                 rowHasData = true;
                                 break;
                             }
                         }
 
-                        // ⛔ Skip completely empty rows
-                        if (!rowHasData)
-                            continue;
+                        // Skip completely empty rows
+                        if (!rowHasData) continue;
 
                         var model = new T();
-
                         foreach (var prop in properties)
                         {
-                            if (!dgv.Columns.Contains(prop.Name))
-                                continue;
+                            if (!dgv.Columns.Contains(prop.Name)) continue;
 
                             var value = row.Cells[prop.Name].Value;
                             SetModelPropertyValue(model, prop, value);
@@ -135,11 +183,9 @@ namespace smpc_engineering_app.Services.Helpers
                     foreach (DataRow dr in dt.Rows)
                     {
                         var model = new T();
-
                         foreach (var prop in properties)
                         {
-                            if (!dt.Columns.Contains(prop.Name))
-                                continue;
+                            if (!dt.Columns.Contains(prop.Name)) continue;
 
                             var value = dr[prop.Name];
                             SetModelPropertyValue(model, prop, value);
@@ -155,13 +201,9 @@ namespace smpc_engineering_app.Services.Helpers
             }
 
             // Helper method for safe conversion and assignment
-            private static void SetModelPropertyValue<T>(
-                T model,
-                PropertyInfo prop,
-                object value)
+            private static void SetModelPropertyValue<T>(T model, PropertyInfo prop, object value)
             {
-                if (value == null || value == DBNull.Value)
-                    return;
+                if (value == null || value == DBNull.Value) return;
 
                 try
                 {
@@ -169,7 +211,6 @@ namespace smpc_engineering_app.Services.Helpers
                         value,
                         Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType
                     );
-
                     prop.SetValue(model, convertedValue);
                 }
                 catch
@@ -185,12 +226,10 @@ namespace smpc_engineering_app.Services.Helpers
             var model = new T();
             var modelType = typeof(T);
 
-            // Loop through each property of the model
             foreach (var prop in modelType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 Control control = null;
 
-                // Search through all panels for a matching control
                 foreach (var panel in panels)
                 {
                     control = panel.Controls
@@ -210,22 +249,82 @@ namespace smpc_engineering_app.Services.Helpers
                 object value = null;
 
                 if (control is TextBox textBox)
-                    value = textBox.Text;
+                {
+                    string tag = textBox.Tag?.ToString() ?? "";
+                    bool isMoney = tag.IndexOf("MONEY", StringComparison.OrdinalIgnoreCase) >= 0;
+                    bool isDocument = tag.IndexOf("DOCUMENT", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if (isMoney)
+                    {
+                        // MONEY: try exact stored value first
+                        if (!string.IsNullOrWhiteSpace(textBox.AccessibleDescription) &&
+                            decimal.TryParse(textBox.AccessibleDescription, out decimal exactVal))
+                        {
+                            value = exactVal;
+                        }
+                        else
+                        {
+                            // fallback parse formatted currency
+                            if (decimal.TryParse(
+                                textBox.Text,
+                                NumberStyles.Currency,
+                                CultureInfo.GetCultureInfo("en-PH"),
+                                out decimal parsedDecimal))
+                            {
+                                value = parsedDecimal;
+                            }
+                            else
+                            {
+                                value = 0m;
+                            }
+                        }
+                    }
+                    else if (isDocument)
+                    {
+                        // DOCUMENT: get numeric value from AccessibleDescription
+                        if (!string.IsNullOrWhiteSpace(textBox.AccessibleDescription) &&
+                            int.TryParse(textBox.AccessibleDescription, out int docVal))
+                        {
+                            value = docVal;
+                        }
+                        else
+                        {
+                            // fallback: remove prefix and parse numeric part
+                            string numericPart = new string(textBox.Text.Where(char.IsDigit).ToArray());
+                            if (int.TryParse(numericPart, out int fallbackVal))
+                                value = fallbackVal;
+                            else
+                                value = 0;
+                        }
+                    }
+                    else
+                    {
+                        value = textBox.Text;
+                    }
+                }
                 else if (control is ComboBox comboBox)
-                    value = comboBox.Text;
+                {
+                    if (comboBox.Tag?.ToString() == "DYNAMIC")
+                        value = comboBox.SelectedValue;
+                    else
+                        value = comboBox.Text;
+                }
                 else if (control is DateTimePicker dateTimePicker)
+                {
                     value = dateTimePicker.Value.ToString("MM/dd/yyyy");
+                }
 
                 if (value != null && prop.CanWrite)
                 {
                     try
                     {
-                        object convertedValue = Convert.ChangeType(value, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+                        Type targetType = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+                        object convertedValue = Convert.ChangeType(value, targetType);
                         prop.SetValue(model, convertedValue);
                     }
                     catch
                     {
-                        // Ignore conversion errors or handle as needed
+                        // Optional: log error
                     }
                 }
             }
@@ -1396,26 +1495,46 @@ namespace smpc_engineering_app.Services.Helpers
 
             foreach (Control control in pnl.Controls)
             {
-                // Handle TextBox
+                string tag = control.Tag as string;
+                if (string.IsNullOrEmpty(tag))
+                    continue;
+
+                bool isRequired = tag.IndexOf("REQUIRED", StringComparison.OrdinalIgnoreCase) >= 0;
+                bool isMoney = tag.IndexOf("MONEY", StringComparison.OrdinalIgnoreCase) >= 0;
+
                 if (control is TextBox textBox)
                 {
-                    if (string.Equals(textBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
-                        && string.IsNullOrEmpty(textBox.Text))
-                    {
-                        FlashRed(control);
-                        isError = true;
-                    }
-                    else
-                    {
-                        control.BackColor = SystemColors.Window;
-                    }
-                }
+                    string value = textBox.Text.Trim();
 
-                // Handle ComboBox
+                    // REQUIRED validation
+                    if (isRequired && string.IsNullOrEmpty(value))
+                    {
+                        FlashRed(textBox);
+                        isError = true;
+                        continue;
+                    }
+
+                    // MONEY validation
+                    if (isMoney && !string.IsNullOrEmpty(value))
+                    {
+                        if (!decimal.TryParse(
+                                value,
+                                NumberStyles.Currency,
+                                CultureInfo.GetCultureInfo("en-PH"),
+                                out decimal moneyValue)
+                            || moneyValue < 0)
+                        {
+                            FlashRed(textBox);
+                            isError = true;
+                            continue;
+                        }
+                    }
+
+                    textBox.BackColor = SystemColors.Window;
+                }
                 else if (control is ComboBox comboBox)
                 {
-                    if (string.Equals(comboBox.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase)
-                        && comboBox.SelectedIndex < 0)
+                    if (isRequired && comboBox.SelectedIndex < 0)
                     {
                         FlashRed(comboBox);
                         isError = true;
@@ -1425,13 +1544,10 @@ namespace smpc_engineering_app.Services.Helpers
                         comboBox.BackColor = SystemColors.Window;
                     }
                 }
-
-                // Handle DateTimePicker
                 else if (control is DateTimePicker dtp)
                 {
-                    if (string.Equals(dtp.Tag as string, "REQUIRED", StringComparison.OrdinalIgnoreCase))
+                    if (isRequired)
                     {
-                        // You can customize this check as needed
                         if (dtp.Value == dtp.MinDate || dtp.Value == default(DateTime))
                         {
                             FlashRed(dtp);
@@ -1441,6 +1557,99 @@ namespace smpc_engineering_app.Services.Helpers
                         {
                             dtp.CalendarMonthBackground = SystemColors.Window;
                             dtp.BackColor = SystemColors.Window;
+                        }
+                    }
+                }
+            }
+
+            return isError;
+        }
+
+        public static bool ValidateControlsValues(params Panel[] panels)
+        {
+            bool isError = false;
+
+            foreach (var pnl in panels)
+            {
+                foreach (Control control in pnl.Controls)
+                {
+                    string tag = control.Tag as string;
+                    if (string.IsNullOrEmpty(tag))
+                        continue;
+
+                    bool isRequired = tag.IndexOf("REQUIRED", StringComparison.OrdinalIgnoreCase) >= 0;
+                    bool isMoney = tag.IndexOf("MONEY", StringComparison.OrdinalIgnoreCase) >= 0;
+
+                    if (control is TextBox textBox)
+                    {
+                        string value = textBox.Text.Trim();
+
+                        // REQUIRED validation
+                        if (isRequired && string.IsNullOrEmpty(value))
+                        {
+                            FlashRed(textBox);
+                            isError = true;
+                            continue;
+                        }
+
+                        // MONEY validation
+                        if (isMoney && !string.IsNullOrEmpty(value))
+                        {
+                            decimal moneyValue;
+
+                            // Try exact stored value first (if you use AccessibleDescription)
+                            if (!string.IsNullOrWhiteSpace(textBox.AccessibleDescription) &&
+                                decimal.TryParse(textBox.AccessibleDescription, out moneyValue))
+                            {
+                                // valid
+                            }
+                            else if (!decimal.TryParse(
+                                        value,
+                                        NumberStyles.Currency,
+                                        CultureInfo.GetCultureInfo("en-PH"),
+                                        out moneyValue))
+                            {
+                                FlashRed(textBox);
+                                isError = true;
+                                continue;
+                            }
+
+                            if (moneyValue < 0)
+                            {
+                                FlashRed(textBox);
+                                isError = true;
+                                continue;
+                            }
+                        }
+
+                        textBox.BackColor = SystemColors.Window;
+                    }
+                    else if (control is ComboBox comboBox)
+                    {
+                        if (isRequired && comboBox.SelectedIndex < 0)
+                        {
+                            FlashRed(comboBox);
+                            isError = true;
+                        }
+                        else
+                        {
+                            comboBox.BackColor = SystemColors.Window;
+                        }
+                    }
+                    else if (control is DateTimePicker dtp)
+                    {
+                        if (isRequired)
+                        {
+                            if (dtp.Value == dtp.MinDate || dtp.Value == default(DateTime))
+                            {
+                                FlashRed(dtp);
+                                isError = true;
+                            }
+                            else
+                            {
+                                dtp.CalendarMonthBackground = SystemColors.Window;
+                                dtp.BackColor = SystemColors.Window;
+                            }
                         }
                     }
                 }
@@ -1480,18 +1689,19 @@ namespace smpc_engineering_app.Services.Helpers
                             string column_name = col_name.ToString();
                             Console.WriteLine(column_name);
 
-                            // Check if the control is a TextBox 
+                            // Check if the control is a TextBox
                             if (control is TextBox textBox && textBox.Name.Replace("txt_", "") == column_name)
                             {
                                 string key = textBox.Name.Replace("txt_", "");
                                 object rawValue = dt.Rows[selectedIndex][column_name];
 
-                                if (textBox.Tag?.ToString() == "MONEY")
+                                // MONEY FORMAT
+                                if (textBox.Tag?.ToString().Contains("MONEY") == true)
                                 {
                                     if (decimal.TryParse(rawValue.ToString(), out decimal moneyVal))
                                     {
                                         textBox.Text = moneyVal.ToString("C2", System.Globalization.CultureInfo.GetCultureInfo("en-PH"));
-                                        textBox.AccessibleDescription = moneyVal.ToString(); // Store full precise value
+                                        textBox.AccessibleDescription = moneyVal.ToString(); // Store precise value
                                     }
                                     else
                                     {
@@ -1499,95 +1709,103 @@ namespace smpc_engineering_app.Services.Helpers
                                         textBox.AccessibleDescription = "0";
                                     }
                                 }
+
+                                // DOCUMENT FORMAT
+                                else if (textBox.Tag?.ToString().StartsWith("DOCUMENT") == true)
+                                {
+                                    string tag = textBox.Tag.ToString();   // e.g. "DOCUMENTAV REQUIRED"
+
+                                    // Remove "DOCUMENT" and split by space, take first part
+                                    string prefix = tag.Substring("DOCUMENT".Length).Split(' ')[0]; // "AV"
+
+                                    if (int.TryParse(rawValue?.ToString(), out int docNumber))
+                                    {
+                                        textBox.Text = prefix + docNumber.ToString("D8");
+                                        textBox.AccessibleDescription = docNumber.ToString(); // Store real value
+                                    }
+                                    else
+                                    {
+                                        textBox.Text = prefix + "00000000";
+                                        textBox.AccessibleDescription = "0"; // fallback real value
+                                    }
+                                }
+
+                                // MULTI TAG
                                 else if (textBox.Tag is List<int> ids && ids.Count > 0)
                                 {
-                                    // If you're still handling MULTI-tagged list items here (you may want to adjust this based on how you store MULTI values)
                                     textBox.Text = string.Join(", ", ids);
                                 }
+
+                                // DEFAULT
                                 else
                                 {
-                                    //to hand outofbound rows
                                     if (selectedIndex < 0 || selectedIndex >= dt.Rows.Count)
                                     {
                                         Console.WriteLine("IndexOutOfRangeException selectedIndex");
                                         return;
                                     }
-                                    textBox.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
-                                    //textBox.Text = rawValue?.ToString() ?? "";
 
+                                    textBox.Text = rawValue?.ToString() ?? "";
                                 }
                             }
 
-                            // Check if the control is a Combobox
-                            if (control is ComboBox comboBox)
+                            // Check if the control is a Combobox
+                            if (control is ComboBox comboBox)
                             {
-                                Console.WriteLine(comboBox.Name);
+                                Console.WriteLine($"This is a  combobox: {comboBox.Name} ");
                                 string key = comboBox.Name.Replace("cmb_", "") + "_id";
-                                string columnValue = dt.Rows[selectedIndex][column_name]?.ToString() ?? "";
 
                                 if (comboBox.Tag == "DYNAMIC")
                                 {
-                                    comboBox.SelectedValue = columnValue;
+                                    Console.WriteLine("DYNAMICS:", comboBox.Name);
+                                    comboBox.SelectedValue = (string)dt.Rows[selectedIndex][key].ToString();
                                 }
-                                else if (comboBox.Tag == "MULTIVALUE")
+                                // Check multiple values
+                                else if (comboBox.Tag == "MULTIVALUE")
                                 {
-                                    string rawValue = columnValue;
+                                    string rawValue = dt.Rows[selectedIndex][column_name].ToString();
                                     var multiValues = rawValue.Split(',')
-                                                         .Select(v => v.Trim())
-                                                         .Where(v => !string.IsNullOrEmpty(v))
-                                                         .ToList();
+                                    .Select(v => v.Trim())
+                                    .Where(v => !string.IsNullOrEmpty(v))
+                                    .ToList();
 
-                                    // Set the first value as display text
-                                    comboBox.Text = multiValues.FirstOrDefault() ?? string.Empty;
+                                    // Set the first value as the display text (optional behavior)
+                                    comboBox.Text = multiValues.FirstOrDefault() ?? string.Empty;
 
-                                    // Add missing values into ComboBox items
-                                    foreach (var val in multiValues)
+                                    // Populate the ComboBox with all values
+                                    //comboBox.Items.Clear();
+                                    foreach (var val in multiValues)
                                     {
-                                        if (!comboBox.Items.Contains(val))
-                                            comboBox.Items.Add(val);
+                                        comboBox.Items.Add(val);
                                     }
 
-                                    if (multiValues.Count > 0)
-                                        comboBox.SelectedIndex = comboBox.FindStringExact(multiValues[0]);
+                                    // Optionally set the first item as selected (you could change this logic)
+                                    if (multiValues.Count > 0)
+                                    {
+                                        comboBox.SelectedIndex = 0;  // Select the first item (if needed)
+                                    }
                                 }
                                 else
                                 {
-                                    string valueToSet = columnValue;
-
-                                    // if the ComboBox does not contain the value, add it temporarily
-                                    if (!comboBox.Items.Contains(valueToSet) && !string.IsNullOrWhiteSpace(valueToSet))
-                                    {
-                                        comboBox.Items.Add(valueToSet);
-                                    }
-
-                                    // Now safely assign the text
-                                    comboBox.Text = valueToSet;
-
-                                    // Force the display even if DropDownStyle = DropDownList
-                                    comboBox.SelectedIndex = comboBox.FindStringExact(valueToSet);
-                                    if (comboBox.SelectedIndex == -1)
-                                    {
-                                        // Simulate display value for DropDownList
-                                        comboBox.SelectedIndex = comboBox.Items.IndexOf(valueToSet);
-                                    }
+                                    string keys = comboBox.Name.Replace("cmb_", "");
+                                    comboBox.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
                                 }
-                            }
-                            // Check if the control is a Checkbox
-                            if (control is CheckBox checkbox)
-                            {
 
-                                //to hand outofbound rows
-                                if (selectedIndex < 0 || selectedIndex >= dt.Rows.Count)
+                            }
+                            // Check if the control is a Checkbox
+                            if (control is CheckBox checkbox)
+                            {
+                                //to hand outofbound rows
+                                if (selectedIndex < 0 || selectedIndex >= dt.Rows.Count)
                                 {
-                                    Console.WriteLine("IndexOutOfRangeException selectedIndex");
+                                    Console.WriteLine("IndexOutOfRangeException  ");
                                     return;
                                 }
                                 string key = checkbox.Name.Replace("chk_", "");
                                 checkbox.Checked = (string)dt.Rows[selectedIndex][column_name].ToString() == "1" ||
-                                    (string)dt.Rows[selectedIndex][column_name].ToString().ToLower() == "true"
-                                    ? true : false;
+                                (string)dt.Rows[selectedIndex][column_name].ToString().ToLower() == "true"
+                                ? true : false;
                             }
-
                             // Check if the control is a DATETIME PICKER
                             if (control is DateTimePicker dateTimePicker)
                             {
@@ -1599,12 +1817,22 @@ namespace smpc_engineering_app.Services.Helpers
                                 if (rawValue != DBNull.Value &&
                                     DateTime.TryParse(rawValue.ToString(), out DateTime parsedDate))
                                 {
+                                    dateTimePicker.Format = DateTimePickerFormat.Custom;
+                                    dateTimePicker.CustomFormat = "MM/dd/yyyy";   // your format
                                     dateTimePicker.Value = parsedDate;
                                 }
                                 else
                                 {
-                                    dateTimePicker.Value = DateTime.Now; // or MinDate if you prefer
+                                    // Make it appear empty
+                                    dateTimePicker.Format = DateTimePickerFormat.Custom;
+                                    dateTimePicker.CustomFormat = " ";
                                 }
+                            }
+                            // Check if the control is a NUMERIC
+                            if (control is NumericUpDown numericUpDown)
+                            {
+                                string key = numericUpDown.Name.Replace("txt_", "");
+                                numericUpDown.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
                             }
                         }
                     }
@@ -1740,6 +1968,7 @@ namespace smpc_engineering_app.Services.Helpers
 
             return filteredRows.Any() ? filteredRows.CopyToDataTable() : dataTable.Clone();
         }
+
         public static void GetBPIModalData(TextBox textBox, DataView dataView, int columnIndex)
         {
             if (dataView != null && dataView.Count > 0)

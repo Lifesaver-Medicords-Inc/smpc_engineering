@@ -15,7 +15,11 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+<<<<<<< HEAD
     <PublishUrl>D:\LEM\Publish\Engineering\</PublishUrl>
+=======
+    <PublishUrl>D:\EngineeringModule\</PublishUrl>
+>>>>>>> c59df04 (bugfix(Job Order): fix the null exception bugs in job order)
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
     <UpdateEnabled>false</UpdateEnabled>
@@ -57,7 +61,11 @@
     <ApplicationIcon>download.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
+<<<<<<< HEAD
     <ManifestCertificateThumbprint>CFD94EE53DB1CE2FE98FCBB53F23649D6BDDE941</ManifestCertificateThumbprint>
+=======
+    <ManifestCertificateThumbprint>C22F82F15F8518C4BBF553DB31569D5EC70CD270</ManifestCertificateThumbprint>
+>>>>>>> c59df04 (bugfix(Job Order): fix the null exception bugs in job order)
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>smpc_engineering_app_TemporaryKey.pfx</ManifestKeyFile>
@@ -66,7 +74,11 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
+<<<<<<< HEAD
     <SignManifests>false</SignManifests>
+=======
+    <SignManifests>true</SignManifests>
+>>>>>>> c59df04 (bugfix(Job Order): fix the null exception bugs in job order)
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -128,13 +140,14 @@
     <Compile Include="Models\BinLocationModel.cs" />
     <Compile Include="Models\ComponentModel.cs" />
     <Compile Include="Models\CurrentUserModel.cs" />
+    <Compile Include="Models\EngineerUserModel.cs" />
     <Compile Include="Models\ItemListModel.cs" />
     <Compile Include="Models\ItemRequestModel.cs" />
-    <Compile Include="Models\JobOrderRedboxListModel.cs" />
+    <Compile Include="Models\JobOrderModel.cs" />
+    <Compile Include="Models\ProductionListRedboxListModel.cs" />
     <Compile Include="Models\PickActivityModel.cs" />
     <Compile Include="Models\QuotationRedboxListModel.cs" />
     <Compile Include="Models\EngrUsersModel.cs" />
-    <Compile Include="Models\JobOrderModel.cs" />
     <Compile Include="Models\SalesOrderViewEngModel.cs" />
     <Compile Include="Models\SalesOrderViewModel.cs" />
     <Compile Include="Models\UserListModel.cs" />
@@ -169,11 +182,11 @@
     <Compile Include="Pages\Components\MaterialsForm.Designer.cs">
       <DependentUpon>MaterialsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ItemRequest\ItemRequest.cs">
+    <Compile Include="Pages\ItemRequest\ItemRequestPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Pages\ItemRequest\ItemRequest.Designer.cs">
-      <DependentUpon>ItemRequest.cs</DependentUpon>
+    <Compile Include="Pages\ItemRequest\ItemRequestPage.Designer.cs">
+      <DependentUpon>ItemRequestPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.cs">
       <SubType>Form</SubType>
@@ -187,11 +200,17 @@
     <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestSearch.Designer.cs">
       <DependentUpon>ItemRequestSearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pages\PickActivity\PickActivity.cs">
+    <Compile Include="Pages\JobOrder\JobOrderPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Pages\PickActivity\PickActivity.Designer.cs">
-      <DependentUpon>PickActivity.cs</DependentUpon>
+    <Compile Include="Pages\JobOrder\JobOrderPage.Designer.cs">
+      <DependentUpon>JobOrderPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PickActivity\PickActivityPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\PickActivity\PickActivityPage.Designer.cs">
+      <DependentUpon>PickActivityPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.cs">
       <SubType>Form</SubType>
@@ -199,17 +218,17 @@
     <Compile Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.Designer.cs">
       <DependentUpon>PickActivitySearch.cs</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Transactions\SalesOrder.cs">
+    <Compile Include="Pages\SalesOrderEngineering\SalesOrderEngineeringModals\SalesOrderEngSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\SalesOrderEngineering\SalesOrderEngineeringModals\SalesOrderEngSearch.Designer.cs">
+      <DependentUpon>SalesOrderEngSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SalesOrderEngineering\SalesOrderEngPage.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Pages\Transactions\SalesOrder.Designer.cs">
-      <DependentUpon>SalesOrder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Transactions\JobOrder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Pages\Transactions\JobOrder.Designer.cs">
-      <DependentUpon>JobOrder.cs</DependentUpon>
+    <Compile Include="Pages\SalesOrderEngineering\SalesOrderEngPage.Designer.cs">
+      <DependentUpon>SalesOrderEngPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\Transactions\SalesQuotationList.cs">
       <SubType>UserControl</SubType>
@@ -218,6 +237,7 @@
       <DependentUpon>SalesQuotationList.cs</DependentUpon>
     </Compile>
     <Compile Include="Services\AuthServices.cs" />
+    <Compile Include="Services\GeneralService.cs" />
     <Compile Include="Services\Helpers\ApiService.cs" />
     <Compile Include="Services\Helpers\WebsocketServices.cs" />
     <Compile Include="Services\ServiceBase.cs" />
@@ -230,7 +250,6 @@
     <Compile Include="Services\Setup\UserListService.cs" />
     <Compile Include="Services\Setup\WarehouseAreaService.cs" />
     <Compile Include="Services\Transaction\ItemRequestService.cs" />
-    <Compile Include="Services\Transaction\JobOrderService.cs" />
     <Compile Include="Services\Transaction\PickActivityService.cs" />
     <Compile Include="Services\Transaction\SalesOrderViewEngService.cs" />
     <Compile Include="Shared\ApiEndPoints.cs" />
@@ -262,14 +281,17 @@
     <EmbeddedResource Include="Pages\Components\RedBoxQuotationItem.resx">
       <DependentUpon>RedBoxQuotationItem.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\ItemRequest\ItemRequest.resx">
-      <DependentUpon>ItemRequest.cs</DependentUpon>
+    <EmbeddedResource Include="Pages\ItemRequest\ItemRequestPage.resx">
+      <DependentUpon>ItemRequestPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.resx">
       <DependentUpon>ItemRequestItems.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\ItemRequest\ItemRequestModals\ItemRequestSearch.resx">
       <DependentUpon>ItemRequestSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\JobOrder\JobOrderPage.resx">
+      <DependentUpon>JobOrderPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Layout.resx">
       <DependentUpon>Layout.cs</DependentUpon>
@@ -280,17 +302,17 @@
     <EmbeddedResource Include="Pages\Components\MaterialsForm.resx">
       <DependentUpon>MaterialsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\PickActivity\PickActivity.resx">
-      <DependentUpon>PickActivity.cs</DependentUpon>
+    <EmbeddedResource Include="Pages\PickActivity\PickActivityPage.resx">
+      <DependentUpon>PickActivityPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.resx">
       <DependentUpon>PickActivitySearch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\Transactions\SalesOrder.resx">
-      <DependentUpon>SalesOrder.cs</DependentUpon>
+    <EmbeddedResource Include="Pages\SalesOrderEngineering\SalesOrderEngineeringModals\SalesOrderEngSearch.resx">
+      <DependentUpon>SalesOrderEngSearch.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\Transactions\JobOrder.resx">
-      <DependentUpon>JobOrder.cs</DependentUpon>
+    <EmbeddedResource Include="Pages\SalesOrderEngineering\SalesOrderEngPage.resx">
+      <DependentUpon>SalesOrderEngPage.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Transactions\SalesQuotationList.resx">
       <DependentUpon>SalesQuotationList.cs</DependentUpon>
@@ -344,6 +366,7 @@
     <None Include="Resources\FolderIcon.png" />
     <None Include="Resources\loading.gif" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Serilog.4.3.0\build\Serilog.targets" Condition="Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -81,27 +81,38 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 
         private async Task LoadItemRequests()
         {
-            ItemRequest = await itemRequestService.GetAsModel();
-            ItemRequest.item_request.Reverse();
-
-            if (_isWarehouseUser)
+            try
             {
-                ItemRequest.item_request = ItemRequest.item_request
-                    .Where(r => r.is_forward == true)
-                    .ToList();
+                ItemRequest = await itemRequestService.GetAsModel();
+                ItemRequest.item_request.Reverse();
+
+                if (_isWarehouseUser)
+                {
+                    ItemRequest.item_request = ItemRequest.item_request
+                        .Where(r => r.is_forward == true)
+                        .ToList();
+                }
+
+                // Convert receiving report list to DataTable using helper
+                irTable = Helpers.ToDataTable(ItemRequest.item_request);
+
+                if (irTable?.Rows.Count > 0)
+                {
+                    dgv_ir_search.DataSource = irTable;
+                }
+                else
+                {
+                    dgv_ir_search.DataSource = null;
+                    Helpers.ShowDialogMessage("error", "No items request found.");
+                }
             }
-
-            // Convert receiving report list to DataTable using helper
-            irTable = Helpers.ToDataTable(ItemRequest.item_request);
-
-            if (irTable?.Rows.Count > 0)
+            catch (NullReferenceException)
             {
-                dgv_ir_search.DataSource = irTable;
+                Helpers.ShowDialogMessage("error", "No item request found.");
             }
-            else
+            catch (Exception ex)
             {
-                dgv_ir_search.DataSource = null;
-                Helpers.ShowDialogMessage("info", "No items request found.");
+                Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
             }
         }
 

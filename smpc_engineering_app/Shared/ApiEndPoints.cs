@@ -45,11 +45,9 @@ namespace smpc_engineering_app.Shared
         public static string WSJOBORDERREDBOXLIST = REDBOX + "/job_order/0";
 
         //Job Order Setup
-        public const string JOB_ORDER = "/setup/job/order";
-        public const string JOB_ORDER_SO = "/setup/job/sales";
-        public const string ALL_JOB_ORDER_SO = "/setup/job/all_sales";
-        public const string JOB_ORDER_SOD = "/setup/job/sales_details";
-        public const string COMPONENTS = "/setup/job/components";
+        public const string JOB_ORDER = "/engineering/job_order";
+        public const string ENGINEER_LIST = "/engineering/job_order/engr_list";
+        public const string COMPONENTS = "/engineering/job_order/components";
 
         //Sales Order IR View
         public const string SALES_ORDER_IR_VIEW = "/setup/item/so_doc";
@@ -61,7 +59,7 @@ namespace smpc_engineering_app.Shared
         public const string All_ITEM = "/setup/item/all_item";
 
         //Sales Order Engineering
-        public const string SALES_ORDER_ENGINEER = "/setup/job/so_view";
+        public const string SALES_ORDER_ENGINEER = "/engineering/job_order/sales_order";
 
         //Bin Location List
         public const string BIN_LOCATION = "/setup/item/all_binloc";

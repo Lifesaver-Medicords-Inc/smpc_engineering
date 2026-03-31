@@ -17,7 +17,7 @@ using smpc_engineering_app.Pages.PickActivity.PickActivityModals;
 
 namespace smpc_engineering_app.Pages.PickActivity
 {
-    public partial class PickActivity : UserControl
+    public partial class PickActivityPage : UserControl
     {
         //Dictionaries for the column grouping of datagridviews
         Dictionary<string, string[]> columnGroupsMain = new Dictionary<string, string[]>()
@@ -62,7 +62,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         private Dictionary<int, TextBox> rowTextBoxes = new Dictionary<int, TextBox>();
         private bool _isProgrammaticChange = false;
 
-        public PickActivity()
+        public PickActivityPage()
         {
             InitializeComponent();
 

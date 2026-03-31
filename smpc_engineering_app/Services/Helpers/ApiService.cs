@@ -86,6 +86,12 @@ namespace smpc_engineering_app.Services.Helpers
             return await SendRequestAsync(url, HttpMethod.Post, jsonContent);
         }
 
+        static internal async Task<T> Post(string url, object data)
+        {
+            string jsonContent = JsonConvert.SerializeObject(data);
+            return await SendRequestAsync(url, HttpMethod.Post, jsonContent);
+        }
+
         static internal async Task<T> Post(string url, Dictionary<string, dynamic> data)
         {
             string jsonContent = JsonConvert.SerializeObject(data);
@@ -104,6 +110,12 @@ namespace smpc_engineering_app.Services.Helpers
         {
             string jsonContent = JsonConvert.SerializeObject(data);
 
+            return await SendRequestAsync(url, HttpMethod.Put, jsonContent);
+        }
+
+        static internal async Task<T> Put(string url, object data)
+        {
+            string jsonContent = JsonConvert.SerializeObject(data);
             return await SendRequestAsync(url, HttpMethod.Put, jsonContent);
         }
 

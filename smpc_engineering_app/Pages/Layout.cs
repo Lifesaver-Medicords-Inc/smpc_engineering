@@ -20,8 +20,9 @@ namespace smpc_engineering_app
     {
         private int tabCount = 0;
 
-        private WebSocketService jobOrderSocket;
+        private WebSocketService productionListSocket;
         private WebSocketService quotationSocket;
+
         public SMPC()
         {
             InitializeComponent();
@@ -77,6 +78,20 @@ namespace smpc_engineering_app
                 throw;
             }
         }
+
+        public void OpenRoute(string routeName)
+        {
+            try
+            {
+                RoutesService route = new RoutesService(routeName);
+                ShowForm(route.GetTitle(), route.GetForm());
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         private void ShowForm(string tabTitle, Control control)
         {
             try
@@ -193,30 +208,6 @@ namespace smpc_engineering_app
             }
         }
 
-        public TabPage OpenSalesOrderTab()
-        {
-            // Create a new tab
-            var tab = new TabPage("Sales Order");
-            tab.Name = "Sales Order";
-            tab.Padding = new Padding(3); 
-            tab.UseVisualStyleBackColor = true;
-
-            // Create the user control
-            var uc = new Pages.Transactions.SalesOrder();
-            uc.Dock = DockStyle.Fill;
-            uc.AutoSize = true;
-            uc.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-
-            // Add UC inside tab
-            tab.Controls.Add(uc);
-
-            // Add tab to container
-            tabContainer.TabPages.Add(tab);
-
-            // Return so caller can set values
-            return tab;
-        }
-
         private async void ConnectWebSockets()
         {
             // --- Quotation Socket ---
@@ -242,25 +233,25 @@ namespace smpc_engineering_app
                 (data) => Invoke((Action)(() => LoadQuotationRedBox(data)))
             );
 
-            // --- Job Order Socket ---
-            jobOrderSocket = new WebSocketService();
+            // --- Production List Socket ---
+            productionListSocket = new WebSocketService();
 
-            jobOrderSocket.OnConnected += () =>
+            productionListSocket.OnConnected += () =>
             {
-                Invoke((Action)(() => lbl_status.Text = "JobOrder Connected"));
+                Invoke((Action)(() => lbl_status.Text = "Production List Connected"));
             };
 
-            jobOrderSocket.OnError += (msg) =>
+            productionListSocket.OnError += (msg) =>
             {
-                Invoke((Action)(() => MessageBox.Show("JobOrder WS Error: " + msg)));
+                Invoke((Action)(() => MessageBox.Show("Production List WS Error: " + msg)));
             };
 
-            jobOrderSocket.OnDisconnected += () =>
+            productionListSocket.OnDisconnected += () =>
             {
-                Invoke((Action)(() => lbl_status.Text = "JobOrder Disconnected"));
+                Invoke((Action)(() => lbl_status.Text = "Production List Disconnected"));
             };
 
-            await jobOrderSocket.ConnectAndDeserialize<RedboxJobOrder>(
+            await productionListSocket.ConnectAndDeserialize<RedboxJobOrder>(
                 ApiEndPoints.WSJOBORDERREDBOXLIST,
                 (data) => Invoke((Action)(() => LoadJobOrderRedBox(data)))
             );
@@ -320,6 +311,7 @@ namespace smpc_engineering_app
                     ProjectName = item.project_name,
                     DueDate = item.due_date,
                     Type = item.type,
+                    Id = item.id.ToString(),
                 };
 
                 redBox.OnSalesOrderClicked += (s, cleanedValue) =>
@@ -337,32 +329,40 @@ namespace smpc_engineering_app
             flowPanelJobOrderRedBox.Height = panel4.Height / 2;
         }
 
-        public void PassSalesOrder(string salesOrder)
+        public void PassSalesOrder(string id)
         {
             TabPage salesOrderTab = null;
 
             // Check if tab already exists
             foreach (TabPage tab in tabContainer.TabPages)
             {
-                if (tab.Name == "Sales Order")
+                if (tab.Name == "SalesOrderEng")
                 {
                     salesOrderTab = tab;
                     break;
                 }
             }
 
-            // If not found, create/open it
+            // If not found, create it
             if (salesOrderTab == null)
             {
-                salesOrderTab = OpenSalesOrderTab();
+                salesOrderTab = new TabPage("Sales Order Engineering");
+                salesOrderTab.Name = "SalesOrderEng";
+
+                var page = new smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngPage();
+                page.Dock = DockStyle.Fill;
+                salesOrderTab.Controls.Add(page);
+                salesOrderTab.AutoScroll = true;
+
+                tabContainer.TabPages.Add(salesOrderTab);
             }
 
-            // Now look for your SalesOrder UC inside that tab
+            // Find the SalesOrderEngPage control and set the ID
             foreach (Control ctrl in salesOrderTab.Controls)
             {
-                if (ctrl is Pages.Transactions.SalesOrder salesOrderUC)
+                if (ctrl is smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngPage engPage)
                 {
-                    salesOrderUC.SetSalesOrder(salesOrder);
+                    engPage.SetSalesOrder(id);
                     break;
                 }
             }
@@ -370,6 +370,5 @@ namespace smpc_engineering_app
             // Switch to the tab
             tabContainer.SelectedTab = salesOrderTab;
         }
-
     }
 }

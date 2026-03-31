@@ -1,7 +1,7 @@
 ﻿
 namespace smpc_engineering_app.Pages.PickActivity
 {
-    partial class PickActivity
+    partial class PickActivityPage
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,7 +29,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickActivity));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickActivityPage));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
             this.cmb_reference_so = new System.Windows.Forms.ComboBox();
@@ -327,8 +327,8 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_close.Image = ((System.Drawing.Image)(resources.GetObject("btn_close.Image")));
             this.btn_close.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btn_close.Name = "btn_close";
-            this.btn_close.Size = new System.Drawing.Size(56, 22);
-            this.btn_close.Text = "Close";
+            this.btn_close.Size = new System.Drawing.Size(63, 22);
+            this.btn_close.Text = "Cancel";
             this.btn_close.Visible = false;
             this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
             // 
@@ -580,14 +580,14 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.warehouse_id.ReadOnly = true;
             this.warehouse_id.Visible = false;
             // 
-            // PickActivity
+            // PickActivityPage
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.dgv_main);
             this.Controls.Add(this.pnl_bot);
             this.Controls.Add(this.pnl_top);
-            this.Name = "PickActivity";
+            this.Name = "PickActivityPage";
             this.Size = new System.Drawing.Size(1400, 950);
             this.Load += new System.EventHandler(this.PickActivity_Load);
             this.pnl_top.ResumeLayout(false);

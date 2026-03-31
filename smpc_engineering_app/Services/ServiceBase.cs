@@ -10,9 +10,9 @@ using System.Net.Http;
 
 namespace smpc_engineering_app.Services
 {
-    abstract class ServiceBase<T> where T:class
+    abstract class ServiceBase<T> where T : class
     {
-        private readonly string url ;
+        private readonly string url;
 
         public ServiceBase(string _url)
         {
@@ -37,13 +37,13 @@ namespace smpc_engineering_app.Services
             }
         }
 
-        public virtual async Task<List<T>> GetAsList()
+        public virtual async Task<T> GetAsModel()
         {
             try
             {
-                var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);
+                var response = await ApiService<ApiResponseModel<T>>.Get(url);
 
-                return response.data ?? new List<T>();
+                return response.data;
             }
             catch (Exception)
             {
@@ -52,13 +52,64 @@ namespace smpc_engineering_app.Services
             }
         }
 
-        public virtual async Task<T> GetAsModel()
+        public virtual async Task<PaginatedResult<T>> GetAsModelPaginated(int? id = null, int? seekId = null)
         {
             try
             {
-                var response = await ApiService<ApiResponseModel<T>>.Get(url);
+                var queryParams = new List<string>();
 
-                return response.data;
+                if (id.HasValue)
+                    queryParams.Add($"id={id}");
+
+                if (seekId.HasValue)
+                    queryParams.Add($"seek_id={seekId}");
+
+                var queryString = queryParams.Count > 0 ? $"?{string.Join("&", queryParams)}" : "";
+                var endpoint = $"{url}{queryString}";
+                var response = await ApiService<ApiResponseModel<T>>.Get(endpoint);
+                return new PaginatedResult<T>
+                {
+                    Data = response.data,
+                    Pagination = response.pagination
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public virtual async Task<PaginatedResult<List<T>>> GetAsListSearch(int? id = null, string search = "")
+        {
+            try
+            {
+                var queryParams = new List<string>();
+                if (id.HasValue) queryParams.Add($"id={id}");
+                if (!string.IsNullOrWhiteSpace(search)) queryParams.Add($"search={Uri.EscapeDataString(search)}");
+
+                var queryString = queryParams.Count > 0 ? "?" + string.Join("&", queryParams) : "";
+                var endpoint = $"{url}{queryString}";
+
+                var response = await ApiService<ApiResponseModel<List<T>>>.Get(endpoint);
+                return new PaginatedResult<List<T>>
+                {
+                    Data = response.data ?? new List<T>(),
+                    Pagination = response.pagination
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public virtual async Task<List<T>> GetAsList()
+        {
+            try
+            {
+                var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);
+
+                return response.data ?? new List<T>();
             }
             catch (Exception)
             {
@@ -75,16 +126,41 @@ namespace smpc_engineering_app.Services
 
             return filter(data);
         }
-          
+
+        // ---------- MODEL → DICTIONARY CONVERTER ----------
+        private Dictionary<string, dynamic> ModelToDictionary(T model)
+        {
+            return model
+                .GetType()
+                .GetProperties()
+                .ToDictionary(
+                    p => p.Name,
+                    p => p.GetValue(model)
+                );
+        }
+
         // POST
-        public virtual async Task<ApiResponseModel> Insert(Dictionary<string, dynamic> data)
+        public async Task<ApiResponseModel> Insert(Dictionary<string, dynamic> data)
         {
             var response = await ApiService<ApiResponseModel>.Post(url, data);
             return response;
         }
 
+        public async Task<ApiResponseModel> Insert(T model)
+        {
+            var data = ModelToDictionary(model);
+            var response = await ApiService<ApiResponseModel>.Post(url, data);
+            return response;
+        }
+
+        public async Task<ApiResponseModel> InsertList(List<T> model)
+        {
+            var response = await ApiService<ApiResponseModel>.Post(url, model);
+            return response;
+        }
+
         // DELETE
-        public virtual async Task<bool> Delete(Dictionary<string, dynamic> data)
+        public async Task<bool> Delete(Dictionary<string, dynamic> data)
         {
             var response = await ApiService<ApiResponseModel<T>>.Delete(url, data);
             bool isSuccess = response.success;
@@ -92,24 +168,32 @@ namespace smpc_engineering_app.Services
             return isSuccess;
         }
 
-        // UPDATE
-        public virtual async Task<ApiResponseModel<T>> Update(Dictionary<string, dynamic> data)
+        public async Task<bool> Delete(T model)
         {
-            var response = await ApiService<ApiResponseModel<T>>.Put(url, data);
+            var data = ModelToDictionary(model);
+            var response = await ApiService<ApiResponseModel<T>>.Delete(url, data);
+            return response.success;
+        }
+
+        // UPDATE
+        public async Task<ApiResponseModel> Update(Dictionary<string, dynamic> data)
+        {
+            var response = await ApiService<ApiResponseModel>.Put(url, data);
+
             return response;
         }
 
-        public virtual async Task<List<T>> GetList()
+        public async Task<ApiResponseModel> UpdateList(List<T> model)
         {
-            try
-            {
-                var response = await ApiService<ApiResponseModel<List<T>>>.Get(url);
-                return response.data;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            var response = await ApiService<ApiResponseModel>.Put(url, model);
+            return response;
+        }
+
+        public async Task<ApiResponseModel> Update(T model)
+        {
+            var data = ModelToDictionary(model);
+            var response = await ApiService<ApiResponseModel>.Put(url, data);
+            return response;
         }
     }
 }

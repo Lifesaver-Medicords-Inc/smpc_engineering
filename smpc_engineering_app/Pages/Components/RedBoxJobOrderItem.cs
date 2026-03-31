@@ -25,13 +25,9 @@ namespace smpc_engineering_app.Pages.Components
 
         private void RedBoxJobOrderItem_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(DocumentNo))
+            if (!string.IsNullOrEmpty(Id))
             {
-                string cleanedValue = DocumentNo.StartsWith("SO#")
-                    ? DocumentNo.Substring(3)
-                    : DocumentNo;
-
-                OnSalesOrderClicked?.Invoke(this, cleanedValue);
+                OnSalesOrderClicked?.Invoke(this, Id);
             }
         }
 
@@ -69,6 +65,12 @@ namespace smpc_engineering_app.Pages.Components
         {
             get => lbl_type.Text;
             set => lbl_type.Text = value;
+        }
+
+        public string Id
+        {
+            get => lbl_id.Text;
+            set => lbl_id.Text = value;
         }
     }
 }

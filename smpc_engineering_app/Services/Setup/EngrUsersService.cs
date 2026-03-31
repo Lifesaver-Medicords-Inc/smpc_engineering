@@ -14,7 +14,7 @@ namespace smpc_engineering_app.Services.Setup
 
         public async Task<List<string>> GetUsersForComboBox()
         {
-            var users = await GetList(); // calls the base method
+            var users = await GetAsList(); // calls the base method
             return users.Select(u => $"Engr. {u.first_name} {u.last_name}").ToList();
         }
     }

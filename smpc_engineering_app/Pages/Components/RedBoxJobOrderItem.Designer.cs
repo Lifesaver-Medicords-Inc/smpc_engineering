@@ -42,12 +42,14 @@ namespace smpc_engineering_app.Pages.Components
             this.label4 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.lbl_id = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
             this.panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(192)))));
+            this.panel1.Controls.Add(this.lbl_id);
             this.panel1.Controls.Add(this.lbl_type);
             this.panel1.Controls.Add(this.lbl_items);
             this.panel1.Controls.Add(this.lbl_due_date);
@@ -192,6 +194,17 @@ namespace smpc_engineering_app.Pages.Components
             this.label1.TabIndex = 19;
             this.label1.Text = "CLIENT NAME";
             // 
+            // lbl_id
+            // 
+            this.lbl_id.AutoSize = true;
+            this.lbl_id.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbl_id.Location = new System.Drawing.Point(94, 102);
+            this.lbl_id.Name = "lbl_id";
+            this.lbl_id.Size = new System.Drawing.Size(15, 13);
+            this.lbl_id.TabIndex = 31;
+            this.lbl_id.Text = "~";
+            this.lbl_id.Visible = false;
+            // 
             // RedBoxJobOrderItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -221,5 +234,6 @@ namespace smpc_engineering_app.Pages.Components
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbl_id;
     }
 }

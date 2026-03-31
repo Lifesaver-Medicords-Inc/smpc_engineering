@@ -31,7 +31,6 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_all_item = new System.Windows.Forms.DataGridView();
-            this.txt_search = new System.Windows.Forms.TextBox();
             this.item_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.short_desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -39,6 +38,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.item_model = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.uom_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.size = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.txt_search = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_all_item)).BeginInit();
             this.SuspendLayout();
             // 
@@ -68,14 +68,6 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.dgv_all_item.Size = new System.Drawing.Size(802, 389);
             this.dgv_all_item.TabIndex = 4;
             this.dgv_all_item.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_all_item_CellClick);
-            // 
-            // txt_search
-            // 
-            this.txt_search.Location = new System.Drawing.Point(350, 215);
-            this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(100, 20);
-            this.txt_search.TabIndex = 5;
-            this.txt_search.TextChanged += new System.EventHandler(this.txt_search_TextChanged);
             // 
             // item_id
             // 
@@ -136,6 +128,14 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.size.Name = "size";
             this.size.ReadOnly = true;
             // 
+            // txt_search
+            // 
+            this.txt_search.Location = new System.Drawing.Point(350, 215);
+            this.txt_search.Name = "txt_search";
+            this.txt_search.Size = new System.Drawing.Size(100, 20);
+            this.txt_search.TabIndex = 5;
+            this.txt_search.TextChanged += new System.EventHandler(this.txt_search_TextChanged);
+            // 
             // ItemRequestItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -143,6 +143,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.dgv_all_item);
             this.Controls.Add(this.txt_search);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "ItemRequestItems";
             this.Text = "ItemRequestItems";
             this.Load += new System.EventHandler(this.ItemRequestItems_Load);

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace smpc_engineering_app.Models
 {
-    class JobOrderRedboxListModel
+    class ProductionListRedboxListModel
     {
         public int id { get; set; }
         public string client_name { get; set; }
@@ -19,6 +19,6 @@ namespace smpc_engineering_app.Models
 
     class RedboxJobOrder
     {
-        public List<JobOrderRedboxListModel> joborder { get; set; }
+        public List<ProductionListRedboxListModel> joborder { get; set; }
     }
 }

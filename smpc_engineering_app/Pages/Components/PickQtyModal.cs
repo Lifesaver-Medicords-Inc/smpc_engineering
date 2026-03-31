@@ -166,6 +166,10 @@ namespace smpc_engineering_app.Pages.Components
                 Helpers.ShowDialogMessage("error", "No available stock after allocation.");
                 this.Close();
             }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
+            }
         }
 
         private void ApplyPassedLocation(DataTable passedTable, string qtyColumn)

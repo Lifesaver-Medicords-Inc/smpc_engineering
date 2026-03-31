@@ -75,21 +75,32 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
 
         private async Task PickActivities()
         {
-            PickActivity = await pickActivityService.GetAsModel();
-
-            PickActivity.pick_activity.Reverse();
-
-            // Convert pick activity list to DataTable using helper
-            paTable = Helpers.ToDataTable(PickActivity.pick_activity);
-
-            if (paTable?.Rows.Count > 0)
+            try
             {
-                dgv_pa_search.DataSource = paTable;
+                PickActivity = await pickActivityService.GetAsModel();
+
+                PickActivity.pick_activity.Reverse();
+
+                // Convert pick activity list to DataTable using helper
+                paTable = Helpers.ToDataTable(PickActivity.pick_activity);
+
+                if (paTable?.Rows.Count > 0)
+                {
+                    dgv_pa_search.DataSource = paTable;
+                }
+                else
+                {
+                    dgv_pa_search.DataSource = null;
+                    Helpers.ShowDialogMessage("error", "No pick activity found.");
+                }
             }
-            else
+            catch (NullReferenceException)
             {
-                dgv_pa_search.DataSource = null;
-                Helpers.ShowDialogMessage("info", "No items request found.");
+                Helpers.ShowDialogMessage("error", "No pick activity found.");
+            }
+            catch (Exception ex)
+            {
+                Helpers.ShowDialogMessage("error", $"Failed to load: {ex.Message}");
             }
         }
 
