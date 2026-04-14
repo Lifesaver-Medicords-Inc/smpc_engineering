@@ -30,7 +30,14 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_all_item = new System.Windows.Forms.DataGridView();
+            this.txt_search = new System.Windows.Forms.TextBox();
             this.item_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.short_desc = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -38,7 +45,6 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.item_model = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.uom_name = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.size = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.txt_search = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_all_item)).BeginInit();
             this.SuspendLayout();
             // 
@@ -69,6 +75,14 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.dgv_all_item.TabIndex = 4;
             this.dgv_all_item.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_all_item_CellClick);
             // 
+            // txt_search
+            // 
+            this.txt_search.Location = new System.Drawing.Point(350, 215);
+            this.txt_search.Name = "txt_search";
+            this.txt_search.Size = new System.Drawing.Size(100, 20);
+            this.txt_search.TabIndex = 5;
+            this.txt_search.TextChanged += new System.EventHandler(this.txt_search_TextChanged);
+            // 
             // item_id
             // 
             this.item_id.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -83,6 +97,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.short_desc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.short_desc.DataPropertyName = "short_desc";
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
+            this.short_desc.DefaultCellStyle = dataGridViewCellStyle2;
             this.short_desc.HeaderText = "DESCRIPTION";
             this.short_desc.Name = "short_desc";
             this.short_desc.ReadOnly = true;
@@ -91,6 +107,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.item_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_code.DataPropertyName = "item_code";
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_code.DefaultCellStyle = dataGridViewCellStyle3;
             this.item_code.HeaderText = "ITEM CODE";
             this.item_code.Name = "item_code";
             this.item_code.ReadOnly = true;
@@ -99,6 +117,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.general_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.general_name.DataPropertyName = "general_name";
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
+            this.general_name.DefaultCellStyle = dataGridViewCellStyle4;
             this.general_name.HeaderText = "GENERAL NAME";
             this.general_name.Name = "general_name";
             this.general_name.ReadOnly = true;
@@ -107,6 +127,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.item_model.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_model.DataPropertyName = "item_model";
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_model.DefaultCellStyle = dataGridViewCellStyle5;
             this.item_model.HeaderText = "ITEM MODEL";
             this.item_model.MinimumWidth = 150;
             this.item_model.Name = "item_model";
@@ -116,6 +138,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.uom_name.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.uom_name.DataPropertyName = "uom_name";
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
+            this.uom_name.DefaultCellStyle = dataGridViewCellStyle6;
             this.uom_name.HeaderText = "UOM";
             this.uom_name.Name = "uom_name";
             this.uom_name.ReadOnly = true;
@@ -124,17 +148,11 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             // 
             this.size.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.size.DataPropertyName = "size";
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
+            this.size.DefaultCellStyle = dataGridViewCellStyle7;
             this.size.HeaderText = "SIZE";
             this.size.Name = "size";
             this.size.ReadOnly = true;
-            // 
-            // txt_search
-            // 
-            this.txt_search.Location = new System.Drawing.Point(350, 215);
-            this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(100, 20);
-            this.txt_search.TabIndex = 5;
-            this.txt_search.TextChanged += new System.EventHandler(this.txt_search_TextChanged);
             // 
             // ItemRequestItems
             // 

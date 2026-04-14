@@ -58,7 +58,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             _panels = new[] { pnl_top, pnl_bot };
 
             Helpers.EnableGroupHeaders(dgv_main, columnGroupsMain);
-            Helpers.SetChildControlsEnabled(_panels, false, new string[] { });
+            Helpers.SetChildControlsEnabled(_panels, true, new string[] { });
         }
 
         private void SetEditableColumns(bool isEdit)
@@ -70,7 +70,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             foreach (var colName in editableColumns)
             {
                 if (dgv_main.Columns.Contains(colName))
-                    dgv_main.Columns[colName].ReadOnly = !isEdit;
+                {
+                    var column = dgv_main.Columns[colName];
+
+                    column.ReadOnly = !isEdit;
+
+                    // Toggle background color based on readonly state
+                    column.DefaultCellStyle.BackColor = column.ReadOnly ? Color.Gainsboro : Color.White;
+                }
             }
         }
 
@@ -93,13 +100,13 @@ namespace smpc_engineering_app.Pages.ItemRequest
             if (_isWarehouseUser)
             {
                 // Warehouse user → only enable pnl_bot
-                Helpers.SetChildControlsEnabled(new[] { pnl_bot }, enable, excludeControls);
-                Helpers.SetChildControlsEnabled(new[] { pnl_top }, false, new string[] { }); // keep top disabled
+                Helpers.SetChildControlsEnabled(new[] { pnl_bot }, !enable, excludeControls);
+                Helpers.SetChildControlsEnabled(new[] { pnl_top }, true, new string[] { }); // keep top disabled
             }
             else
             {
                 // Non-warehouse users → enable both panels normally
-                Helpers.SetChildControlsEnabled(_panels, enable, excludeControls);
+                Helpers.SetChildControlsEnabled(_panels, !enable, excludeControls);
             }
 
             if (isNewMode)
@@ -107,8 +114,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             Helpers.SetButtonVisibility(
                 toolStrip1,
-                visibleButtons: enable ? new[] { "btn_save", "btn_close" } : new[] { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" },
-                hiddenButtons: enable ? new[] { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" } : new[] { "btn_save", "btn_close" }
+                visibleButtons: enable ? new[] { "btn_save", "btn_close" } : new[] { "btn_print", "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" },
+                hiddenButtons: enable ? new[] { "btn_print", "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" } : new[] { "btn_save", "btn_close" }
             );
 
             //Hide btn_new entirely if warehouse user
@@ -273,7 +280,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             var current = _itemRequests[_currentIRIndex];
 
-            var confirm = MessageBox.Show($"Are you sure you want to delete Receiving Report #{current.id}?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            var confirm = MessageBox.Show($"Are you sure you want to delete Item Request #{current.id}?", "Confirm Delete", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (confirm != DialogResult.Yes) return;
 
@@ -299,7 +306,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
                     return;
                 }
 
-                Helpers.ShowDialogMessage("success", "Receiving Report deleted successfully.");
+                Helpers.ShowDialogMessage("success", "Item Request deleted successfully.");
             }
             catch (Exception ex)
             {

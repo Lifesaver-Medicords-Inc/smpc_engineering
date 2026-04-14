@@ -30,18 +30,21 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle17 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle18 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle19 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle20 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle21 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle22 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle23 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle24 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SalesOrderEngPage));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btn_search = new System.Windows.Forms.ToolStripButton();
+            this.btn_next = new System.Windows.Forms.ToolStripButton();
+            this.btn_prev = new System.Windows.Forms.ToolStripButton();
             this.pnl_main = new System.Windows.Forms.Panel();
             this.txt_id = new System.Windows.Forms.TextBox();
             this.lbl_so_id = new System.Windows.Forms.Label();
@@ -71,11 +74,13 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.panel3 = new System.Windows.Forms.Panel();
             this.pnl_Sales = new System.Windows.Forms.Panel();
             this.label27 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnUpload = new System.Windows.Forms.Button();
             this.SALES_LV = new System.Windows.Forms.ListView();
             this.panel2 = new System.Windows.Forms.Panel();
             this.TV1_preview = new System.Windows.Forms.Panel();
             this.label29 = new System.Windows.Forms.Label();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.SALES_TV = new System.Windows.Forms.TreeView();
             this.panel9 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -94,24 +99,19 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.treeViewContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.renameFileItem = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox3 = new System.Windows.Forms.PictureBox();
-            this.btn_search = new System.Windows.Forms.ToolStripButton();
-            this.btn_prev = new System.Windows.Forms.ToolStripButton();
-            this.btn_next = new System.Windows.Forms.ToolStripButton();
             this.panel6.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.pnl_main.SuspendLayout();
             this.pnl_footer.SuspendLayout();
             this.panel3.SuspendLayout();
             this.pnl_Sales.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
             this.TV1_preview.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.panel1.SuspendLayout();
             this.pnl_body.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_main)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // panel6
@@ -146,6 +146,36 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.toolStrip1.Size = new System.Drawing.Size(1400, 25);
             this.toolStrip1.TabIndex = 16;
             this.toolStrip1.Text = "toolStrip1";
+            // 
+            // btn_search
+            // 
+            this.btn_search.Image = ((System.Drawing.Image)(resources.GetObject("btn_search.Image")));
+            this.btn_search.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_search.Name = "btn_search";
+            this.btn_search.Size = new System.Drawing.Size(62, 22);
+            this.btn_search.Text = "Search";
+            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
+            // 
+            // btn_next
+            // 
+            this.btn_next.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btn_next.Image = ((System.Drawing.Image)(resources.GetObject("btn_next.Image")));
+            this.btn_next.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_next.Name = "btn_next";
+            this.btn_next.Size = new System.Drawing.Size(52, 22);
+            this.btn_next.Text = "Next";
+            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
+            // 
+            // btn_prev
+            // 
+            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
+            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_prev.Name = "btn_prev";
+            this.btn_prev.Size = new System.Drawing.Size(72, 22);
+            this.btn_prev.Text = "Previous";
+            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
             // 
             // pnl_main
             // 
@@ -306,7 +336,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.txt_doc_no.ReadOnly = true;
             this.txt_doc_no.Size = new System.Drawing.Size(289, 20);
             this.txt_doc_no.TabIndex = 282;
-            this.txt_doc_no.Tag = "";
+            this.txt_doc_no.Tag = "DOCUMENTSO";
             // 
             // txt_bill_to
             // 
@@ -457,6 +487,16 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.label27.TabIndex = 1;
             this.label27.Text = "Please select a folder";
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::smpc_engineering_app.Properties.Resources.FolderIcon;
+            this.pictureBox1.Location = new System.Drawing.Point(260, 33);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(139, 79);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // btnUpload
             // 
             this.btnUpload.BackColor = System.Drawing.Color.CornflowerBlue;
@@ -520,6 +560,16 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.label29.TabIndex = 4;
             this.label29.Text = "Directory will open when saved";
             // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Image = global::smpc_engineering_app.Properties.Resources.search;
+            this.pictureBox3.Location = new System.Drawing.Point(249, 33);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(151, 79);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox3.TabIndex = 3;
+            this.pictureBox3.TabStop = false;
+            // 
             // SALES_TV
             // 
             this.SALES_TV.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -571,14 +621,14 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.dgv_main.AllowUserToAddRows = false;
             this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle17.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle17.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle17.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle17.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle17.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle17.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle17.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle17;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv_main.ColumnHeadersHeight = 50;
             this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -618,8 +668,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.numbering.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.numbering.DataPropertyName = "numbering";
-            dataGridViewCellStyle18.BackColor = System.Drawing.Color.Gainsboro;
-            this.numbering.DefaultCellStyle = dataGridViewCellStyle18;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
+            this.numbering.DefaultCellStyle = dataGridViewCellStyle2;
             this.numbering.HeaderText = "#";
             this.numbering.MinimumWidth = 50;
             this.numbering.Name = "numbering";
@@ -630,8 +680,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.item_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_code.DataPropertyName = "item_code";
-            dataGridViewCellStyle19.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_code.DefaultCellStyle = dataGridViewCellStyle19;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_code.DefaultCellStyle = dataGridViewCellStyle3;
             this.item_code.HeaderText = "ITEM CODE";
             this.item_code.MinimumWidth = 200;
             this.item_code.Name = "item_code";
@@ -641,8 +691,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.item_desc.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_desc.DataPropertyName = "item_desc";
-            dataGridViewCellStyle20.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_desc.DefaultCellStyle = dataGridViewCellStyle20;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_desc.DefaultCellStyle = dataGridViewCellStyle4;
             this.item_desc.HeaderText = "ITEM DESCRIPTION";
             this.item_desc.Name = "item_desc";
             this.item_desc.ReadOnly = true;
@@ -651,8 +701,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.stock.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.stock.DataPropertyName = "stock";
-            dataGridViewCellStyle21.BackColor = System.Drawing.Color.Gainsboro;
-            this.stock.DefaultCellStyle = dataGridViewCellStyle21;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
+            this.stock.DefaultCellStyle = dataGridViewCellStyle5;
             this.stock.HeaderText = "STOCK";
             this.stock.MinimumWidth = 80;
             this.stock.Name = "stock";
@@ -663,8 +713,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.req_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.req_qty.DataPropertyName = "req_qty";
-            dataGridViewCellStyle22.BackColor = System.Drawing.Color.Gainsboro;
-            this.req_qty.DefaultCellStyle = dataGridViewCellStyle22;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
+            this.req_qty.DefaultCellStyle = dataGridViewCellStyle6;
             this.req_qty.HeaderText = "QTY";
             this.req_qty.MinimumWidth = 80;
             this.req_qty.Name = "req_qty";
@@ -675,8 +725,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.remark.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.remark.DataPropertyName = "remark";
-            dataGridViewCellStyle23.BackColor = System.Drawing.Color.Gainsboro;
-            this.remark.DefaultCellStyle = dataGridViewCellStyle23;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
+            this.remark.DefaultCellStyle = dataGridViewCellStyle7;
             this.remark.HeaderText = "REMARK";
             this.remark.Name = "remark";
             this.remark.ReadOnly = true;
@@ -685,8 +735,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.status.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.status.DataPropertyName = "status";
-            dataGridViewCellStyle24.BackColor = System.Drawing.Color.Gainsboro;
-            this.status.DefaultCellStyle = dataGridViewCellStyle24;
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Gainsboro;
+            this.status.DefaultCellStyle = dataGridViewCellStyle8;
             this.status.HeaderText = "STATUS";
             this.status.Name = "status";
             this.status.ReadOnly = true;
@@ -700,56 +750,6 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             // 
             this.renameFileItem.Name = "renameFileItem";
             this.renameFileItem.Size = new System.Drawing.Size(61, 4);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Image = global::smpc_engineering_app.Properties.Resources.FolderIcon;
-            this.pictureBox1.Location = new System.Drawing.Point(260, 33);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(139, 79);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
-            // pictureBox3
-            // 
-            this.pictureBox3.Image = global::smpc_engineering_app.Properties.Resources.search;
-            this.pictureBox3.Location = new System.Drawing.Point(249, 33);
-            this.pictureBox3.Name = "pictureBox3";
-            this.pictureBox3.Size = new System.Drawing.Size(151, 79);
-            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox3.TabIndex = 3;
-            this.pictureBox3.TabStop = false;
-            // 
-            // btn_search
-            // 
-            this.btn_search.Image = ((System.Drawing.Image)(resources.GetObject("btn_search.Image")));
-            this.btn_search.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_search.Name = "btn_search";
-            this.btn_search.Size = new System.Drawing.Size(62, 22);
-            this.btn_search.Text = "Search";
-            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
-            // 
-            // btn_prev
-            // 
-            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
-            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_prev.Name = "btn_prev";
-            this.btn_prev.Size = new System.Drawing.Size(72, 22);
-            this.btn_prev.Text = "Previous";
-            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
-            // 
-            // btn_next
-            // 
-            this.btn_next.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btn_next.Image = ((System.Drawing.Image)(resources.GetObject("btn_next.Image")));
-            this.btn_next.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_next.Name = "btn_next";
-            this.btn_next.Size = new System.Drawing.Size(52, 22);
-            this.btn_next.Text = "Next";
-            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
             // 
             // SalesOrderEngPage
             // 
@@ -773,15 +773,15 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
             this.panel3.ResumeLayout(false);
             this.pnl_Sales.ResumeLayout(false);
             this.pnl_Sales.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.TV1_preview.ResumeLayout(false);
             this.TV1_preview.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.pnl_body.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_main)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

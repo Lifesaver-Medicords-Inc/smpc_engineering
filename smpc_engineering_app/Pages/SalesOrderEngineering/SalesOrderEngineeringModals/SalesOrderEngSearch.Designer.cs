@@ -39,16 +39,16 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_so_search = new System.Windows.Forms.DataGridView();
+            this.txt_search = new System.Windows.Forms.TextBox();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.customer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tin = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.doc_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.delivery_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.delivery_to = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bill_to = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.txt_search = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_so_search)).BeginInit();
             this.SuspendLayout();
             // 
@@ -71,7 +71,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.code,
             this.tin,
             this.doc_no,
-            this.doc_date,
+            this.date,
             this.delivery_date,
             this.delivery_to,
             this.bill_to});
@@ -80,6 +80,13 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.dgv_so_search.Size = new System.Drawing.Size(802, 389);
             this.dgv_so_search.TabIndex = 10;
             this.dgv_so_search.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_so_search_CellClick);
+            // 
+            // txt_search
+            // 
+            this.txt_search.Location = new System.Drawing.Point(350, 215);
+            this.txt_search.Name = "txt_search";
+            this.txt_search.Size = new System.Drawing.Size(100, 20);
+            this.txt_search.TabIndex = 11;
             // 
             // id
             // 
@@ -131,15 +138,15 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.doc_no.Name = "doc_no";
             this.doc_no.ReadOnly = true;
             // 
-            // doc_date
+            // date
             // 
-            this.doc_date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.doc_date.DataPropertyName = "doc_date";
+            this.date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.date.DataPropertyName = "date";
             dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
-            this.doc_date.DefaultCellStyle = dataGridViewCellStyle6;
-            this.doc_date.HeaderText = "DOC DATE";
-            this.doc_date.Name = "doc_date";
-            this.doc_date.ReadOnly = true;
+            this.date.DefaultCellStyle = dataGridViewCellStyle6;
+            this.date.HeaderText = "DATE";
+            this.date.Name = "date";
+            this.date.ReadOnly = true;
             // 
             // delivery_date
             // 
@@ -171,13 +178,6 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.bill_to.Name = "bill_to";
             this.bill_to.ReadOnly = true;
             // 
-            // txt_search
-            // 
-            this.txt_search.Location = new System.Drawing.Point(350, 215);
-            this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(100, 20);
-            this.txt_search.TabIndex = 11;
-            // 
             // SalesOrderEngSearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -185,6 +185,8 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.dgv_so_search);
             this.Controls.Add(this.txt_search);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "SalesOrderEngSearch";
             this.Text = "SalesOrderEngSearch";
             this.Load += new System.EventHandler(this.SalesOrderEngSearch_Load);
@@ -203,7 +205,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
         private System.Windows.Forms.DataGridViewTextBoxColumn code;
         private System.Windows.Forms.DataGridViewTextBoxColumn tin;
         private System.Windows.Forms.DataGridViewTextBoxColumn doc_no;
-        private System.Windows.Forms.DataGridViewTextBoxColumn doc_date;
+        private System.Windows.Forms.DataGridViewTextBoxColumn date;
         private System.Windows.Forms.DataGridViewTextBoxColumn delivery_date;
         private System.Windows.Forms.DataGridViewTextBoxColumn delivery_to;
         private System.Windows.Forms.DataGridViewTextBoxColumn bill_to;

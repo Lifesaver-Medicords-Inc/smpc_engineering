@@ -29,7 +29,10 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             // Center the modal relative to its parent form
             this.StartPosition = FormStartPosition.CenterParent;
 
+            dgv_pa_search.AutoGenerateColumns = false;
             InitializeSearchBox();
+
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pa_search, "doc_no", "PA");
         }
 
         private void InitializeSearchBox()
@@ -51,7 +54,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             }
             else
             {
-                var searchedData = Helpers.FilterDataTable(paTable, searchText, "doc_no", "customer", "reference_so", "sales_person", "prepared_by", "picked_by");
+                var searchedData = Helpers.FilterDataTable(paTable, searchText, "doc_no", "customer", "sales_person", "sales_person", "prepared_by", "picked_by");
                 dgv_pa_search.DataSource = searchedData;
             }
         }

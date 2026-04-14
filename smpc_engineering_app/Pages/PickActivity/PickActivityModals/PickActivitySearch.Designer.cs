@@ -30,15 +30,21 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
         private void InitializeComponent()
         {
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgv_pa_search = new System.Windows.Forms.DataGridView();
+            this.txt_search = new System.Windows.Forms.TextBox();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.reference_so = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.sales_person = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.customer = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.prepared_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.picked_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.txt_search = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_pa_search)).BeginInit();
             this.SuspendLayout();
             // 
@@ -58,7 +64,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.dgv_pa_search.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.id,
             this.doc_no,
-            this.reference_so,
+            this.sales_person,
             this.customer,
             this.code,
             this.prepared_by,
@@ -68,6 +74,13 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.dgv_pa_search.Size = new System.Drawing.Size(802, 389);
             this.dgv_pa_search.TabIndex = 4;
             this.dgv_pa_search.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pa_search_CellClick);
+            // 
+            // txt_search
+            // 
+            this.txt_search.Location = new System.Drawing.Point(350, 215);
+            this.txt_search.Name = "txt_search";
+            this.txt_search.Size = new System.Drawing.Size(100, 20);
+            this.txt_search.TabIndex = 5;
             // 
             // id
             // 
@@ -83,22 +96,28 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             // 
             this.doc_no.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.doc_no.DataPropertyName = "doc_no";
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
+            this.doc_no.DefaultCellStyle = dataGridViewCellStyle2;
             this.doc_no.HeaderText = "DOC NO";
             this.doc_no.Name = "doc_no";
             this.doc_no.ReadOnly = true;
             // 
-            // reference_so
+            // sales_person
             // 
-            this.reference_so.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.reference_so.DataPropertyName = "reference_so";
-            this.reference_so.HeaderText = "REF DOC";
-            this.reference_so.Name = "reference_so";
-            this.reference_so.ReadOnly = true;
+            this.sales_person.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.sales_person.DataPropertyName = "sales_person";
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
+            this.sales_person.DefaultCellStyle = dataGridViewCellStyle3;
+            this.sales_person.HeaderText = "SALES PERSON";
+            this.sales_person.Name = "sales_person";
+            this.sales_person.ReadOnly = true;
             // 
             // customer
             // 
             this.customer.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.customer.DataPropertyName = "customer";
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
+            this.customer.DefaultCellStyle = dataGridViewCellStyle4;
             this.customer.HeaderText = "CUSTOMER";
             this.customer.Name = "customer";
             this.customer.ReadOnly = true;
@@ -107,6 +126,8 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             // 
             this.code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.code.DataPropertyName = "code";
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
+            this.code.DefaultCellStyle = dataGridViewCellStyle5;
             this.code.HeaderText = "CODE";
             this.code.MinimumWidth = 150;
             this.code.Name = "code";
@@ -116,6 +137,8 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             // 
             this.prepared_by.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.prepared_by.DataPropertyName = "prepared_by";
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
+            this.prepared_by.DefaultCellStyle = dataGridViewCellStyle6;
             this.prepared_by.HeaderText = "PREPARED BY";
             this.prepared_by.Name = "prepared_by";
             this.prepared_by.ReadOnly = true;
@@ -124,16 +147,11 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             // 
             this.picked_by.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.picked_by.DataPropertyName = "picked_by";
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
+            this.picked_by.DefaultCellStyle = dataGridViewCellStyle7;
             this.picked_by.HeaderText = "PICKED BY";
             this.picked_by.Name = "picked_by";
             this.picked_by.ReadOnly = true;
-            // 
-            // txt_search
-            // 
-            this.txt_search.Location = new System.Drawing.Point(350, 215);
-            this.txt_search.Name = "txt_search";
-            this.txt_search.Size = new System.Drawing.Size(100, 20);
-            this.txt_search.TabIndex = 5;
             // 
             // PickActivitySearch
             // 
@@ -159,7 +177,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
         private System.Windows.Forms.TextBox txt_search;
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn doc_no;
-        private System.Windows.Forms.DataGridViewTextBoxColumn reference_so;
+        private System.Windows.Forms.DataGridViewTextBoxColumn sales_person;
         private System.Windows.Forms.DataGridViewTextBoxColumn customer;
         private System.Windows.Forms.DataGridViewTextBoxColumn code;
         private System.Windows.Forms.DataGridViewTextBoxColumn prepared_by;

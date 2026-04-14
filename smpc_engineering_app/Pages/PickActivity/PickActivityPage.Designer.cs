@@ -29,30 +29,48 @@ namespace smpc_engineering_app.Pages.PickActivity
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PickActivityPage));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
+            this.txt_picked_by = new System.Windows.Forms.TextBox();
+            this.txt_prepared_by = new System.Windows.Forms.TextBox();
+            this.txt_doc_no = new System.Windows.Forms.TextBox();
+            this.txt_sales_person = new System.Windows.Forms.TextBox();
+            this.txt_code = new System.Windows.Forms.TextBox();
+            this.txt_customer = new System.Windows.Forms.TextBox();
             this.cmb_reference_so = new System.Windows.Forms.ComboBox();
             this.txt_id = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.txt_doc_no = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.txt_customer = new System.Windows.Forms.TextBox();
-            this.txt_sales_person = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.txt_picked_by = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.txt_prepared_by = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.txt_code = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.btn_new = new System.Windows.Forms.ToolStripButton();
+            this.btn_search = new System.Windows.Forms.ToolStripButton();
+            this.btn_edit = new System.Windows.Forms.ToolStripButton();
+            this.btn_delete = new System.Windows.Forms.ToolStripButton();
+            this.btn_print = new System.Windows.Forms.ToolStripButton();
+            this.btn_save = new System.Windows.Forms.ToolStripButton();
+            this.btn_cancel = new System.Windows.Forms.ToolStripButton();
+            this.btn_next = new System.Windows.Forms.ToolStripButton();
+            this.btn_prev = new System.Windows.Forms.ToolStripButton();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.pnl_bot = new System.Windows.Forms.Panel();
-            this.btn_print = new System.Windows.Forms.Button();
             this.dgv_main = new System.Windows.Forms.DataGridView();
             this.number = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -70,38 +88,28 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.actual_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bin_location = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.warehouse_id = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.btn_new = new System.Windows.Forms.ToolStripButton();
-            this.btn_search = new System.Windows.Forms.ToolStripButton();
-            this.btn_edit = new System.Windows.Forms.ToolStripButton();
-            this.btn_delete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.btn_save = new System.Windows.Forms.ToolStripButton();
-            this.btn_cancel = new System.Windows.Forms.ToolStripButton();
-            this.btn_prev = new System.Windows.Forms.ToolStripButton();
-            this.btn_next = new System.Windows.Forms.ToolStripButton();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
-            this.pnl_bot.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_main)).BeginInit();
             this.SuspendLayout();
             // 
             // pnl_top
             // 
+            this.pnl_top.Controls.Add(this.txt_picked_by);
+            this.pnl_top.Controls.Add(this.txt_prepared_by);
+            this.pnl_top.Controls.Add(this.txt_doc_no);
+            this.pnl_top.Controls.Add(this.txt_sales_person);
+            this.pnl_top.Controls.Add(this.txt_code);
+            this.pnl_top.Controls.Add(this.txt_customer);
             this.pnl_top.Controls.Add(this.cmb_reference_so);
             this.pnl_top.Controls.Add(this.txt_id);
             this.pnl_top.Controls.Add(this.label13);
-            this.pnl_top.Controls.Add(this.txt_doc_no);
             this.pnl_top.Controls.Add(this.label4);
-            this.pnl_top.Controls.Add(this.txt_customer);
-            this.pnl_top.Controls.Add(this.txt_sales_person);
             this.pnl_top.Controls.Add(this.label10);
             this.pnl_top.Controls.Add(this.label9);
-            this.pnl_top.Controls.Add(this.txt_picked_by);
             this.pnl_top.Controls.Add(this.label8);
-            this.pnl_top.Controls.Add(this.txt_prepared_by);
             this.pnl_top.Controls.Add(this.label7);
-            this.pnl_top.Controls.Add(this.txt_code);
             this.pnl_top.Controls.Add(this.label3);
             this.pnl_top.Controls.Add(this.label2);
             this.pnl_top.Controls.Add(this.toolStrip1);
@@ -111,6 +119,66 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.pnl_top.Name = "pnl_top";
             this.pnl_top.Size = new System.Drawing.Size(1400, 215);
             this.pnl_top.TabIndex = 1;
+            // 
+            // txt_picked_by
+            // 
+            this.txt_picked_by.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_picked_by.Location = new System.Drawing.Point(1164, 151);
+            this.txt_picked_by.Name = "txt_picked_by";
+            this.txt_picked_by.ReadOnly = true;
+            this.txt_picked_by.Size = new System.Drawing.Size(200, 20);
+            this.txt_picked_by.TabIndex = 310;
+            this.txt_picked_by.Tag = "REQUIRED";
+            // 
+            // txt_prepared_by
+            // 
+            this.txt_prepared_by.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_prepared_by.Location = new System.Drawing.Point(1164, 130);
+            this.txt_prepared_by.Name = "txt_prepared_by";
+            this.txt_prepared_by.ReadOnly = true;
+            this.txt_prepared_by.Size = new System.Drawing.Size(200, 20);
+            this.txt_prepared_by.TabIndex = 309;
+            this.txt_prepared_by.Tag = "REQUIRED";
+            // 
+            // txt_doc_no
+            // 
+            this.txt_doc_no.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_doc_no.Location = new System.Drawing.Point(1164, 90);
+            this.txt_doc_no.Name = "txt_doc_no";
+            this.txt_doc_no.ReadOnly = true;
+            this.txt_doc_no.Size = new System.Drawing.Size(99, 20);
+            this.txt_doc_no.TabIndex = 308;
+            this.txt_doc_no.Tag = "DOCUMENTPA";
+            // 
+            // txt_sales_person
+            // 
+            this.txt_sales_person.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_sales_person.Location = new System.Drawing.Point(139, 154);
+            this.txt_sales_person.Name = "txt_sales_person";
+            this.txt_sales_person.ReadOnly = true;
+            this.txt_sales_person.Size = new System.Drawing.Size(200, 20);
+            this.txt_sales_person.TabIndex = 307;
+            this.txt_sales_person.Tag = "REQUIRED";
+            // 
+            // txt_code
+            // 
+            this.txt_code.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_code.Location = new System.Drawing.Point(139, 109);
+            this.txt_code.Name = "txt_code";
+            this.txt_code.ReadOnly = true;
+            this.txt_code.Size = new System.Drawing.Size(200, 20);
+            this.txt_code.TabIndex = 306;
+            this.txt_code.Tag = "REQUIRED";
+            // 
+            // txt_customer
+            // 
+            this.txt_customer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(235)))), ((int)(((byte)(235)))), ((int)(((byte)(235)))));
+            this.txt_customer.Location = new System.Drawing.Point(139, 88);
+            this.txt_customer.Name = "txt_customer";
+            this.txt_customer.ReadOnly = true;
+            this.txt_customer.Size = new System.Drawing.Size(370, 20);
+            this.txt_customer.TabIndex = 305;
+            this.txt_customer.Tag = "REQUIRED";
             // 
             // cmb_reference_so
             // 
@@ -148,14 +216,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label13.Text = "PICK ACTIVITY ID:";
             this.label13.Visible = false;
             // 
-            // txt_doc_no
-            // 
-            this.txt_doc_no.Location = new System.Drawing.Point(1164, 90);
-            this.txt_doc_no.Name = "txt_doc_no";
-            this.txt_doc_no.Size = new System.Drawing.Size(99, 20);
-            this.txt_doc_no.TabIndex = 36;
-            this.txt_doc_no.Tag = "";
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -164,22 +224,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label4.Size = new System.Drawing.Size(52, 13);
             this.label4.TabIndex = 35;
             this.label4.Text = "DOC NO:";
-            // 
-            // txt_customer
-            // 
-            this.txt_customer.Location = new System.Drawing.Point(139, 88);
-            this.txt_customer.Name = "txt_customer";
-            this.txt_customer.Size = new System.Drawing.Size(370, 20);
-            this.txt_customer.TabIndex = 34;
-            this.txt_customer.Tag = "";
-            // 
-            // txt_sales_person
-            // 
-            this.txt_sales_person.Location = new System.Drawing.Point(139, 154);
-            this.txt_sales_person.Name = "txt_sales_person";
-            this.txt_sales_person.Size = new System.Drawing.Size(200, 20);
-            this.txt_sales_person.TabIndex = 32;
-            this.txt_sales_person.Tag = "";
             // 
             // label10
             // 
@@ -199,14 +243,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label9.TabIndex = 31;
             this.label9.Text = "REFERENCE SO:";
             // 
-            // txt_picked_by
-            // 
-            this.txt_picked_by.Location = new System.Drawing.Point(1164, 151);
-            this.txt_picked_by.Name = "txt_picked_by";
-            this.txt_picked_by.Size = new System.Drawing.Size(200, 20);
-            this.txt_picked_by.TabIndex = 29;
-            this.txt_picked_by.Tag = "";
-            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -216,14 +252,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label8.TabIndex = 26;
             this.label8.Text = "PICKED BY:";
             // 
-            // txt_prepared_by
-            // 
-            this.txt_prepared_by.Location = new System.Drawing.Point(1164, 130);
-            this.txt_prepared_by.Name = "txt_prepared_by";
-            this.txt_prepared_by.Size = new System.Drawing.Size(200, 20);
-            this.txt_prepared_by.TabIndex = 25;
-            this.txt_prepared_by.Tag = "";
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
@@ -232,14 +260,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.label7.Size = new System.Drawing.Size(86, 13);
             this.label7.TabIndex = 24;
             this.label7.Text = "PREPARED BY:";
-            // 
-            // txt_code
-            // 
-            this.txt_code.Location = new System.Drawing.Point(139, 109);
-            this.txt_code.Name = "txt_code";
-            this.txt_code.Size = new System.Drawing.Size(200, 20);
-            this.txt_code.TabIndex = 15;
-            this.txt_code.Tag = "";
             // 
             // label3
             // 
@@ -266,7 +286,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_search,
             this.btn_edit,
             this.btn_delete,
-            this.toolStripButton1,
+            this.btn_print,
             this.btn_save,
             this.btn_cancel,
             this.btn_next,
@@ -277,233 +297,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 13;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // panel6
-            // 
-            this.panel6.Controls.Add(this.label1);
-            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel6.Location = new System.Drawing.Point(0, 0);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(1400, 47);
-            this.panel6.TabIndex = 10;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
-            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.label1.Location = new System.Drawing.Point(18, 10);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(128, 25);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Pick Activity";
-            // 
-            // pnl_bot
-            // 
-            this.pnl_bot.Controls.Add(this.btn_print);
-            this.pnl_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pnl_bot.Location = new System.Drawing.Point(0, 825);
-            this.pnl_bot.Name = "pnl_bot";
-            this.pnl_bot.Size = new System.Drawing.Size(1400, 125);
-            this.pnl_bot.TabIndex = 2;
-            // 
-            // btn_print
-            // 
-            this.btn_print.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_print.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(207)))), ((int)(((byte)(226)))), ((int)(((byte)(243)))));
-            this.btn_print.Location = new System.Drawing.Point(43, 85);
-            this.btn_print.Name = "btn_print";
-            this.btn_print.Size = new System.Drawing.Size(114, 23);
-            this.btn_print.TabIndex = 38;
-            this.btn_print.Text = "PRINT";
-            this.btn_print.UseVisualStyleBackColor = false;
-            // 
-            // dgv_main
-            // 
-            this.dgv_main.AllowUserToAddRows = false;
-            this.dgv_main.AllowUserToDeleteRows = false;
-            this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
-            this.dgv_main.ColumnHeadersHeight = 50;
-            this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.number,
-            this.id,
-            this.pa_id,
-            this.item_id,
-            this.so_id,
-            this.sod_id,
-            this.item_code,
-            this.item_description,
-            this.left_qty,
-            this.left_uom,
-            this.pick_qty,
-            this.pick_uom,
-            this.actual_qty,
-            this.actual_uom,
-            this.bin_location,
-            this.warehouse_id});
-            this.dgv_main.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dgv_main.EnableHeadersVisualStyles = false;
-            this.dgv_main.Location = new System.Drawing.Point(0, 215);
-            this.dgv_main.Name = "dgv_main";
-            this.dgv_main.Size = new System.Drawing.Size(1400, 610);
-            this.dgv_main.TabIndex = 3;
-            this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
-            this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
-            this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
-            // 
-            // number
-            // 
-            this.number.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.number.DataPropertyName = "number";
-            this.number.Frozen = true;
-            this.number.HeaderText = "#";
-            this.number.Name = "number";
-            this.number.ReadOnly = true;
-            this.number.Width = 50;
-            // 
-            // id
-            // 
-            this.id.DataPropertyName = "id";
-            this.id.HeaderText = "ID";
-            this.id.Name = "id";
-            this.id.ReadOnly = true;
-            this.id.Visible = false;
-            // 
-            // pa_id
-            // 
-            this.pa_id.DataPropertyName = "pa_id";
-            this.pa_id.HeaderText = "PA ID";
-            this.pa_id.Name = "pa_id";
-            this.pa_id.ReadOnly = true;
-            this.pa_id.Visible = false;
-            // 
-            // item_id
-            // 
-            this.item_id.DataPropertyName = "item_id";
-            this.item_id.HeaderText = "ITEM ID";
-            this.item_id.Name = "item_id";
-            this.item_id.ReadOnly = true;
-            // 
-            // so_id
-            // 
-            this.so_id.DataPropertyName = "so_id";
-            this.so_id.HeaderText = "SO ID";
-            this.so_id.Name = "so_id";
-            this.so_id.ReadOnly = true;
-            this.so_id.Visible = false;
-            // 
-            // sod_id
-            // 
-            this.sod_id.DataPropertyName = "sod_id";
-            this.sod_id.HeaderText = "SOD ID";
-            this.sod_id.Name = "sod_id";
-            this.sod_id.ReadOnly = true;
-            this.sod_id.Visible = false;
-            // 
-            // item_code
-            // 
-            this.item_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.item_code.DataPropertyName = "item_code";
-            this.item_code.HeaderText = "ITEM CODE";
-            this.item_code.MinimumWidth = 100;
-            this.item_code.Name = "item_code";
-            this.item_code.ReadOnly = true;
-            // 
-            // item_description
-            // 
-            this.item_description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.item_description.DataPropertyName = "item_description";
-            this.item_description.HeaderText = "ITEM DESCRIPTION";
-            this.item_description.MinimumWidth = 200;
-            this.item_description.Name = "item_description";
-            this.item_description.ReadOnly = true;
-            // 
-            // left_qty
-            // 
-            this.left_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.left_qty.DataPropertyName = "left_qty";
-            this.left_qty.HeaderText = "QTY";
-            this.left_qty.MinimumWidth = 80;
-            this.left_qty.Name = "left_qty";
-            this.left_qty.ReadOnly = true;
-            this.left_qty.Width = 80;
-            // 
-            // left_uom
-            // 
-            this.left_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.left_uom.DataPropertyName = "left_uom";
-            this.left_uom.HeaderText = "UOM";
-            this.left_uom.MinimumWidth = 80;
-            this.left_uom.Name = "left_uom";
-            this.left_uom.ReadOnly = true;
-            this.left_uom.Width = 80;
-            // 
-            // pick_qty
-            // 
-            this.pick_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.pick_qty.DataPropertyName = "pick_qty";
-            this.pick_qty.HeaderText = "QTY";
-            this.pick_qty.MinimumWidth = 80;
-            this.pick_qty.Name = "pick_qty";
-            this.pick_qty.ReadOnly = true;
-            this.pick_qty.Width = 80;
-            // 
-            // pick_uom
-            // 
-            this.pick_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.pick_uom.DataPropertyName = "left_uom";
-            this.pick_uom.HeaderText = "UOM";
-            this.pick_uom.MinimumWidth = 80;
-            this.pick_uom.Name = "pick_uom";
-            this.pick_uom.ReadOnly = true;
-            this.pick_uom.Width = 80;
-            // 
-            // actual_qty
-            // 
-            this.actual_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.actual_qty.DataPropertyName = "actual_qty";
-            this.actual_qty.HeaderText = "QTY";
-            this.actual_qty.MinimumWidth = 80;
-            this.actual_qty.Name = "actual_qty";
-            this.actual_qty.ReadOnly = true;
-            this.actual_qty.Width = 80;
-            // 
-            // actual_uom
-            // 
-            this.actual_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.actual_uom.DataPropertyName = "actual_uom";
-            this.actual_uom.HeaderText = "UOM";
-            this.actual_uom.MinimumWidth = 80;
-            this.actual_uom.Name = "actual_uom";
-            this.actual_uom.ReadOnly = true;
-            this.actual_uom.Width = 80;
-            // 
-            // bin_location
-            // 
-            this.bin_location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.bin_location.DataPropertyName = "bin_location";
-            this.bin_location.HeaderText = "NEW BIN LOCATION";
-            this.bin_location.MinimumWidth = 250;
-            this.bin_location.Name = "bin_location";
-            this.bin_location.ReadOnly = true;
-            this.bin_location.Width = 250;
-            // 
-            // warehouse_id
-            // 
-            this.warehouse_id.DataPropertyName = "warehouse_id";
-            this.warehouse_id.HeaderText = "WAREHOUSE ID";
-            this.warehouse_id.Name = "warehouse_id";
-            this.warehouse_id.ReadOnly = true;
-            this.warehouse_id.Visible = false;
             // 
             // btn_new
             // 
@@ -541,13 +334,13 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_delete.Text = "Delete";
             this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
             // 
-            // toolStripButton1
+            // btn_print
             // 
-            this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(52, 22);
-            this.toolStripButton1.Text = "Print";
+            this.btn_print.Image = ((System.Drawing.Image)(resources.GetObject("btn_print.Image")));
+            this.btn_print.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_print.Name = "btn_print";
+            this.btn_print.Size = new System.Drawing.Size(52, 22);
+            this.btn_print.Text = "Print";
             // 
             // btn_save
             // 
@@ -569,16 +362,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_cancel.Visible = false;
             this.btn_cancel.Click += new System.EventHandler(this.btn_close_Click);
             // 
-            // btn_prev
-            // 
-            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
-            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_prev.Name = "btn_prev";
-            this.btn_prev.Size = new System.Drawing.Size(72, 22);
-            this.btn_prev.Text = "Previous";
-            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
-            // 
             // btn_next
             // 
             this.btn_next.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
@@ -589,6 +372,252 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.btn_next.Text = "Next";
             this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
             this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
+            // 
+            // btn_prev
+            // 
+            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
+            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_prev.Name = "btn_prev";
+            this.btn_prev.Size = new System.Drawing.Size(72, 22);
+            this.btn_prev.Text = "Previous";
+            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.Controls.Add(this.label1);
+            this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel6.Location = new System.Drawing.Point(0, 0);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(1400, 47);
+            this.panel6.TabIndex = 10;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
+            this.label1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.label1.Location = new System.Drawing.Point(18, 10);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(128, 25);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "Pick Activity";
+            // 
+            // pnl_bot
+            // 
+            this.pnl_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pnl_bot.Location = new System.Drawing.Point(0, 825);
+            this.pnl_bot.Name = "pnl_bot";
+            this.pnl_bot.Size = new System.Drawing.Size(1400, 125);
+            this.pnl_bot.TabIndex = 2;
+            // 
+            // dgv_main
+            // 
+            this.dgv_main.AllowUserToAddRows = false;
+            this.dgv_main.AllowUserToDeleteRows = false;
+            this.dgv_main.AllowUserToResizeColumns = false;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dgv_main.ColumnHeadersHeight = 50;
+            this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.number,
+            this.id,
+            this.pa_id,
+            this.item_id,
+            this.so_id,
+            this.sod_id,
+            this.item_code,
+            this.item_description,
+            this.left_qty,
+            this.left_uom,
+            this.pick_qty,
+            this.pick_uom,
+            this.actual_qty,
+            this.actual_uom,
+            this.bin_location,
+            this.warehouse_id});
+            this.dgv_main.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dgv_main.EnableHeadersVisualStyles = false;
+            this.dgv_main.Location = new System.Drawing.Point(0, 215);
+            this.dgv_main.Name = "dgv_main";
+            this.dgv_main.Size = new System.Drawing.Size(1400, 610);
+            this.dgv_main.TabIndex = 3;
+            this.dgv_main.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_main_CellClick);
+            this.dgv_main.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.dgv_main_EditingControlShowing);
+            this.dgv_main.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.dgv_main_RowPostPaint);
+            // 
+            // number
+            // 
+            this.number.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.number.DataPropertyName = "number";
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
+            this.number.DefaultCellStyle = dataGridViewCellStyle2;
+            this.number.Frozen = true;
+            this.number.HeaderText = "#";
+            this.number.Name = "number";
+            this.number.ReadOnly = true;
+            this.number.Width = 50;
+            // 
+            // id
+            // 
+            this.id.DataPropertyName = "id";
+            this.id.HeaderText = "ID";
+            this.id.Name = "id";
+            this.id.ReadOnly = true;
+            this.id.Visible = false;
+            // 
+            // pa_id
+            // 
+            this.pa_id.DataPropertyName = "pa_id";
+            this.pa_id.HeaderText = "PA ID";
+            this.pa_id.Name = "pa_id";
+            this.pa_id.ReadOnly = true;
+            this.pa_id.Visible = false;
+            // 
+            // item_id
+            // 
+            this.item_id.DataPropertyName = "item_id";
+            this.item_id.HeaderText = "ITEM ID";
+            this.item_id.Name = "item_id";
+            this.item_id.ReadOnly = true;
+            this.item_id.Visible = false;
+            // 
+            // so_id
+            // 
+            this.so_id.DataPropertyName = "so_id";
+            this.so_id.HeaderText = "SO ID";
+            this.so_id.Name = "so_id";
+            this.so_id.ReadOnly = true;
+            this.so_id.Visible = false;
+            // 
+            // sod_id
+            // 
+            this.sod_id.DataPropertyName = "sod_id";
+            this.sod_id.HeaderText = "SOD ID";
+            this.sod_id.Name = "sod_id";
+            this.sod_id.ReadOnly = true;
+            this.sod_id.Visible = false;
+            // 
+            // item_code
+            // 
+            this.item_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.item_code.DataPropertyName = "item_code";
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_code.DefaultCellStyle = dataGridViewCellStyle3;
+            this.item_code.HeaderText = "ITEM CODE";
+            this.item_code.MinimumWidth = 100;
+            this.item_code.Name = "item_code";
+            this.item_code.ReadOnly = true;
+            // 
+            // item_description
+            // 
+            this.item_description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.item_description.DataPropertyName = "item_description";
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_description.DefaultCellStyle = dataGridViewCellStyle4;
+            this.item_description.HeaderText = "ITEM DESCRIPTION";
+            this.item_description.MinimumWidth = 200;
+            this.item_description.Name = "item_description";
+            this.item_description.ReadOnly = true;
+            // 
+            // left_qty
+            // 
+            this.left_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.left_qty.DataPropertyName = "left_qty";
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
+            this.left_qty.DefaultCellStyle = dataGridViewCellStyle5;
+            this.left_qty.HeaderText = "QTY";
+            this.left_qty.MinimumWidth = 80;
+            this.left_qty.Name = "left_qty";
+            this.left_qty.ReadOnly = true;
+            this.left_qty.Width = 80;
+            // 
+            // left_uom
+            // 
+            this.left_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.left_uom.DataPropertyName = "left_uom";
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
+            this.left_uom.DefaultCellStyle = dataGridViewCellStyle6;
+            this.left_uom.HeaderText = "UOM";
+            this.left_uom.MinimumWidth = 80;
+            this.left_uom.Name = "left_uom";
+            this.left_uom.ReadOnly = true;
+            this.left_uom.Width = 80;
+            // 
+            // pick_qty
+            // 
+            this.pick_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.pick_qty.DataPropertyName = "pick_qty";
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
+            this.pick_qty.DefaultCellStyle = dataGridViewCellStyle7;
+            this.pick_qty.HeaderText = "QTY";
+            this.pick_qty.MinimumWidth = 80;
+            this.pick_qty.Name = "pick_qty";
+            this.pick_qty.ReadOnly = true;
+            this.pick_qty.Width = 80;
+            // 
+            // pick_uom
+            // 
+            this.pick_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.pick_uom.DataPropertyName = "left_uom";
+            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Gainsboro;
+            this.pick_uom.DefaultCellStyle = dataGridViewCellStyle8;
+            this.pick_uom.HeaderText = "UOM";
+            this.pick_uom.MinimumWidth = 80;
+            this.pick_uom.Name = "pick_uom";
+            this.pick_uom.ReadOnly = true;
+            this.pick_uom.Width = 80;
+            // 
+            // actual_qty
+            // 
+            this.actual_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.actual_qty.DataPropertyName = "actual_qty";
+            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Gainsboro;
+            this.actual_qty.DefaultCellStyle = dataGridViewCellStyle9;
+            this.actual_qty.HeaderText = "QTY";
+            this.actual_qty.MinimumWidth = 80;
+            this.actual_qty.Name = "actual_qty";
+            this.actual_qty.ReadOnly = true;
+            this.actual_qty.Width = 80;
+            // 
+            // actual_uom
+            // 
+            this.actual_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.actual_uom.DataPropertyName = "actual_uom";
+            dataGridViewCellStyle10.BackColor = System.Drawing.Color.Gainsboro;
+            this.actual_uom.DefaultCellStyle = dataGridViewCellStyle10;
+            this.actual_uom.HeaderText = "UOM";
+            this.actual_uom.MinimumWidth = 80;
+            this.actual_uom.Name = "actual_uom";
+            this.actual_uom.ReadOnly = true;
+            this.actual_uom.Width = 80;
+            // 
+            // bin_location
+            // 
+            this.bin_location.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.bin_location.DataPropertyName = "bin_location";
+            dataGridViewCellStyle11.BackColor = System.Drawing.Color.Gainsboro;
+            this.bin_location.DefaultCellStyle = dataGridViewCellStyle11;
+            this.bin_location.HeaderText = "NEW BIN LOCATION";
+            this.bin_location.MinimumWidth = 250;
+            this.bin_location.Name = "bin_location";
+            this.bin_location.ReadOnly = true;
+            this.bin_location.Width = 250;
+            // 
+            // warehouse_id
+            // 
+            this.warehouse_id.DataPropertyName = "warehouse_id";
+            this.warehouse_id.HeaderText = "WAREHOUSE ID";
+            this.warehouse_id.Name = "warehouse_id";
+            this.warehouse_id.ReadOnly = true;
+            this.warehouse_id.Visible = false;
             // 
             // PickActivityPage
             // 
@@ -606,7 +635,6 @@ namespace smpc_engineering_app.Pages.PickActivity
             this.toolStrip1.PerformLayout();
             this.panel6.ResumeLayout(false);
             this.panel6.PerformLayout();
-            this.pnl_bot.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgv_main)).EndInit();
             this.ResumeLayout(false);
 
@@ -615,28 +643,30 @@ namespace smpc_engineering_app.Pages.PickActivity
         #endregion
 
         private System.Windows.Forms.Panel pnl_top;
-        private System.Windows.Forms.TextBox txt_picked_by;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.TextBox txt_prepared_by;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox txt_code;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox txt_sales_person;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.TextBox txt_customer;
-        private System.Windows.Forms.TextBox txt_doc_no;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Panel pnl_bot;
-        private System.Windows.Forms.Button btn_print;
         private System.Windows.Forms.DataGridView dgv_main;
         private System.Windows.Forms.TextBox txt_id;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox cmb_reference_so;
+        private System.Windows.Forms.ToolStripButton btn_new;
+        private System.Windows.Forms.ToolStripButton btn_search;
+        private System.Windows.Forms.ToolStripButton btn_edit;
+        private System.Windows.Forms.ToolStripButton btn_delete;
+        private System.Windows.Forms.ToolStripButton btn_print;
+        private System.Windows.Forms.ToolStripButton btn_save;
+        private System.Windows.Forms.ToolStripButton btn_cancel;
+        private System.Windows.Forms.ToolStripButton btn_next;
+        private System.Windows.Forms.ToolStripButton btn_prev;
         private System.Windows.Forms.DataGridViewTextBoxColumn number;
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn pa_id;
@@ -653,14 +683,11 @@ namespace smpc_engineering_app.Pages.PickActivity
         private System.Windows.Forms.DataGridViewTextBoxColumn actual_uom;
         private System.Windows.Forms.DataGridViewTextBoxColumn bin_location;
         private System.Windows.Forms.DataGridViewTextBoxColumn warehouse_id;
-        private System.Windows.Forms.ToolStripButton btn_new;
-        private System.Windows.Forms.ToolStripButton btn_search;
-        private System.Windows.Forms.ToolStripButton btn_edit;
-        private System.Windows.Forms.ToolStripButton btn_delete;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
-        private System.Windows.Forms.ToolStripButton btn_save;
-        private System.Windows.Forms.ToolStripButton btn_cancel;
-        private System.Windows.Forms.ToolStripButton btn_next;
-        private System.Windows.Forms.ToolStripButton btn_prev;
+        private System.Windows.Forms.TextBox txt_customer;
+        private System.Windows.Forms.TextBox txt_code;
+        private System.Windows.Forms.TextBox txt_sales_person;
+        private System.Windows.Forms.TextBox txt_doc_no;
+        private System.Windows.Forms.TextBox txt_prepared_by;
+        private System.Windows.Forms.TextBox txt_picked_by;
     }
 }

@@ -122,6 +122,8 @@ namespace smpc_engineering_app.Pages
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(296, 106);
             this.Controls.Add(this.pnl_auth);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(312, 145);
             this.MinimumSize = new System.Drawing.Size(312, 145);
             this.Name = "Login";

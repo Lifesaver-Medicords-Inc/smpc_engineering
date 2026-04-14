@@ -35,6 +35,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 
             dgv_ir_search.AutoGenerateColumns = false;
             InitializeSearchBox();
+
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_ir_search, "doc_no", "IR");
         }
 
         private void InitializeSearchBox()
@@ -56,7 +58,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             }
             else
             {
-                var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "ref_doc", "req_by", "req_date", "required_date");
+                var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "purpose", "req_by", "req_date", "required_date");
                 dgv_ir_search.DataSource = searchedData;
             }
         }

@@ -30,7 +30,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.StartPosition = FormStartPosition.CenterParent;
 
             dgv_so_search.AutoGenerateColumns = false;
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_so_search, "doc_no", "AV");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_so_search, "doc_no", "SO");
             InitializeSearchBox();
         }
 
@@ -54,7 +54,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             else
             {
                 var searchedData = Helpers.FilterDataTable(soTable, searchText,
-                    "customer", "code", "tin", "delivery_date", "doc_no", "doc_date", "delivery_to", "bill_to");
+                    "customer", "code", "tin", "delivery_date", "doc_no", "date", "delivery_to", "bill_to");
                 dgv_so_search.DataSource = searchedData;
             }
         }

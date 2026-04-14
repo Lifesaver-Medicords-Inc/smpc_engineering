@@ -71,7 +71,7 @@ namespace smpc_engineering_app.Pages.PickActivity
             btn_new.Visible = _isWarehouseUser ? false : true;
 
             Helpers.EnableGroupHeaders(dgv_main, columnGroupsMain);
-            Helpers.SetChildControlsEnabled(new Panel[] { pnl_top }, false, new string[] { });
+            Helpers.SetChildControlsEnabled(new Panel[] { pnl_top }, true, new string[] { });
         }
 
         private void SetEditableColumns(bool isEdit)
@@ -83,7 +83,14 @@ namespace smpc_engineering_app.Pages.PickActivity
             foreach (var colName in editableColumns)
             {
                 if (dgv_main.Columns.Contains(colName))
-                    dgv_main.Columns[colName].ReadOnly = !isEdit;
+                {
+                    var column = dgv_main.Columns[colName];
+
+                    column.ReadOnly = !isEdit;
+
+                    // Toggle background color based on readonly state
+                    column.DefaultCellStyle.BackColor = column.ReadOnly ? Color.Gainsboro : Color.White;
+                }
             }
         }
 
@@ -95,11 +102,11 @@ namespace smpc_engineering_app.Pages.PickActivity
 
             //Enable panels based on user role
             if (!_isWarehouseUser)
-                Helpers.SetChildControlsEnabled(new[] { pnl_top }, enable, new string[] { "txt_customer", "txt_code", "txt_prepared_by", "txt_picked_by", "txt_sales_person", "txt_doc_no" });
+                Helpers.SetChildControlsEnabled(new[] { pnl_top }, !enable, new string[] { "txt_customer", "txt_code", "txt_prepared_by", "txt_picked_by", "txt_sales_person", "txt_doc_no" });
 
             // buttons
-            string[] editButtons = { "btn_save", "btn_close" };
-            string[] navButtons = { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete" };
+            string[] editButtons = { "btn_save", "btn_cancel" };
+            string[] navButtons = { "btn_prev", "btn_next", "btn_search", "btn_edit", "btn_delete", "btn_print" };
 
             Helpers.SetButtonVisibility(
                 toolStrip1,

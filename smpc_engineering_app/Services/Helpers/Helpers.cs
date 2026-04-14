@@ -568,7 +568,7 @@ namespace smpc_engineering_app.Services.Helpers
             }
         }
 
-        public static void SetChildControlsEnabled(Control[] parents, bool enable, string[] excludeNames)
+        public static void SetChildControlsEnabled(Control[] parents, bool readOnly, string[] excludeNames)
         {
             foreach (Control parent in parents)
             {
@@ -578,13 +578,23 @@ namespace smpc_engineering_app.Services.Helpers
                     if (excludeNames != null && excludeNames.Contains(control.Name))
                         continue;
 
-                    // Affect controls of these types
-                    if (control is TextBox || control is ComboBox || control is CheckBox || control is DateTimePicker)
-                        control.Enabled = enable;
+                    if (control is TextBox textBox)
+                    {
+                        textBox.ReadOnly = readOnly;
+                        textBox.BackColor = readOnly ? Color.FromArgb(235, 235, 235) : Color.White;
+                    }
+                    else if (control is ComboBox comboBox)
+                        comboBox.Enabled = !readOnly;
+
+                    else if (control is DateTimePicker datePicker)
+                        datePicker.Enabled = !readOnly; // No true ReadOnly, fallback behavior
+
+                    else if (control is CheckBox checkBox)
+                        checkBox.Enabled = !readOnly; // Prevent user from changing value
 
                     // Recurse into child containers
                     if (control.HasChildren)
-                        SetChildControlsEnabled(new Control[] { control }, enable, excludeNames);
+                        SetChildControlsEnabled(new Control[] { control }, readOnly, excludeNames);
                 }
             }
         }

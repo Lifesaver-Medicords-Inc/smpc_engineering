@@ -210,6 +210,8 @@ namespace smpc_engineering_app.Pages.Components
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.btn_save);
             this.Controls.Add(this.dgv_pick_qty);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "PickQtyModal";
             this.Text = "PickQtyModal";
             this.Load += new System.EventHandler(this.PickQtyModal_Load);
