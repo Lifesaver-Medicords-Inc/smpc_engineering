@@ -18,8 +18,8 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
     {
         public string SelectedPAId { get; private set; } = null;
         private string placeHolderText = "Pick Activity Search...";
-        private PickActivityList PickActivity;
-        readonly PickActivityService pickActivityService = new PickActivityService();
+        private PickActivityList2 PickActivity;
+        readonly PickActivityService2 pickActivityService = new PickActivityService2();
         private DataTable paTable;
 
         public PickActivitySearch()
@@ -54,7 +54,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             }
             else
             {
-                var searchedData = Helpers.FilterDataTable(paTable, searchText, "doc_no", "customer", "sales_person", "sales_person", "prepared_by", "picked_by");
+                var searchedData = Helpers.FilterDataTable(paTable, searchText, "doc_no", "customer", "customer_code", "sales_person", "prepared_by", "picked_by");
                 dgv_pa_search.DataSource = searchedData;
             }
         }
