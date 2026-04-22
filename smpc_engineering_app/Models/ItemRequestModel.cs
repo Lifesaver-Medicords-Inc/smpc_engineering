@@ -68,4 +68,63 @@ namespace smpc_engineering_app.Models
         public List<ItemRequestDetailsModel> item_request_details { get; set; }
         public List<ItemRequestLocationModel> item_request_location { get; set; }
     }
+
+    public class ItemRequest2Model
+    {
+        public int id { get; set; }
+        public int doc_no { get; set; }
+        public int sales_order_id { get; set; }
+        public string requesting_dept { get; set; }
+        public string purpose { get; set; }
+        public string request_date { get; set; }
+        public string required_date { get; set; }
+        public string issue_date { get; set; }
+        public string ref_doc { get; set; }
+        public string requested_by { get; set; }
+        public string received_by { get; set; }
+        public string approved_by { get; set; }
+        public string issued_by { get; set; }
+        public bool? is_forward { get; set; }
+    }
+
+    public class ItemRequestDetails2Model
+    {
+        public int id { get; set; }
+        public int item_request_id { get; set; }
+        public int sales_order_details_id { get; set; }
+        public int item_id { get; set; }
+        public string item_description { get; set; }
+        public int? required_qty { get; set; }
+        public string required_uom { get; set; }
+        public int? remaining_qty { get; set; }
+        public string remaining_uom { get; set; }
+        public int? issued_qty { get; set; }
+        public string issued_uom { get; set; }
+        public string serial_no { get; set; }
+        public string remarks { get; set; }
+        public bool? has_issued { get; set; }
+    }
+
+    public class ItemRequestLocation2Model
+    {
+        public int id { get; set; }
+        public int item_request_id { get; set; }
+        public int item_request_details_id { get; set; }
+        public int bin_id { get; set; }
+        public int selected_qty { get; set; }
+    }
+
+    public class ItemRequestList2
+    {
+        public List<ItemRequest2Model> item_request { get; set; }
+        public List<ItemRequestDetails2Model> item_request_details { get; set; }
+        public List<ItemRequestLocation2Model> item_request_locations { get; set; }
+    }
+
+    public class ItemRequestPayload2
+    {
+        public ItemRequest2Model item_request { get; set; }
+        public List<ItemRequestDetails2Model> item_request_details { get; set; }
+        public List<ItemRequestLocation2Model> item_request_locations { get; set; }
+    }
 }

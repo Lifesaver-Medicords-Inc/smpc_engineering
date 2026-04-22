@@ -10,4 +10,10 @@ namespace smpc_engineering_app.Models
     {
         public string user_name { get; set; }
     }
+
+    class UserListViewModel
+    {
+        public int user_id { get; set; }
+        public string user_name { get; set; }
+    }
 }

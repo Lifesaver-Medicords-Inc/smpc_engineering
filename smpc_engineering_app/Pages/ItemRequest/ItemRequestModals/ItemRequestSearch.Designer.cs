@@ -41,8 +41,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.id = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.purpose = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.req_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.req_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.requested_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.request_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.required_date = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_ir_search)).BeginInit();
             this.SuspendLayout();
@@ -64,8 +64,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.id,
             this.doc_no,
             this.purpose,
-            this.req_by,
-            this.req_date,
+            this.requested_by,
+            this.request_date,
             this.required_date});
             this.dgv_ir_search.Location = new System.Drawing.Point(-1, 31);
             this.dgv_ir_search.Name = "dgv_ir_search";
@@ -113,26 +113,26 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             this.purpose.Name = "purpose";
             this.purpose.ReadOnly = true;
             // 
-            // req_by
+            // requested_by
             // 
-            this.req_by.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.req_by.DataPropertyName = "req_by";
+            this.requested_by.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.requested_by.DataPropertyName = "requested_by";
             dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
-            this.req_by.DefaultCellStyle = dataGridViewCellStyle5;
-            this.req_by.HeaderText = "REQUESTOR";
-            this.req_by.Name = "req_by";
-            this.req_by.ReadOnly = true;
+            this.requested_by.DefaultCellStyle = dataGridViewCellStyle5;
+            this.requested_by.HeaderText = "REQUESTOR";
+            this.requested_by.Name = "requested_by";
+            this.requested_by.ReadOnly = true;
             // 
-            // req_date
+            // request_date
             // 
-            this.req_date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.req_date.DataPropertyName = "req_date";
+            this.request_date.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.request_date.DataPropertyName = "request_date";
             dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
-            this.req_date.DefaultCellStyle = dataGridViewCellStyle6;
-            this.req_date.HeaderText = "REQUEST DATE";
-            this.req_date.MinimumWidth = 150;
-            this.req_date.Name = "req_date";
-            this.req_date.ReadOnly = true;
+            this.request_date.DefaultCellStyle = dataGridViewCellStyle6;
+            this.request_date.HeaderText = "REQUEST DATE";
+            this.request_date.MinimumWidth = 150;
+            this.request_date.Name = "request_date";
+            this.request_date.ReadOnly = true;
             // 
             // required_date
             // 
@@ -169,8 +169,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         private System.Windows.Forms.DataGridViewTextBoxColumn id;
         private System.Windows.Forms.DataGridViewTextBoxColumn doc_no;
         private System.Windows.Forms.DataGridViewTextBoxColumn purpose;
-        private System.Windows.Forms.DataGridViewTextBoxColumn req_by;
-        private System.Windows.Forms.DataGridViewTextBoxColumn req_date;
+        private System.Windows.Forms.DataGridViewTextBoxColumn requested_by;
+        private System.Windows.Forms.DataGridViewTextBoxColumn request_date;
         private System.Windows.Forms.DataGridViewTextBoxColumn required_date;
     }
 }

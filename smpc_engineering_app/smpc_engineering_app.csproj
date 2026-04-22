@@ -140,6 +140,13 @@
     <Compile Include="Models\SalesOrderViewModel.cs" />
     <Compile Include="Models\UserListModel.cs" />
     <Compile Include="Models\WarehouseAreaModel.cs" />
+    <Compile Include="Models\PickActWarehouseViewModel.cs" />
+    <Compile Include="Pages\Components\BinLocationPickComponent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\Components\BinLocationPickComponent.Designer.cs">
+      <DependentUpon>BinLocationPickComponent.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Components\PickQtyModal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,6 +177,12 @@
     <Compile Include="Pages\Components\MaterialsForm.Designer.cs">
       <DependentUpon>MaterialsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Pages\ItemRequest2\ItemRequestPage2.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\ItemRequest2\ItemRequestPage2.Designer.cs">
+      <DependentUpon>ItemRequestPage2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +206,12 @@
     </Compile>
     <Compile Include="Pages\JobOrder\JobOrderPage.Designer.cs">
       <DependentUpon>JobOrderPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PickActivity2\PickActivityPage2.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\PickActivity2\PickActivityPage2.Designer.cs">
+      <DependentUpon>PickActivityPage2.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.cs">
       <SubType>Form</SubType>
@@ -227,6 +246,7 @@
     <Compile Include="Services\AuthServices.cs" />
     <Compile Include="Services\GeneralService.cs" />
     <Compile Include="Services\Helpers\ApiService.cs" />
+    <Compile Include="Services\Helpers\BinLocationComboOverlay.cs" />
     <Compile Include="Services\Helpers\WebsocketServices.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\Setup\BinLocationListService.cs" />
@@ -238,7 +258,9 @@
     <Compile Include="Services\Setup\UserListService.cs" />
     <Compile Include="Services\Setup\WarehouseAreaService.cs" />
     <Compile Include="Services\Transaction\ItemRequestService.cs" />
+    <Compile Include="Services\Transaction\ItemRequestService2.cs" />
     <Compile Include="Services\Transaction\PickActivityService.cs" />
+    <Compile Include="Services\Transaction\PickActivityService2.cs" />
     <Compile Include="Services\Transaction\SalesOrderViewEngService.cs" />
     <Compile Include="Shared\ApiEndPoints.cs" />
     <Compile Include="Shared\CacheData.cs" />
@@ -260,6 +282,9 @@
     <Compile Include="Services\Helpers\LogsServices.cs" />
     <Compile Include="Services\RoutesService.cs" />
     <Compile Include="Shared\ENUM_TAX_CODE.cs" />
+    <EmbeddedResource Include="Pages\Components\BinLocationPickComponent.resx">
+      <DependentUpon>BinLocationPickComponent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pages\Components\PickQtyModal.resx">
       <DependentUpon>PickQtyModal.cs</DependentUpon>
     </EmbeddedResource>
@@ -268,6 +293,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Components\RedBoxQuotationItem.resx">
       <DependentUpon>RedBoxQuotationItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\ItemRequest2\ItemRequestPage2.resx">
+      <DependentUpon>ItemRequestPage2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\ItemRequest\ItemRequestModals\ItemRequestItems.resx">
       <DependentUpon>ItemRequestItems.cs</DependentUpon>
@@ -289,6 +317,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\Components\MaterialsForm.resx">
       <DependentUpon>MaterialsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\PickActivity2\PickActivityPage2.resx">
+      <DependentUpon>PickActivityPage2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\PickActivity\PickActivityModals\PickActivitySearch.resx">
       <DependentUpon>PickActivitySearch.cs</DependentUpon>
@@ -353,6 +384,10 @@
     <None Include="Resources\search.png" />
     <None Include="Resources\FolderIcon.png" />
     <None Include="Resources\loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pages\ItemRequest2\ItemRequestModals2\" />
+    <Folder Include="Pages\PickActivity2\PickActivity2Modals\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Serilog.4.3.0\build\Serilog.targets" Condition="Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" />

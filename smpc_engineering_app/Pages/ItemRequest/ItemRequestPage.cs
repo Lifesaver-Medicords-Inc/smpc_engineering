@@ -93,14 +93,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             btn_cancel.Enabled = enable;
 
             var excludeControls = !_isWarehouseUser
-                ? new[] { "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "cmb_received_by" }
-                : new[] { "txt_required_date", "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "dtp_required_date", "dtp_issue_date" };
+                ? new[] { "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "txt_doc_no", "cmb_received_by", "dtp_req_date" }
+                : new[] { "txt_required_date", "txt_id", "txt_approved_by", "txt_issued_by", "txt_req_by", "txt_req_date", "dtp_required_date", "dtp_issue_date" };
 
             //Enable panels based on user role
             if (_isWarehouseUser)
             {
                 // Warehouse user → only enable pnl_bot
-                Helpers.SetChildControlsEnabled(new[] { pnl_bot }, !enable, excludeControls);
+                Helpers.SetChildControlsEnabled(new[] { pnl_bot }, enable, excludeControls);
                 Helpers.SetChildControlsEnabled(new[] { pnl_top }, true, new string[] { }); // keep top disabled
             }
             else

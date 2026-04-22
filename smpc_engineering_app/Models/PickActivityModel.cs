@@ -64,4 +64,60 @@ namespace smpc_engineering_app.Models
         public List<PickActivityDetailsModel> pick_activity_details { get; set; }
         public List<PickActivityLocationModel> pick_activity_location { get; set; }
     }
+
+    public class PickActivity2Model
+    {
+        public int id { get; set; }
+        public int doc_no { get; set; }
+        public int sales_order_id { get; set; }
+        public string customer { get; set; }
+        public string customer_code { get; set; }
+        public string reference_so { get; set; }
+        public string sales_person { get; set; }
+        public string prepared_by { get; set; }
+        public string picked_by { get; set; }
+    }
+
+    public class PickActivityDetails2Model
+    {
+        public int id { get; set; }
+        public int pick_activity_id { get; set; }
+        public int sales_order_details_id { get; set; }
+        public int item_id { get; set; }
+        public string item_code { get; set; }
+        public string item_description { get; set; }
+        public int? left_qty { get; set; }
+        public string left_uom { get; set; }
+        public int? pick_qty { get; set; }
+        public string pick_uom { get; set; }
+        public int? actual_qty { get; set; }
+        public string actual_uom { get; set; }
+        public string bin_location { get; set; }
+        public string warehouse { get; set; }
+        public int warehouse_id { get; set; }
+        public bool? has_actual { get; set; }
+    }
+
+    public class PickActivityLocation2Model
+    {
+        public int id { get; set; }
+        public int pick_activity_id { get; set; }
+        public int pick_activity_details_id { get; set; }
+        public int bin_id { get; set; }
+        public int selected_qty { get; set; }
+    }
+
+    public class PickActivityList2
+    {
+        public List<PickActivity2Model> pick_activity { get; set; }
+        public List<PickActivityDetails2Model> pick_activity_details { get; set; }
+        public List<PickActivityLocation2Model> pick_activity_locations { get; set; }
+    }
+
+    public class PickActivityPayload2
+    {
+        public PickActivity2Model pick_activity { get; set; }
+        public List<PickActivityDetails2Model> pick_activity_details { get; set; }
+        public List<PickActivityLocation2Model> pick_activity_locations { get; set; }
+    }
 }

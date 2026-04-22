@@ -1,0 +1,58 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using smpc_engineering_app.Models;
+using smpc_engineering_app.Shared;
+using smpc_engineering_app.Services.Helpers;
+
+namespace smpc_engineering_app.Services.Transaction
+{
+    class PickActivityService2 : ServiceBase<PickActivityList2>
+    {
+        public PickActivityService2() : base(ApiEndPoints.PICK_ACTIVITY2) { }
+
+        // CREATE
+        public async Task<ApiResponseModel<object>> CreatePickActivity(PickActivityPayload2 payload)
+        {
+            var response = await ApiService<ApiResponseModel<object>>.Post(ApiEndPoints.PICK_ACTIVITY2, new Dictionary<string, dynamic>
+                {
+                    { "pick_activity", payload.pick_activity },
+                    { "pick_activity_details", payload.pick_activity_details },
+                    { "pick_activity_locations", payload.pick_activity_locations }
+                }
+            );
+
+            return response;
+        }
+
+        // UPDATE
+        public async Task<ApiResponseModel<object>> UpdatePickActivity(PickActivityPayload2 payload)
+        {
+            var response = await ApiService<ApiResponseModel<object>>.Put(ApiEndPoints.PICK_ACTIVITY2, new Dictionary<string, dynamic>
+                {
+                    { "pick_activity", payload.pick_activity },
+                    { "pick_activity_details", payload.pick_activity_details },
+                    { "pick_activity_locations", payload.pick_activity_locations }
+                }
+            );
+
+            return response;
+        }
+
+        // DELETE
+        public async Task<ApiResponseModel<object>> DeletePickActivity(PickActivityPayload2 payload)
+        {
+            var response = await ApiService<ApiResponseModel<object>>.Delete(ApiEndPoints.PICK_ACTIVITY2, new Dictionary<string, dynamic>
+                {
+                    { "pick_activity", payload.pick_activity },
+                    { "pick_activity_details", payload.pick_activity_details },
+                    { "pick_activity_locations", payload.pick_activity_locations }
+                }
+            );
+
+            return response;
+        }
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using smpc_engineering_app.Pages;
 using smpc_engineering_app.Pages.Transactions;
 using smpc_engineering_app.Pages.ItemRequest;
+using smpc_engineering_app.Pages.ItemRequest2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using smpc_engineering_app.Pages.PickActivity;
+using smpc_engineering_app.Pages.PickActivity2;
 using smpc_engineering_app.Pages.JobOrder;
 using smpc_engineering_app.Pages.SalesOrderEngineering;
 
@@ -20,8 +22,8 @@ namespace smpc_engineering_app.Services
             //========================================================================
             // TRANSACTIONS   
             { "Sales Quotation List", new SalesQuotationList() },
-            { "Item Request", new ItemRequestPage() },
-            { "Pick Activity", new PickActivityPage() },
+            { "Item Request", new ItemRequestPage2() },
+            { "Pick Activity", new PickActivityPage2() },
             { "Job Order", new JobOrderPage() },
             { "Sales Order", new SalesOrderEngPage() },
         };

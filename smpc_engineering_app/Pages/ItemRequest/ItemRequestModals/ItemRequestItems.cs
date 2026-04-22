@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using smpc_engineering_app.Services.Helpers;
 using smpc_engineering_app.Models;
 using smpc_engineering_app.Services.Setup;
+using smpc_engineering_app.Services;
+using smpc_engineering_app.Shared;
 
 namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 {
@@ -19,7 +21,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         public string SelectedItemDesc { get; private set; } = null;
         public string SelectedItemUom { get; private set; } = null;
         private string placeHolderText = "Item List Search...";
-        readonly ItemListService itemlistService = new ItemListService();
+        GeneralService<ItemListModel> itemServiceSetup;
         private DataTable itemTable;
 
         public ItemRequestItems()
@@ -80,8 +82,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
 
         private async Task LoadItemLists()
         {
-            var data = await itemlistService.GetAsDatatable();
-            itemTable = data;
+            itemServiceSetup = new GeneralService<ItemListModel>(ApiEndPoints.ITEM_REQUEST2_ITEMS);
+            itemTable = await itemServiceSetup.GetAsDatatable();
 
             if (itemTable?.Rows.Count > 0)
             {

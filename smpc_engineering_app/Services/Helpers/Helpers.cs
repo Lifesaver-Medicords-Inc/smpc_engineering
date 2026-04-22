@@ -543,6 +543,54 @@ namespace smpc_engineering_app.Services.Helpers
             }
         }
 
+        public static void SetButtonVisibility2(ToolStrip toolStrip, Control parentControl, IEnumerable<string> visibleButtons, IEnumerable<string> hiddenButtons)
+        {
+            if (toolStrip == null && parentControl == null) return;
+
+            var allControls = new List<Control>();
+
+            if (parentControl != null)
+                allControls.AddRange(GetAllControls(parentControl));
+
+            // ToolStrip buttons
+            var toolStripButtons = toolStrip?.Items
+                .OfType<ToolStripButton>()
+                .ToDictionary(b => b.Name, b => b);
+
+            // Show buttons
+            foreach (var buttonName in visibleButtons ?? Enumerable.Empty<string>())
+            {
+                if (toolStripButtons != null && toolStripButtons.TryGetValue(buttonName, out var tsBtn))
+                    tsBtn.Visible = true;
+
+                var ctrl = allControls.FirstOrDefault(c => c.Name == buttonName);
+                if (ctrl != null)
+                    ctrl.Visible = true;
+            }
+
+            // Hide buttons
+            foreach (var buttonName in hiddenButtons ?? Enumerable.Empty<string>())
+            {
+                if (toolStripButtons != null && toolStripButtons.TryGetValue(buttonName, out var tsBtn))
+                    tsBtn.Visible = false;
+
+                var ctrl = allControls.FirstOrDefault(c => c.Name == buttonName);
+                if (ctrl != null)
+                    ctrl.Visible = false;
+            }
+        }
+
+        private static IEnumerable<Control> GetAllControls(Control parent)
+        {
+            foreach (Control c in parent.Controls)
+            {
+                yield return c;
+
+                foreach (var child in GetAllControls(c))
+                    yield return child;
+            }
+        }
+
         public static void ResetControls(Panel[] pnls)
         {
             foreach (Panel pnl in pnls)
@@ -584,8 +632,11 @@ namespace smpc_engineering_app.Services.Helpers
                         textBox.BackColor = readOnly ? Color.FromArgb(235, 235, 235) : Color.White;
                     }
                     else if (control is ComboBox comboBox)
+                    {
                         comboBox.Enabled = !readOnly;
-
+                        comboBox.DropDownStyle = readOnly ? ComboBoxStyle.DropDown : ComboBoxStyle.DropDownList;
+                        comboBox.BackColor = readOnly ? Color.FromArgb(235, 235, 235) : Color.White;
+                    }
                     else if (control is DateTimePicker datePicker)
                         datePicker.Enabled = !readOnly; // No true ReadOnly, fallback behavior
 
@@ -595,6 +646,43 @@ namespace smpc_engineering_app.Services.Helpers
                     // Recurse into child containers
                     if (control.HasChildren)
                         SetChildControlsEnabled(new Control[] { control }, readOnly, excludeNames);
+                }
+            }
+        }
+
+        public static void SetChildControlsEnabledInclude(Control[] parents, bool readOnly, string[] includeNames)
+        {
+            foreach (Control parent in parents)
+            {
+                foreach (Control control in parent.Controls)
+                {
+                    bool shouldAffect = includeNames == null || includeNames.Contains(control.Name);
+
+                    if (shouldAffect)
+                    {
+                        if (control is TextBox textBox)
+                        {
+                            textBox.ReadOnly = readOnly;
+                            textBox.BackColor = readOnly ? Color.FromArgb(235, 235, 235) : Color.White;
+                        }
+
+                        else if (control is ComboBox comboBox)
+                        {
+                            comboBox.Enabled = !readOnly;
+                            comboBox.DropDownStyle = readOnly ? ComboBoxStyle.DropDown : ComboBoxStyle.DropDownList;
+                            comboBox.BackColor = readOnly ? Color.FromArgb(235, 235, 235) : Color.White;
+                        }
+
+                        else if (control is DateTimePicker datePicker)
+                            datePicker.Enabled = !readOnly;
+
+                        else if (control is CheckBox checkBox)
+                            checkBox.AutoCheck = !readOnly;
+                    }
+
+                    // Recurse into child containers
+                    if (control.HasChildren)
+                        SetChildControlsEnabledInclude(new Control[] { control }, readOnly, includeNames);
                 }
             }
         }
@@ -1499,6 +1587,21 @@ namespace smpc_engineering_app.Services.Helpers
             return values;
         }
 
+        public static void FlashRed(Control control, Color restoreColor)
+        {
+            control.BackColor = Color.Red;
+
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = 3000;
+            timer.Tick += (s, e) =>
+            {
+                control.BackColor = restoreColor;
+                timer.Stop();
+                timer.Dispose();
+            };
+            timer.Start();
+        }
+
         public static bool ValidateControlsValues(Panel pnl)
         {
             bool isError = false;
@@ -1512,19 +1615,20 @@ namespace smpc_engineering_app.Services.Helpers
                 bool isRequired = tag.IndexOf("REQUIRED", StringComparison.OrdinalIgnoreCase) >= 0;
                 bool isMoney = tag.IndexOf("MONEY", StringComparison.OrdinalIgnoreCase) >= 0;
 
+                // Capture before any mutation
+                Color originalColor = control.BackColor;
+
                 if (control is TextBox textBox)
                 {
                     string value = textBox.Text.Trim();
 
-                    // REQUIRED validation
                     if (isRequired && string.IsNullOrEmpty(value))
                     {
-                        FlashRed(textBox);
+                        FlashRed(textBox, originalColor);
                         isError = true;
                         continue;
                     }
 
-                    // MONEY validation
                     if (isMoney && !string.IsNullOrEmpty(value))
                     {
                         if (!decimal.TryParse(
@@ -1534,24 +1638,24 @@ namespace smpc_engineering_app.Services.Helpers
                                 out decimal moneyValue)
                             || moneyValue < 0)
                         {
-                            FlashRed(textBox);
+                            FlashRed(textBox, originalColor);
                             isError = true;
                             continue;
                         }
                     }
 
-                    textBox.BackColor = SystemColors.Window;
+                    textBox.BackColor = originalColor;
                 }
                 else if (control is ComboBox comboBox)
                 {
                     if (isRequired && comboBox.SelectedIndex < 0)
                     {
-                        FlashRed(comboBox);
+                        FlashRed(comboBox, originalColor);
                         isError = true;
                     }
                     else
                     {
-                        comboBox.BackColor = SystemColors.Window;
+                        comboBox.BackColor = originalColor;
                     }
                 }
                 else if (control is DateTimePicker dtp)
@@ -1560,13 +1664,13 @@ namespace smpc_engineering_app.Services.Helpers
                     {
                         if (dtp.Value == dtp.MinDate || dtp.Value == default(DateTime))
                         {
-                            FlashRed(dtp);
+                            FlashRed(dtp, originalColor);
                             isError = true;
                         }
                         else
                         {
                             dtp.CalendarMonthBackground = SystemColors.Window;
-                            dtp.BackColor = SystemColors.Window;
+                            dtp.BackColor = originalColor;
                         }
                     }
                 }
@@ -1590,28 +1694,28 @@ namespace smpc_engineering_app.Services.Helpers
                     bool isRequired = tag.IndexOf("REQUIRED", StringComparison.OrdinalIgnoreCase) >= 0;
                     bool isMoney = tag.IndexOf("MONEY", StringComparison.OrdinalIgnoreCase) >= 0;
 
+                    // Capture before any mutation
+                    Color originalColor = control.BackColor;
+
                     if (control is TextBox textBox)
                     {
                         string value = textBox.Text.Trim();
 
-                        // REQUIRED validation
                         if (isRequired && string.IsNullOrEmpty(value))
                         {
-                            FlashRed(textBox);
+                            FlashRed(textBox, originalColor);
                             isError = true;
                             continue;
                         }
 
-                        // MONEY validation
                         if (isMoney && !string.IsNullOrEmpty(value))
                         {
                             decimal moneyValue;
 
-                            // Try exact stored value first (if you use AccessibleDescription)
                             if (!string.IsNullOrWhiteSpace(textBox.AccessibleDescription) &&
                                 decimal.TryParse(textBox.AccessibleDescription, out moneyValue))
                             {
-                                // valid
+                                // valid stored value
                             }
                             else if (!decimal.TryParse(
                                         value,
@@ -1619,31 +1723,31 @@ namespace smpc_engineering_app.Services.Helpers
                                         CultureInfo.GetCultureInfo("en-PH"),
                                         out moneyValue))
                             {
-                                FlashRed(textBox);
+                                FlashRed(textBox, originalColor);
                                 isError = true;
                                 continue;
                             }
 
                             if (moneyValue < 0)
                             {
-                                FlashRed(textBox);
+                                FlashRed(textBox, originalColor);
                                 isError = true;
                                 continue;
                             }
                         }
 
-                        textBox.BackColor = SystemColors.Window;
+                        textBox.BackColor = originalColor;
                     }
                     else if (control is ComboBox comboBox)
                     {
                         if (isRequired && comboBox.SelectedIndex < 0)
                         {
-                            FlashRed(comboBox);
+                            FlashRed(comboBox, originalColor);
                             isError = true;
                         }
                         else
                         {
-                            comboBox.BackColor = SystemColors.Window;
+                            comboBox.BackColor = originalColor;
                         }
                     }
                     else if (control is DateTimePicker dtp)
@@ -1652,13 +1756,13 @@ namespace smpc_engineering_app.Services.Helpers
                         {
                             if (dtp.Value == dtp.MinDate || dtp.Value == default(DateTime))
                             {
-                                FlashRed(dtp);
+                                FlashRed(dtp, originalColor);
                                 isError = true;
                             }
                             else
                             {
                                 dtp.CalendarMonthBackground = SystemColors.Window;
-                                dtp.BackColor = SystemColors.Window;
+                                dtp.BackColor = originalColor;
                             }
                         }
                     }
@@ -1666,22 +1770,6 @@ namespace smpc_engineering_app.Services.Helpers
             }
 
             return isError;
-        }
-
-        public static void FlashRed(Control control)
-        {
-            Color originalColor = SystemColors.Window;
-            control.BackColor = Color.Red;
-
-            var timer = new System.Windows.Forms.Timer();
-            timer.Interval = 3000; // 3 seconds
-            timer.Tick += (s, e) =>
-            {
-                control.BackColor = originalColor;
-                timer.Stop();
-                timer.Dispose();
-            };
-            timer.Start();
         }
 
         public static void BindControls(Panel[] pnl_list, DataTable dt, int selectedIndex = 0)
@@ -1759,49 +1847,71 @@ namespace smpc_engineering_app.Services.Helpers
                                 }
                             }
 
-                            // Check if the control is a Combobox
-                            if (control is ComboBox comboBox)
+                            // Check if the control is a Combobox
+                            if (control is ComboBox comboBox)
                             {
-                                Console.WriteLine($"This is a  combobox: {comboBox.Name} ");
+                                Console.WriteLine($"This is a combobox: {comboBox.Name}");
                                 string key = comboBox.Name.Replace("cmb_", "") + "_id";
+                                comboBox.BackColor = Color.FromArgb(235, 235, 235);
 
                                 if (comboBox.Tag == "DYNAMIC")
                                 {
                                     Console.WriteLine("DYNAMICS:", comboBox.Name);
-                                    comboBox.SelectedValue = (string)dt.Rows[selectedIndex][key].ToString();
+                                    string rawVal = dt.Rows[selectedIndex][key].ToString();
+
+                                    if (comboBox.DataSource != null)
+                                    {
+                                        // Items are loaded, bind normally
+                                        comboBox.SelectedValue = rawVal;
+                                    }
+                                    else
+                                    {
+                                        // Items not loaded yet (view mode) — store for deferred binding
+                                        comboBox.AccessibleDescription = rawVal;
+                                        comboBox.Text = dt.Rows[selectedIndex][column_name].ToString();
+                                    }
                                 }
-                                // Check multiple values
-                                else if (comboBox.Tag == "MULTIVALUE")
+                                else if (comboBox.Tag == "MULTIVALUE")
                                 {
                                     string rawValue = dt.Rows[selectedIndex][column_name].ToString();
                                     var multiValues = rawValue.Split(',')
-                                    .Select(v => v.Trim())
-                                    .Where(v => !string.IsNullOrEmpty(v))
-                                    .ToList();
+                                        .Select(v => v.Trim())
+                                        .Where(v => !string.IsNullOrEmpty(v))
+                                        .ToList();
 
-                                    // Set the first value as the display text (optional behavior)
-                                    comboBox.Text = multiValues.FirstOrDefault() ?? string.Empty;
+                                    comboBox.Text = multiValues.FirstOrDefault() ?? string.Empty;
 
-                                    // Populate the ComboBox with all values
-                                    //comboBox.Items.Clear();
-                                    foreach (var val in multiValues)
-                                    {
+                                    foreach (var val in multiValues)
                                         comboBox.Items.Add(val);
-                                    }
 
-                                    // Optionally set the first item as selected (you could change this logic)
-                                    if (multiValues.Count > 0)
-                                    {
-                                        comboBox.SelectedIndex = 0;  // Select the first item (if needed)
-                                    }
+                                    if (multiValues.Count > 0)
+                                        comboBox.SelectedIndex = 0;
                                 }
                                 else
                                 {
-                                    string keys = comboBox.Name.Replace("cmb_", "");
-                                    comboBox.Text = (string)dt.Rows[selectedIndex][column_name].ToString();
-                                }
+                                    // View mode — no items loaded, just display the text value
+                                    string displayValue = dt.Rows[selectedIndex][column_name].ToString();
 
+                                    if (comboBox.Items.Count > 0)
+                                    {
+                                        // Try to select matching item first
+                                        int matchIndex = comboBox.FindStringExact(displayValue);
+                                        if (matchIndex >= 0)
+                                            comboBox.SelectedIndex = matchIndex;
+                                        else
+                                            comboBox.Text = displayValue;
+                                    }
+                                    else
+                                    {
+                                        // No items — force text display and store raw value
+                                        comboBox.DropDownStyle = ComboBoxStyle.DropDown; // must be DropDown to allow free text
+                                        comboBox.Text = displayValue;
+                                        comboBox.AccessibleDescription = displayValue; // stash for later if needed
+                                        comboBox.BackColor = Color.FromArgb(235, 235, 235);
+                                    }
+                                }
                             }
+
                             // Check if the control is a Checkbox
                             if (control is CheckBox checkbox)
                             {
@@ -1823,17 +1933,28 @@ namespace smpc_engineering_app.Services.Helpers
                                     return;
 
                                 object rawValue = dt.Rows[selectedIndex][column_name];
+                                string rawStr = rawValue?.ToString() ?? "";
 
-                                if (rawValue != DBNull.Value &&
-                                    DateTime.TryParse(rawValue.ToString(), out DateTime parsedDate))
+                                if (rawValue != DBNull.Value && !string.IsNullOrWhiteSpace(rawStr))
                                 {
-                                    dateTimePicker.Format = DateTimePickerFormat.Custom;
-                                    dateTimePicker.CustomFormat = "MM/dd/yyyy";   // your format
-                                    dateTimePicker.Value = parsedDate;
+                                    // Try exact format first, then fallback to general parse
+                                    if (!DateTime.TryParseExact(rawStr, "MM/dd/yyyy",
+                                            System.Globalization.CultureInfo.InvariantCulture,
+                                            System.Globalization.DateTimeStyles.None,
+                                            out DateTime parsedDate))
+                                    {
+                                        DateTime.TryParse(rawStr, out parsedDate); // fallback
+                                    }
+
+                                    if (parsedDate != default)
+                                    {
+                                        dateTimePicker.Format = DateTimePickerFormat.Custom;
+                                        dateTimePicker.CustomFormat = "MM/dd/yyyy";
+                                        dateTimePicker.Value = parsedDate;             // ← Set Value AFTER setting Format
+                                    }
                                 }
                                 else
                                 {
-                                    // Make it appear empty
                                     dateTimePicker.Format = DateTimePickerFormat.Custom;
                                     dateTimePicker.CustomFormat = " ";
                                 }

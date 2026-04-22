@@ -18,8 +18,8 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
     {
         public string SelectedIRId { get; private set; } = null;
         private string placeHolderText = "Item Request Search...";
-        private ItemRequestList ItemRequest;
-        readonly ItemRequestService itemRequestService = new ItemRequestService();
+        private ItemRequestList2 ItemRequest;
+        readonly ItemRequestService2 itemRequestService = new ItemRequestService2();
         private DataTable irTable;
         private bool _isWarehouseUser;
         private string userDepartment = CacheData.CurrentUser.department.ToLower();
@@ -58,7 +58,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             }
             else
             {
-                var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "purpose", "req_by", "req_date", "required_date");
+                var searchedData = Helpers.FilterDataTable(irTable, searchText, "doc_no", "purpose", "requested_by", "request_date", "required_date");
                 dgv_ir_search.DataSource = searchedData;
             }
         }
@@ -77,7 +77,6 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             finally
             {
                 Helpers.Loading.HideLoading(dgv_ir_search);
-
             }
         }
 

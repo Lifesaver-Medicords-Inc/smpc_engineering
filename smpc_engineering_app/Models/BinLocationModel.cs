@@ -22,4 +22,14 @@ namespace smpc_engineering_app.Models
         public int warehouse_id { get; set; }
         public int item_id { get; set; }
     }
+
+    public class BinLocation2Model
+    {
+        public int bin_id { get; set; }
+        public string bin_location { get; set; }
+        public int warehouse_id { get; set; }
+        public int item_id { get; set; }
+        public int stock_qty { get; set; }
+        public string stock_uom { get; set; }
+    }
 }

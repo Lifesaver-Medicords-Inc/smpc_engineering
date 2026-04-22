@@ -29,17 +29,17 @@ namespace smpc_engineering_app.Pages.ItemRequest
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle31 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle32 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle33 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle34 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle37 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle38 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle39 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle40 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ItemRequestPage));
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnl_top = new System.Windows.Forms.Panel();
             this.txt_doc_no = new System.Windows.Forms.TextBox();
             this.txt_purpose = new System.Windows.Forms.TextBox();
@@ -54,19 +54,9 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.cmb_req_dept = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.btn_new = new System.Windows.Forms.ToolStripButton();
-            this.btn_search = new System.Windows.Forms.ToolStripButton();
-            this.btn_edit = new System.Windows.Forms.ToolStripButton();
-            this.btn_delete = new System.Windows.Forms.ToolStripButton();
-            this.btn_print = new System.Windows.Forms.ToolStripButton();
-            this.btn_save = new System.Windows.Forms.ToolStripButton();
-            this.btn_close = new System.Windows.Forms.ToolStripButton();
-            this.btn_next = new System.Windows.Forms.ToolStripButton();
-            this.btn_prev = new System.Windows.Forms.ToolStripButton();
             this.panel6 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.pnl_bot = new System.Windows.Forms.Panel();
@@ -96,6 +86,16 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.issued_uom = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.remarks = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.btn_new = new System.Windows.Forms.ToolStripButton();
+            this.btn_search = new System.Windows.Forms.ToolStripButton();
+            this.btn_edit = new System.Windows.Forms.ToolStripButton();
+            this.btn_delete = new System.Windows.Forms.ToolStripButton();
+            this.btn_print = new System.Windows.Forms.ToolStripButton();
+            this.btn_save = new System.Windows.Forms.ToolStripButton();
+            this.btn_close = new System.Windows.Forms.ToolStripButton();
+            this.btn_next = new System.Windows.Forms.ToolStripButton();
+            this.btn_prev = new System.Windows.Forms.ToolStripButton();
+            this.cmb_req_dept = new System.Windows.Forms.ComboBox();
             this.pnl_top.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel6.SuspendLayout();
@@ -106,6 +106,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             // pnl_top
             // 
+            this.pnl_top.Controls.Add(this.cmb_req_dept);
             this.pnl_top.Controls.Add(this.txt_doc_no);
             this.pnl_top.Controls.Add(this.txt_purpose);
             this.pnl_top.Controls.Add(this.cmb_ref_doc);
@@ -119,7 +120,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.pnl_top.Controls.Add(this.label6);
             this.pnl_top.Controls.Add(this.label5);
             this.pnl_top.Controls.Add(this.label4);
-            this.pnl_top.Controls.Add(this.cmb_req_dept);
             this.pnl_top.Controls.Add(this.label3);
             this.pnl_top.Controls.Add(this.label2);
             this.pnl_top.Controls.Add(this.toolStrip1);
@@ -138,7 +138,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.txt_doc_no.ReadOnly = true;
             this.txt_doc_no.Size = new System.Drawing.Size(200, 20);
             this.txt_doc_no.TabIndex = 305;
-            this.txt_doc_no.Tag = "REQUIRED";
+            this.txt_doc_no.Tag = "DOCUMENTIR";
             // 
             // txt_purpose
             // 
@@ -175,7 +175,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dtp_req_date.Name = "dtp_req_date";
             this.dtp_req_date.Size = new System.Drawing.Size(200, 20);
             this.dtp_req_date.TabIndex = 98;
-            this.dtp_req_date.Tag = "REQUIRED";
+            this.dtp_req_date.Tag = "";
             // 
             // dtp_issue_date
             // 
@@ -261,26 +261,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.label4.TabIndex = 18;
             this.label4.Text = "REQUEST DATE:";
             // 
-            // cmb_req_dept
-            // 
-            this.cmb_req_dept.BackColor = System.Drawing.SystemColors.Window;
-            this.cmb_req_dept.Enabled = false;
-            this.cmb_req_dept.FormattingEnabled = true;
-            this.cmb_req_dept.Items.AddRange(new object[] {
-            "Management",
-            "Sales",
-            "Logistics",
-            "Engineering",
-            "Accounting",
-            "Purchasing",
-            "Warehouse"});
-            this.cmb_req_dept.Location = new System.Drawing.Point(139, 87);
-            this.cmb_req_dept.Name = "cmb_req_dept";
-            this.cmb_req_dept.Size = new System.Drawing.Size(200, 21);
-            this.cmb_req_dept.TabIndex = 17;
-            this.cmb_req_dept.Tag = "REQUIRED";
-            this.cmb_req_dept.TextChanged += new System.EventHandler(this.cmb_req_dept_TextChanged);
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
@@ -317,91 +297,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.toolStrip1.Stretch = true;
             this.toolStrip1.TabIndex = 13;
             this.toolStrip1.Text = "toolStrip1";
-            // 
-            // btn_new
-            // 
-            this.btn_new.Image = ((System.Drawing.Image)(resources.GetObject("btn_new.Image")));
-            this.btn_new.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_new.Name = "btn_new";
-            this.btn_new.Size = new System.Drawing.Size(51, 22);
-            this.btn_new.Text = "New";
-            this.btn_new.Click += new System.EventHandler(this.btn_new_Click);
-            // 
-            // btn_search
-            // 
-            this.btn_search.Image = ((System.Drawing.Image)(resources.GetObject("btn_search.Image")));
-            this.btn_search.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_search.Name = "btn_search";
-            this.btn_search.Size = new System.Drawing.Size(62, 22);
-            this.btn_search.Text = "Search";
-            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
-            // 
-            // btn_edit
-            // 
-            this.btn_edit.Image = ((System.Drawing.Image)(resources.GetObject("btn_edit.Image")));
-            this.btn_edit.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_edit.Name = "btn_edit";
-            this.btn_edit.Size = new System.Drawing.Size(47, 22);
-            this.btn_edit.Text = "Edit";
-            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
-            // 
-            // btn_delete
-            // 
-            this.btn_delete.Image = ((System.Drawing.Image)(resources.GetObject("btn_delete.Image")));
-            this.btn_delete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_delete.Name = "btn_delete";
-            this.btn_delete.Size = new System.Drawing.Size(60, 22);
-            this.btn_delete.Text = "Delete";
-            this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
-            // 
-            // btn_print
-            // 
-            this.btn_print.Image = ((System.Drawing.Image)(resources.GetObject("btn_print.Image")));
-            this.btn_print.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_print.Name = "btn_print";
-            this.btn_print.Size = new System.Drawing.Size(52, 22);
-            this.btn_print.Text = "Print";
-            // 
-            // btn_save
-            // 
-            this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
-            this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_save.Name = "btn_save";
-            this.btn_save.Size = new System.Drawing.Size(51, 22);
-            this.btn_save.Text = "Save";
-            this.btn_save.Visible = false;
-            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
-            // 
-            // btn_close
-            // 
-            this.btn_close.Image = ((System.Drawing.Image)(resources.GetObject("btn_close.Image")));
-            this.btn_close.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_close.Name = "btn_close";
-            this.btn_close.Size = new System.Drawing.Size(63, 22);
-            this.btn_close.Text = "Cancel";
-            this.btn_close.Visible = false;
-            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
-            // 
-            // btn_next
-            // 
-            this.btn_next.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btn_next.Image = ((System.Drawing.Image)(resources.GetObject("btn_next.Image")));
-            this.btn_next.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_next.Name = "btn_next";
-            this.btn_next.Size = new System.Drawing.Size(52, 22);
-            this.btn_next.Text = "Next";
-            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
-            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
-            // 
-            // btn_prev
-            // 
-            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
-            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btn_prev.Name = "btn_prev";
-            this.btn_prev.Size = new System.Drawing.Size(72, 22);
-            this.btn_prev.Text = "Previous";
-            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
             // 
             // panel6
             // 
@@ -556,14 +451,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.dgv_main.AllowUserToAddRows = false;
             this.dgv_main.AllowUserToDeleteRows = false;
             this.dgv_main.AllowUserToResizeColumns = false;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle31.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle31.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle31.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle31.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle31.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle31.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle31.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv_main.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle31;
             this.dgv_main.ColumnHeadersHeight = 50;
             this.dgv_main.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv_main.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -595,8 +490,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.number.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.number.DataPropertyName = "number";
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Gainsboro;
-            this.number.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle32.BackColor = System.Drawing.Color.Gainsboro;
+            this.number.DefaultCellStyle = dataGridViewCellStyle32;
             this.number.Frozen = true;
             this.number.HeaderText = "#";
             this.number.Name = "number";
@@ -645,8 +540,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.item_description.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.item_description.DataPropertyName = "item_description";
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Gainsboro;
-            this.item_description.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle33.BackColor = System.Drawing.Color.Gainsboro;
+            this.item_description.DefaultCellStyle = dataGridViewCellStyle33;
             this.item_description.HeaderText = "ITEM DESCRIPTION";
             this.item_description.MinimumWidth = 200;
             this.item_description.Name = "item_description";
@@ -655,8 +550,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // order_qty
             // 
             this.order_qty.DataPropertyName = "order_qty";
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.Gainsboro;
-            this.order_qty.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle34.BackColor = System.Drawing.Color.Gainsboro;
+            this.order_qty.DefaultCellStyle = dataGridViewCellStyle34;
             this.order_qty.HeaderText = "ORDER QTY";
             this.order_qty.Name = "order_qty";
             this.order_qty.ReadOnly = true;
@@ -666,8 +561,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.req_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.req_qty.DataPropertyName = "req_qty";
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
-            this.req_qty.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle35.BackColor = System.Drawing.Color.Gainsboro;
+            this.req_qty.DefaultCellStyle = dataGridViewCellStyle35;
             this.req_qty.HeaderText = "QTY";
             this.req_qty.MinimumWidth = 80;
             this.req_qty.Name = "req_qty";
@@ -678,8 +573,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.req_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.req_uom.DataPropertyName = "req_uom";
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.Gainsboro;
-            this.req_uom.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle36.BackColor = System.Drawing.Color.Gainsboro;
+            this.req_uom.DefaultCellStyle = dataGridViewCellStyle36;
             this.req_uom.HeaderText = "UOM";
             this.req_uom.MinimumWidth = 80;
             this.req_uom.Name = "req_uom";
@@ -690,8 +585,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.issued_qty.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.issued_qty.DataPropertyName = "issued_qty";
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.Gainsboro;
-            this.issued_qty.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle37.BackColor = System.Drawing.Color.Gainsboro;
+            this.issued_qty.DefaultCellStyle = dataGridViewCellStyle37;
             this.issued_qty.HeaderText = "QTY";
             this.issued_qty.MinimumWidth = 80;
             this.issued_qty.Name = "issued_qty";
@@ -702,8 +597,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.issued_uom.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.issued_uom.DataPropertyName = "issued_uom";
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Gainsboro;
-            this.issued_uom.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle38.BackColor = System.Drawing.Color.Gainsboro;
+            this.issued_uom.DefaultCellStyle = dataGridViewCellStyle38;
             this.issued_uom.HeaderText = "UOM";
             this.issued_uom.MinimumWidth = 80;
             this.issued_uom.Name = "issued_uom";
@@ -714,8 +609,8 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.serial_no.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.serial_no.DataPropertyName = "serial_no";
-            dataGridViewCellStyle9.BackColor = System.Drawing.Color.Gainsboro;
-            this.serial_no.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle39.BackColor = System.Drawing.Color.Gainsboro;
+            this.serial_no.DefaultCellStyle = dataGridViewCellStyle39;
             this.serial_no.HeaderText = "SERIAL NUMBER";
             this.serial_no.MinimumWidth = 180;
             this.serial_no.Name = "serial_no";
@@ -725,12 +620,121 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // 
             this.remarks.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.remarks.DataPropertyName = "remarks";
-            dataGridViewCellStyle10.BackColor = System.Drawing.Color.Gainsboro;
-            this.remarks.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle40.BackColor = System.Drawing.Color.Gainsboro;
+            this.remarks.DefaultCellStyle = dataGridViewCellStyle40;
             this.remarks.HeaderText = "REMARKS";
             this.remarks.MinimumWidth = 180;
             this.remarks.Name = "remarks";
             this.remarks.ReadOnly = true;
+            // 
+            // btn_new
+            // 
+            this.btn_new.Image = ((System.Drawing.Image)(resources.GetObject("btn_new.Image")));
+            this.btn_new.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_new.Name = "btn_new";
+            this.btn_new.Size = new System.Drawing.Size(51, 22);
+            this.btn_new.Text = "New";
+            this.btn_new.Click += new System.EventHandler(this.btn_new_Click);
+            // 
+            // btn_search
+            // 
+            this.btn_search.Image = ((System.Drawing.Image)(resources.GetObject("btn_search.Image")));
+            this.btn_search.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_search.Name = "btn_search";
+            this.btn_search.Size = new System.Drawing.Size(62, 22);
+            this.btn_search.Text = "Search";
+            this.btn_search.Click += new System.EventHandler(this.btn_search_Click);
+            // 
+            // btn_edit
+            // 
+            this.btn_edit.Image = ((System.Drawing.Image)(resources.GetObject("btn_edit.Image")));
+            this.btn_edit.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_edit.Name = "btn_edit";
+            this.btn_edit.Size = new System.Drawing.Size(47, 22);
+            this.btn_edit.Text = "Edit";
+            this.btn_edit.Click += new System.EventHandler(this.btn_edit_Click);
+            // 
+            // btn_delete
+            // 
+            this.btn_delete.Image = ((System.Drawing.Image)(resources.GetObject("btn_delete.Image")));
+            this.btn_delete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_delete.Name = "btn_delete";
+            this.btn_delete.Size = new System.Drawing.Size(60, 22);
+            this.btn_delete.Text = "Delete";
+            this.btn_delete.Click += new System.EventHandler(this.btn_delete_Click);
+            // 
+            // btn_print
+            // 
+            this.btn_print.Image = ((System.Drawing.Image)(resources.GetObject("btn_print.Image")));
+            this.btn_print.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_print.Name = "btn_print";
+            this.btn_print.Size = new System.Drawing.Size(52, 22);
+            this.btn_print.Text = "Print";
+            // 
+            // btn_save
+            // 
+            this.btn_save.Image = ((System.Drawing.Image)(resources.GetObject("btn_save.Image")));
+            this.btn_save.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_save.Name = "btn_save";
+            this.btn_save.Size = new System.Drawing.Size(51, 22);
+            this.btn_save.Text = "Save";
+            this.btn_save.Visible = false;
+            this.btn_save.Click += new System.EventHandler(this.btn_save_Click);
+            // 
+            // btn_close
+            // 
+            this.btn_close.Image = ((System.Drawing.Image)(resources.GetObject("btn_close.Image")));
+            this.btn_close.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_close.Name = "btn_close";
+            this.btn_close.Size = new System.Drawing.Size(63, 22);
+            this.btn_close.Text = "Cancel";
+            this.btn_close.Visible = false;
+            this.btn_close.Click += new System.EventHandler(this.btn_close_Click);
+            // 
+            // btn_next
+            // 
+            this.btn_next.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btn_next.Image = ((System.Drawing.Image)(resources.GetObject("btn_next.Image")));
+            this.btn_next.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_next.Name = "btn_next";
+            this.btn_next.Size = new System.Drawing.Size(52, 22);
+            this.btn_next.Text = "Next";
+            this.btn_next.TextImageRelation = System.Windows.Forms.TextImageRelation.TextBeforeImage;
+            this.btn_next.Click += new System.EventHandler(this.btn_next_Click);
+            // 
+            // btn_prev
+            // 
+            this.btn_prev.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.btn_prev.Image = ((System.Drawing.Image)(resources.GetObject("btn_prev.Image")));
+            this.btn_prev.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btn_prev.Name = "btn_prev";
+            this.btn_prev.Size = new System.Drawing.Size(72, 22);
+            this.btn_prev.Text = "Previous";
+            this.btn_prev.Click += new System.EventHandler(this.btn_prev_Click);
+            // 
+            // cmb_req_dept
+            // 
+            this.cmb_req_dept.BackColor = System.Drawing.Color.White;
+            this.cmb_req_dept.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmb_req_dept.Enabled = false;
+            this.cmb_req_dept.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmb_req_dept.FormattingEnabled = true;
+            this.cmb_req_dept.Items.AddRange(new object[] {
+            "Management",
+            "Sales",
+            "Logistics",
+            "Engineering",
+            "Accounting",
+            "Purchasing",
+            "Warehouse"});
+            this.cmb_req_dept.Location = new System.Drawing.Point(139, 87);
+            this.cmb_req_dept.MaxLength = 50;
+            this.cmb_req_dept.MinimumSize = new System.Drawing.Size(200, 0);
+            this.cmb_req_dept.Name = "cmb_req_dept";
+            this.cmb_req_dept.Size = new System.Drawing.Size(200, 21);
+            this.cmb_req_dept.TabIndex = 306;
+            this.cmb_req_dept.TabStop = false;
+            this.cmb_req_dept.Tag = "REQUIRED";
             // 
             // ItemRequestPage
             // 
@@ -767,7 +771,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ComboBox cmb_req_dept;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
@@ -815,5 +818,6 @@ namespace smpc_engineering_app.Pages.ItemRequest
         private System.Windows.Forms.DataGridViewTextBoxColumn remarks;
         private System.Windows.Forms.TextBox txt_purpose;
         private System.Windows.Forms.TextBox txt_doc_no;
+        private System.Windows.Forms.ComboBox cmb_req_dept;
     }
 }
