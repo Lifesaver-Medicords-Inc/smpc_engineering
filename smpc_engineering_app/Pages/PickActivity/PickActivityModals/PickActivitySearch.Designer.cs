@@ -42,7 +42,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.doc_no = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.sales_person = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.customer = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.code = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.customer_code = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.prepared_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.picked_by = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgv_pa_search)).BeginInit();
@@ -66,7 +66,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.doc_no,
             this.sales_person,
             this.customer,
-            this.code,
+            this.customer_code,
             this.prepared_by,
             this.picked_by});
             this.dgv_pa_search.Location = new System.Drawing.Point(-1, 31);
@@ -122,16 +122,16 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             this.customer.Name = "customer";
             this.customer.ReadOnly = true;
             // 
-            // code
+            // customer_code
             // 
-            this.code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.code.DataPropertyName = "code";
+            this.customer_code.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.customer_code.DataPropertyName = "customer_code";
             dataGridViewCellStyle5.BackColor = System.Drawing.Color.Gainsboro;
-            this.code.DefaultCellStyle = dataGridViewCellStyle5;
-            this.code.HeaderText = "CODE";
-            this.code.MinimumWidth = 150;
-            this.code.Name = "code";
-            this.code.ReadOnly = true;
+            this.customer_code.DefaultCellStyle = dataGridViewCellStyle5;
+            this.customer_code.HeaderText = "CODE";
+            this.customer_code.MinimumWidth = 150;
+            this.customer_code.Name = "customer_code";
+            this.customer_code.ReadOnly = true;
             // 
             // prepared_by
             // 
@@ -179,7 +179,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
         private System.Windows.Forms.DataGridViewTextBoxColumn doc_no;
         private System.Windows.Forms.DataGridViewTextBoxColumn sales_person;
         private System.Windows.Forms.DataGridViewTextBoxColumn customer;
-        private System.Windows.Forms.DataGridViewTextBoxColumn code;
+        private System.Windows.Forms.DataGridViewTextBoxColumn customer_code;
         private System.Windows.Forms.DataGridViewTextBoxColumn prepared_by;
         private System.Windows.Forms.DataGridViewTextBoxColumn picked_by;
     }
