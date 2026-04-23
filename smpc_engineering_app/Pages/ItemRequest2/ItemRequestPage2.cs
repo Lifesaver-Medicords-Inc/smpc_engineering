@@ -497,10 +497,18 @@ namespace smpc_engineering_app.Pages.ItemRequest2
                 if (issuedQty > 0)
                     hasAtLeastOneIssued = true;
 
-                // Validate: required must not exceed remaining
+                // Validate: required must not exceed remaining.
+                // Rows sourced from ItemRequestItems (no sales_order_details_id) are exempt —
+                // they have no parent sales order line to constrain against.
                 if (!_isWarehouse && !(_isEditMode && !_isWarehouse))
                 {
-                    if (requiredQty > remainingQty)
+                    var salesOrderDetailsId = row.Cells["sales_order_details_id"].Value;
+                    bool isFromRefDoc = salesOrderDetailsId != null
+                        && salesOrderDetailsId != DBNull.Value
+                        && !string.IsNullOrEmpty(salesOrderDetailsId.ToString())
+                        && salesOrderDetailsId.ToString() != "0";
+
+                    if (isFromRefDoc && requiredQty > remainingQty)
                     {
                         string itemDesc = row.Cells["item_description"].Value?.ToString() ?? $"Row {i + 1}";
                         Helpers.ShowDialogMessage("error",
