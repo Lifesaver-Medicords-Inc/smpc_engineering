@@ -16,4 +16,9 @@ namespace smpc_engineering_app.Models
         public int user_id { get; set; }
         public string user_name { get; set; }
     }
+
+    class ClearCacheModel
+    {
+
+    }
 }

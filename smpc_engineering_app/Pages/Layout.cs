@@ -22,6 +22,8 @@ namespace smpc_engineering_app
 
         private WebSocketService productionListSocket;
         private WebSocketService quotationSocket;
+        GeneralService<ClearCacheModel> cacheServiceSetup;
+        private ClearCacheModel _cachedata;
 
         public SMPC()
         {
@@ -189,7 +191,7 @@ namespace smpc_engineering_app
             return;
         }
 
-        private void SMPC_Load(object sender, EventArgs e)
+        private async void SMPC_Load(object sender, EventArgs e)
         {
             Login login = new Login();
             if (DialogResult.OK == login.ShowDialog())
@@ -199,6 +201,15 @@ namespace smpc_engineering_app
                 lbl_department.Text = CacheData.CurrentUser.department;
                 this.Enabled = true;
 
+                try
+                {
+                    cacheServiceSetup = new GeneralService<ClearCacheModel>(ApiEndPoints.CLEAR_CACHE);
+                    _cachedata = await cacheServiceSetup.GetAsModel();
+                }
+                catch (Exception)
+                {
+                    return; // Skip ConnectWebSockets if cache fetch fails
+                }
 
                 ConnectWebSockets();
             }

@@ -45,6 +45,9 @@ namespace smpc_engineering_app.Shared
         public static string PICK_ACTIVITY2_WAREHOUSE = "/engineering/pick_activity/warehouse";
         public static string PICK_ACTIVITY2_WAREHOUSE_AREA = "/engineering/pick_activity/warehouse_area/";
 
+        //Clear Cache
+        public const string CLEAR_CACHE = "/admin/clear_all";
+
         //Sales Order IR View
         public const string SALES_ORDER_IR_VIEW = "/setup/item/so_doc";
 
