@@ -950,5 +950,10 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 Helpers.ShowDialogMessage("error", $"Failed to load items for selected Ref Doc: {ex.Message}");
             }
         }
+
+        private void pnl_top_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

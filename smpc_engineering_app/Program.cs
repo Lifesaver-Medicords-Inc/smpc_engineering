@@ -24,7 +24,7 @@ namespace smpc_engineering_app
                 .WriteTo.File("logs\\engineering-logs-.log", rollingInterval: RollingInterval.Day) 
                 .CreateLogger();
 
-            string env = System.Configuration.ConfigurationManager.AppSettings["Environment"] ?? "Development";
+            string env = System.Configuration.ConfigurationManager.AppSettings["Environment"] ?? "Production";
 
             // Resolve the correct API URL
             ApiBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"ApiBaseUrl.{env}"]
