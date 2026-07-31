@@ -20,7 +20,13 @@ namespace smpc_engineering_app.Pages.Components
 
             this.AutoSize = false;
 
-            lbl_doc_no.DoubleClick += RedBoxJobOrderItem_Click;
+            // Style the document number like a clickable link so it reads as
+            // "click here to open the sales order" instead of a plain label.
+            lbl_doc_no.ForeColor = Color.FromArgb(30, 144, 255); // link blue
+            lbl_doc_no.Font = new Font(lbl_doc_no.Font, lbl_doc_no.Font.Style | FontStyle.Underline);
+            lbl_doc_no.Cursor = Cursors.Hand;
+
+            lbl_doc_no.Click += RedBoxJobOrderItem_Click;
         }
 
         private void RedBoxJobOrderItem_Click(object sender, EventArgs e)

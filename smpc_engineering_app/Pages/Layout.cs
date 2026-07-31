@@ -25,6 +25,13 @@ namespace smpc_engineering_app
         GeneralService<ClearCacheModel> cacheServiceSetup;
         private ClearCacheModel _cachedata;
 
+        // Red Box section sidebar (QUOTATIONS / PRODUCTION labels + divider)
+        private Label lblQuotationsSide;
+        private Label lblProductionSide;
+        private Panel pnlRedBoxDivider;
+        private const int RedBoxSideLabelWidth = 24;
+        private const int RedBoxDividerHeight = 4;
+
         public SMPC()
         {
             InitializeComponent();
@@ -42,26 +49,111 @@ namespace smpc_engineering_app
             // Hook events for Quotation
             flowPanelQuotationRedBox.SizeChanged += (s, e) => ResizeFlowChildren(flowPanelQuotationRedBox);
             flowPanelQuotationRedBox.ControlAdded += (s, e) => SizeChild(flowPanelQuotationRedBox, e.Control);
+            flowPanelQuotationRedBox.Layout += (s, e) => SuppressHorizontalScroll(flowPanelQuotationRedBox);
 
             // Hook events for JobOrder
             flowPanelJobOrderRedBox.SizeChanged += (s, e) => ResizeFlowChildren(flowPanelJobOrderRedBox);
             flowPanelJobOrderRedBox.ControlAdded += (s, e) => SizeChild(flowPanelJobOrderRedBox, e.Control);
+            flowPanelJobOrderRedBox.Layout += (s, e) => SuppressHorizontalScroll(flowPanelJobOrderRedBox);
+
+            BuildRedBoxSideLabels();
+        }
+
+        private void BuildRedBoxSideLabels()
+        {
+            lblQuotationsSide = new Label
+            {
+                Text = "Q\nU\nO\nT\nA\nT\nI\nO\nN\nS",
+                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(139, 0, 0),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Width = RedBoxSideLabelWidth
+            };
+
+            lblProductionSide = new Label
+            {
+                Text = "P\nR\nO\nD\nU\nC\nT\nI\nO\nN",
+                Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold),
+                ForeColor = Color.FromArgb(139, 0, 0),
+                BackColor = Color.Transparent,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Width = RedBoxSideLabelWidth
+            };
+
+            pnlRedBoxDivider = new Panel
+            {
+                BackColor = Color.FromArgb(139, 0, 0),
+                Height = RedBoxDividerHeight
+            };
+
+            // The designer docks these Top/Bottom; switch to explicit bounds so we
+            // can carve out a left-side column for the section labels.
+            flowPanelQuotationRedBox.Dock = DockStyle.None;
+            flowPanelJobOrderRedBox.Dock = DockStyle.None;
+
+            panel4.Controls.Add(lblQuotationsSide);
+            panel4.Controls.Add(lblProductionSide);
+            panel4.Controls.Add(pnlRedBoxDivider);
+
+            LayoutRedBoxSections();
+        }
+
+        private void LayoutRedBoxSections()
+        {
+            if (panel4.Height <= 0 || panel4.Width <= 0) return;
+
+            int half = panel4.Height / 2;
+
+            // Quotations section (top half)
+            lblQuotationsSide.SetBounds(0, 0, RedBoxSideLabelWidth, half);
+            flowPanelQuotationRedBox.SetBounds(RedBoxSideLabelWidth, 0, panel4.Width - RedBoxSideLabelWidth, half);
+
+            // Bold divider between the two sections
+            pnlRedBoxDivider.SetBounds(0, half, panel4.Width, RedBoxDividerHeight);
+
+            // Production section (bottom half)
+            int bottomTop = half + RedBoxDividerHeight;
+            int bottomHeight = panel4.Height - bottomTop;
+            lblProductionSide.SetBounds(0, bottomTop, RedBoxSideLabelWidth, bottomHeight);
+            flowPanelJobOrderRedBox.SetBounds(RedBoxSideLabelWidth, bottomTop, panel4.Width - RedBoxSideLabelWidth, bottomHeight);
         }
 
         void ResizeFlowChildren(FlowLayoutPanel flowPanel)
         {
             foreach (Control c in flowPanel.Controls)
                 SizeChild(flowPanel, c);
+
+            SuppressHorizontalScroll(flowPanel);
         }
 
         void SizeChild(FlowLayoutPanel flowPanel, Control c)
         {
-            // Width that fills the flow panel, respecting padding & the child’s margin
+            // Width that fills the flow panel, respecting padding & the child's margin.
+            // Reserve room for the vertical scrollbar even when it isn't showing yet -
+            // otherwise a card sized to the full width now can overflow by a few pixels
+            // once enough cards are added to trigger the vertical scrollbar, which in
+            // turn pops an unwanted horizontal scrollbar at the bottom of the box.
             int w = flowPanel.ClientSize.Width
                     - flowPanel.Padding.Horizontal
-                    - c.Margin.Horizontal;
+                    - c.Margin.Horizontal
+                    - SystemInformation.VerticalScrollBarWidth;
 
             c.Width = Math.Max(0, w);
+
+            SuppressHorizontalScroll(flowPanel);
+        }
+
+        // FlowLayoutPanel re-decides its scrollbars on every layout pass, so setting
+        // HorizontalScroll.Enabled/Visible = false once (e.g. right after Controls.Clear())
+        // doesn't stick - it needs to be reasserted whenever cards are added/resized.
+        void SuppressHorizontalScroll(FlowLayoutPanel flowPanel)
+        {
+            if (flowPanel.HorizontalScroll.Visible || flowPanel.HorizontalScroll.Enabled)
+            {
+                flowPanel.HorizontalScroll.Enabled = false;
+                flowPanel.HorizontalScroll.Visible = false;
+            }
         }
 
         private void Sidebar_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -336,8 +428,7 @@ namespace smpc_engineering_app
 
         private void panel4_Resize(object sender, EventArgs e)
         {
-            flowPanelQuotationRedBox.Height = panel4.Height / 2;
-            flowPanelJobOrderRedBox.Height = panel4.Height / 2;
+            LayoutRedBoxSections();
         }
 
         public void PassSalesOrder(string id)

@@ -28,7 +28,7 @@ namespace smpc_engineering_app.Pages.Components
         public string SalesQuotation
         {
             get => lbl_doc_no.Text;
-            set => lbl_doc_no.Text = "Q#" + value;
+            set => lbl_doc_no.Text = value;
         }
 
         public string Status
