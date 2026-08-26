@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using smpc_engineering_app.Shared;
 
 namespace smpc_engineering_app.Services.Helpers
 {
@@ -17,6 +18,18 @@ namespace smpc_engineering_app.Services.Helpers
     {
         private static string baseUrl => Program.ApiBaseUrl ?? "http://127.0.0.1:3000/api";
 
+        // ERP_API's RequireAuth middleware only ever delivers the auth token via a
+        // Set-Cookie header on login - never in the JSON body - and expects it back
+        // as a raw Authorization header (or ?Authorization= query param, for
+        // WebSocketService's own use of CacheData.SessionToken) on every request
+        // after. This class never captured it at all: a fresh HttpClient with no
+        // CookieContainer was created per call, and CacheData.SessionToken (declared
+        // in Shared/CacheData.cs) was never written to anywhere in this app - so
+        // every "protected" endpoint call here has always been sent with no token,
+        // and both red-box WebSockets fail with a 401 that ClientWebSocket reports
+        // as the generic "Unable to connect to the remote server". Same missing-
+        // token-capture gap already found and fixed in the Accounting app; mirrors
+        // smpc_inventory_app's RequestToApi.cs, the confirmed-working reference.
         static private async Task<T> SendRequestAsync(string url, HttpMethod method, string body = null)
         {
 
@@ -37,6 +50,11 @@ namespace smpc_engineering_app.Services.Helpers
                         Content = content
                     };
 
+                    if (!string.IsNullOrEmpty(CacheData.SessionToken))
+                    {
+                        requestMessage.Headers.Add("Authorization", CacheData.SessionToken);
+                    }
+
                     // Perform the HTTP request asynchronously
                     HttpResponseMessage response = await client.SendAsync(requestMessage);
 
@@ -46,6 +64,16 @@ namespace smpc_engineering_app.Services.Helpers
                     if (response.IsSuccessStatusCode)
                     {
                         string responseContent = await response.Content.ReadAsStringAsync();
+
+                        if (string.IsNullOrEmpty(CacheData.SessionToken) &&
+                            response.Headers.TryGetValues("Set-Cookie", out var setCookieValues))
+                        {
+                            string token = ExtractToken(setCookieValues.First());
+                            if (!string.IsNullOrEmpty(token))
+                            {
+                                CacheData.SessionToken = token;
+                            }
+                        }
 
                         // Optionally, you can parse the responseContent into an object of type T
                         T result = JsonConvert.DeserializeObject<T>(responseContent);
@@ -76,6 +104,23 @@ namespace smpc_engineering_app.Services.Helpers
                     throw;
                 }
             }
+        }
+
+        // Same extraction logic as smpc_inventory_app's RequestToApi.cs - the cookie
+        // looks like "Authorization=<jwt>; Path=/; Expires=...", so this pulls out
+        // just the token value between "Authorization=" and the first semicolon (or
+        // to the end of the string if there's no trailing attribute).
+        private static string ExtractToken(string cookieString)
+        {
+            const string marker = "Authorization=";
+            int tokenStartIndex = cookieString.IndexOf(marker);
+            if (tokenStartIndex < 0) return null;
+            tokenStartIndex += marker.Length;
+
+            int tokenEndIndex = cookieString.IndexOf(";", tokenStartIndex);
+            return tokenEndIndex == -1
+                ? cookieString.Substring(tokenStartIndex)
+                : cookieString.Substring(tokenStartIndex, tokenEndIndex - tokenStartIndex);
         }
 
         //// POST Method
