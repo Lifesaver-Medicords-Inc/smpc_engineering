@@ -89,10 +89,9 @@ namespace smpc_engineering_app.Pages.Transactions
             dgv_quotation_list.DataSource = searchedData;
         }
 
-        // Opening the actual quotation (Size Up / item table / wiring editable, everything
-        // else read-only per §3.2) is the next build step - the detail editor host page
-        // doesn't exist yet, so this only reports that for now rather than silently
-        // doing nothing on a double-click.
+        // Opens the quotation detail editor - Size Up/item table/wiring interactive,
+        // everything else round-trips unchanged on save (see SalesQuotationEngPage's own
+        // type-level comment for why enforcement lives there and not on screen).
         private void dgv_quotation_list_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
@@ -101,7 +100,25 @@ namespace smpc_engineering_app.Pages.Transactions
             int quotationId = Convert.ToInt32(row.Cells["col_id"].Value ?? 0);
             if (quotationId <= 0) return;
 
-            Helpers.ShowDialogMessage("info", "The quotation editor for Engineering isn't wired up yet.");
+            var mainForm = this.FindForm() as SMPC;
+            if (mainForm == null) return;
+
+            mainForm.OpenRoute("Sales Quotation Detail");
+
+            foreach (Control ctrl in mainForm.tabContainer.SelectedTab.Controls)
+            {
+                if (ctrl is smpc_engineering_app.Pages.SalesQuotationEngineering.SalesQuotationEngPage uc)
+                {
+                    uc.SetQuotation(
+                        quotationId,
+                        row.Cells["col_client_name"].Value?.ToString(),
+                        row.Cells["col_document_no"].Value?.ToString(),
+                        row.Cells["col_project_name"].Value?.ToString(),
+                        row.Cells["col_sales_executive"].Value?.ToString(),
+                        row.Cells["col_status"].Value?.ToString());
+                    break;
+                }
+            }
         }
     }
 }

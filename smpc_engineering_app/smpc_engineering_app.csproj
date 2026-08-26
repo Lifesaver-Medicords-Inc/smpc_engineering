@@ -141,6 +141,7 @@
     <Compile Include="Models\PickActivityModel.cs" />
     <Compile Include="Models\ProductionListRedboxListModel.cs" />
     <Compile Include="Models\QuotationRedboxListModel.cs" />
+    <Compile Include="Models\EngineeringItemModel.cs" />
     <Compile Include="Models\EngrUsersModel.cs" />
     <Compile Include="Models\JobOrderModel.cs" />
     <Compile Include="Models\SalesOrderViewEngModel.cs" />
@@ -243,6 +244,12 @@
     </Compile>
     <Compile Include="Pages\SalesOrderEngineering\SalesOrderEngPage.Designer.cs">
       <DependentUpon>SalesOrderEngPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\SalesQuotationEngineering\SalesQuotationEngPage.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\SalesQuotationEngineering\SalesQuotationEngPage.Designer.cs">
+      <DependentUpon>SalesQuotationEngPage.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\Transactions\SalesQuotationList.cs">
       <SubType>UserControl</SubType>

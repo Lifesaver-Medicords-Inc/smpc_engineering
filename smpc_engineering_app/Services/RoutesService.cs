@@ -12,6 +12,7 @@ using smpc_engineering_app.Pages.PickActivity;
 using smpc_engineering_app.Pages.PickActivity2;
 using smpc_engineering_app.Pages.JobOrder;
 using smpc_engineering_app.Pages.SalesOrderEngineering;
+using smpc_engineering_app.Pages.SalesQuotationEngineering;
 
 namespace smpc_engineering_app.Services
 {
@@ -26,6 +27,11 @@ namespace smpc_engineering_app.Services
             { "Pick Activity", new PickActivityPage2() },
             { "Job Order", new JobOrderPage() },
             { "Sales Order", new SalesOrderEngPage() },
+            // Not reachable from the sidebar (no matching TreeView node) - opened only
+            // programmatically from SalesQuotationList's double-click handler via
+            // OpenRoute, same pattern JobOrderPage already uses for "Sales Order"/
+            // "Item Request".
+            { "Sales Quotation Detail", new SalesQuotationEngPage() },
         };
 
         private string _selectedRoute;

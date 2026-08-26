@@ -23,6 +23,15 @@ namespace smpc_engineering_app.Shared
         //Sales Quotation List (§3.2 - REQUEST FOR ENGR. quotations scoped to the logged-in engineer)
         public const string SALES_QUOTATION_LIST = "/engineering/sales_quotation_list";
 
+        //Sales Project (quotation detail editor - same endpoint smpc_sales_system's own
+        //ProjectService uses for both GET and PUT)
+        public const string SALES_PROJECTS = "/sales/projects";
+
+        //Full item catalog (same endpoint smpc_sales_system's own ItemService uses -
+        //All_ITEM above is a different, more limited view with no item_name/item_brand,
+        //not enough for the Size Up pump picker's own filter+display needs)
+        public const string SETUP_ITEM_FULL = "/setup/item";
+
         //Job Order
         public const string JOB_ORDER = "/engineering/job_order";
         public const string ENGINEER_LIST = "/engineering/job_order/engr_list";
