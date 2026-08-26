@@ -20,6 +20,9 @@ namespace smpc_engineering_app.Shared
         //JOB ORDER REDBOX WS
         public static string WSJOBORDERREDBOXLIST = REDBOX + "/job_order/0";
 
+        //Sales Quotation List (§3.2 - REQUEST FOR ENGR. quotations scoped to the logged-in engineer)
+        public const string SALES_QUOTATION_LIST = "/engineering/sales_quotation_list";
+
         //Job Order
         public const string JOB_ORDER = "/engineering/job_order";
         public const string ENGINEER_LIST = "/engineering/job_order/engr_list";

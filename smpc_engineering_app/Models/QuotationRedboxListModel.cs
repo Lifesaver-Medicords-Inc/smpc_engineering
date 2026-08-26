@@ -15,6 +15,7 @@ namespace smpc_engineering_app.Models
         public string project_name { get; set; }
         public string sales_executive { get; set; }
         public string remark { get; set; }
+        public int requested_engr_id { get; set; }
     }
 
     class RedboxQuotationList
