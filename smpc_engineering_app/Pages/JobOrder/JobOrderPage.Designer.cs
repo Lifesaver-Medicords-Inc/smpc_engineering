@@ -82,6 +82,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.cmb_a_engr_pending = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.item_rqst_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.so_item_status_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.general_name_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.report_base_pending = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -102,6 +103,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_rqst_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.due_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.so_item_status_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.engr_id_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.a_engr_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.general_name_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -129,6 +131,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.engr_id_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.a_engr_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.status_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.so_item_status_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.type_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btn_edit = new System.Windows.Forms.ToolStripButton();
             this.btn_save = new System.Windows.Forms.ToolStripButton();
@@ -255,6 +258,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.cmb_a_engr_pending,
             this.item_rqst_pending,
             this.status_pending,
+            this.so_item_status_pending,
             this.general_name_pending,
             this.serial_no_pending,
             this.report_base_pending,
@@ -423,13 +427,22 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_rqst_pending.Visible = false;
             // 
             // status_pending
-            // 
+            //
             this.status_pending.DataPropertyName = "status";
             this.status_pending.HeaderText = "STATUS";
             this.status_pending.Name = "status_pending";
             this.status_pending.ReadOnly = true;
             this.status_pending.Visible = false;
-            // 
+            //
+            // so_item_status_pending
+            //
+            this.so_item_status_pending.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.so_item_status_pending.DataPropertyName = "so_item_status";
+            this.so_item_status_pending.HeaderText = "ITEM STATUS";
+            this.so_item_status_pending.MinimumWidth = 140;
+            this.so_item_status_pending.Name = "so_item_status_pending";
+            this.so_item_status_pending.ReadOnly = true;
+            //
             // general_name_pending
             // 
             this.general_name_pending.DataPropertyName = "general_name";
@@ -504,6 +517,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_rqst_ongoing,
             this.due_ongoing,
             this.status_ongoing,
+            this.so_item_status_ongoing,
             this.engr_id_ongoing,
             this.a_engr_ongoing,
             this.general_name_ongoing,
@@ -658,9 +672,18 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.status_ongoing.MinimumWidth = 90;
             this.status_ongoing.Name = "status_ongoing";
             this.status_ongoing.ReadOnly = true;
-            // 
+            //
+            // so_item_status_ongoing
+            //
+            this.so_item_status_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.so_item_status_ongoing.DataPropertyName = "so_item_status";
+            this.so_item_status_ongoing.HeaderText = "ITEM STATUS";
+            this.so_item_status_ongoing.MinimumWidth = 140;
+            this.so_item_status_ongoing.Name = "so_item_status_ongoing";
+            this.so_item_status_ongoing.ReadOnly = true;
+            //
             // engr_id_ongoing
-            // 
+            //
             this.engr_id_ongoing.DataPropertyName = "engr_id";
             this.engr_id_ongoing.HeaderText = "ENGR ID";
             this.engr_id_ongoing.Name = "engr_id_ongoing";
@@ -754,6 +777,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.engr_id_finished,
             this.a_engr_finished,
             this.status_finished,
+            this.so_item_status_finished,
             this.type_finished});
             this.dgv_pl_finished.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgv_pl_finished.EnableHeadersVisualStyles = false;
@@ -948,7 +972,16 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.status_finished.Name = "status_finished";
             this.status_finished.ReadOnly = true;
             this.status_finished.Visible = false;
-            // 
+            //
+            // so_item_status_finished
+            //
+            this.so_item_status_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.so_item_status_finished.DataPropertyName = "so_item_status";
+            this.so_item_status_finished.HeaderText = "ITEM STATUS";
+            this.so_item_status_finished.MinimumWidth = 140;
+            this.so_item_status_finished.Name = "so_item_status_finished";
+            this.so_item_status_finished.ReadOnly = true;
+            //
             // type_finished
             // 
             this.type_finished.DataPropertyName = "type";
@@ -1043,6 +1076,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewTextBoxColumn item_rqst_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn due_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn status_ongoing;
+        private System.Windows.Forms.DataGridViewTextBoxColumn so_item_status_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn engr_id_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn a_engr_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn general_name_ongoing;
@@ -1065,6 +1099,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewComboBoxColumn cmb_a_engr_pending;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_rqst_pending;
         private System.Windows.Forms.DataGridViewTextBoxColumn status_pending;
+        private System.Windows.Forms.DataGridViewTextBoxColumn so_item_status_pending;
         private System.Windows.Forms.DataGridViewTextBoxColumn general_name_pending;
         private System.Windows.Forms.DataGridViewTextBoxColumn serial_no_pending;
         private System.Windows.Forms.DataGridViewTextBoxColumn report_base_pending;
@@ -1088,6 +1123,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewTextBoxColumn engr_id_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn a_engr_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn status_finished;
+        private System.Windows.Forms.DataGridViewTextBoxColumn so_item_status_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn type_finished;
         private System.Windows.Forms.ToolStripButton btn_edit;
         private System.Windows.Forms.ToolStripButton btn_save;

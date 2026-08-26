@@ -24,6 +24,11 @@ namespace smpc_engineering_app.Models
         public string a_engr { get; set; }
         public string item_rqst { get; set; }
         public string status { get; set; }
+        // §7.1 - the richer SO Item Status (Phase 2 item 2.6), joined from
+        // tbl_trans_sales_order_details.status via order_details_id. Distinct from
+        // `status` above, which is this Job Order's own coarse PENDING/ONGOING/COMPLETE
+        // value (that's what drives which of the 3 tabs a row appears under).
+        public string so_item_status { get; set; }
         public string general_name { get; set; }
         public string serial_no { get; set; }
         public string report { get; set; }
