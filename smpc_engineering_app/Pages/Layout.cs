@@ -117,8 +117,14 @@ namespace smpc_engineering_app
                 int availableWidth = pnl_content_capped.ClientSize.Width;
                 int cappedWidth = Math.Min(MaxContentWidth, availableWidth);
 
+                // Was Math.Max(cappedWidth, activePage.Width) - forced tabContainer to
+                // AT LEAST cappedWidth even when the open page itself is much narrower,
+                // leaving a wide gray dead strip next to the actual content instead of
+                // a page-sized, centered column. The active page's own width is what
+                // should drive this, always - 1280 only matters as the empty-state
+                // fallback (no tab open yet) below.
                 Control activePage = GetActiveTabPageControl();
-                int neededWidth = activePage != null ? Math.Max(cappedWidth, activePage.Width) : cappedWidth;
+                int neededWidth = activePage != null ? activePage.Width : cappedWidth;
 
                 tabContainer.Width = neededWidth;
                 tabContainer.Height = pnl_content_capped.ClientSize.Height;
