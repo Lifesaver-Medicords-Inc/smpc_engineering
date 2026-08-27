@@ -57,6 +57,57 @@ namespace smpc_engineering_app
             flowPanelJobOrderRedBox.Layout += (s, e) => SuppressHorizontalScroll(flowPanelJobOrderRedBox);
 
             BuildRedBoxSideLabels();
+
+            tabContainer.SelectedIndexChanged += (s, e) => RecalculateContentWidth();
+            // Phase 4.6 (UI uniformity): set the initial capped/centered width before
+            // the form is ever shown - the Resize event alone would leave tabContainer
+            // at its Designer-time placeholder size for one frame on startup.
+            RecalculateContentWidth();
+        }
+
+        // Phase 4.6 (UI uniformity): the main content area (tabContainer, left of the
+        // sidebar/panel1 and right of RedBox's panel5) caps at 1280px and stays
+        // centered on wide/ultrawide monitors. RedBox's own panel (panel5) is left
+        // uncapped/full-width on purpose - it's persistent utility chrome, not the
+        // "page" being viewed.
+        //
+        // Individual pages hardcode their own size in their own code and are never
+        // resized to fit whatever tabContainer happens to be (same as
+        // smpc_sales_system's Quotation.cs - see that app's Layout.cs for the full
+        // history of what was tried and why this shape won). tabContainer never
+        // shrinks narrower than the ACTIVE tab's own page needs; pnl_content_capped's
+        // own AutoScroll (Designer) scrolls the whole work area - tab strip included -
+        // into view when it doesn't fit, rather than the page clipping inside a
+        // too-small TabPage.
+        private const int MaxContentWidth = 1280;
+
+        private void pnl_content_capped_Resize(object sender, EventArgs e)
+        {
+            RecalculateContentWidth();
+        }
+
+        private Control GetActiveTabPageControl()
+        {
+            TabPage selected = tabContainer.SelectedTab;
+            return selected != null && selected.Controls.Count > 0 ? selected.Controls[0] : null;
+        }
+
+        private void RecalculateContentWidth()
+        {
+            int availableWidth = pnl_content_capped.ClientSize.Width;
+            int cappedWidth = Math.Min(MaxContentWidth, availableWidth);
+
+            Control activePage = GetActiveTabPageControl();
+            int neededWidth = activePage != null ? Math.Max(cappedWidth, activePage.Width) : cappedWidth;
+
+            tabContainer.Width = neededWidth;
+            tabContainer.Height = pnl_content_capped.ClientSize.Height;
+            // Centers only when everything actually fits (neededWidth == cappedWidth);
+            // once the active page needs more room than's available, flush-left is the
+            // only position that makes sense for something you're about to scroll to
+            // see the rest of.
+            tabContainer.Left = neededWidth <= availableWidth ? (availableWidth - neededWidth) / 2 : 0;
+            tabContainer.Top = 0;
         }
 
         private void BuildRedBoxSideLabels()
@@ -194,14 +245,22 @@ namespace smpc_engineering_app
 
                 TabPage newTab = new TabPage(tabTitle);
 
-                //control.Width = this.Width - 235; 
+                //control.Width = this.Width - 235;
                 container.Height = this.Height * 2;
                 //control.Height = this.Height;
-                control.Width = this.Width - 570;
+                // Phase 4.6 (UI uniformity): was "control.Width = this.Width - 570" (a
+                // magic-number approximation of the available content width) - removed
+                // entirely, along with newTab.AutoScroll. The page keeps its own
+                // Designer-authored/hardcoded size; pnl_content_capped's own AutoScroll
+                // (Designer) and RecalculateContentWidth (above) handle showing all of
+                // it, scrolled if needed, instead of clipping it to a forced width.
                 newTab.Controls.Add(control);
-                newTab.AutoScroll = true;
                 tabContainer.TabPages.Add(newTab);
                 tabContainer.SelectTab(newTab);
+                // SelectTab above should already raise SelectedIndexChanged and trigger
+                // this, but calling it directly here too is cheap and removes any doubt
+                // that a freshly-added tab's own width need is accounted for immediately.
+                RecalculateContentWidth();
             }
             catch (Exception)
             {
@@ -214,6 +273,7 @@ namespace smpc_engineering_app
             try
             {
                 tabContainer.TabPages.Remove(tabContainer.SelectedTab);
+                RecalculateContentWidth();
             }
             catch (Exception)
             {
@@ -277,6 +337,7 @@ namespace smpc_engineering_app
                 {
                     TabPage tabToRemove = tabContainer.TabPages[i];
                     tabContainer.TabPages.Remove(tabToRemove);
+                    RecalculateContentWidth();
                     break;
                 }
             }

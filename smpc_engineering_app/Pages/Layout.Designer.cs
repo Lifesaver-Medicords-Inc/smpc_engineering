@@ -66,12 +66,14 @@ namespace smpc_engineering_app
             this.label2 = new System.Windows.Forms.Label();
             this.panel3 = new System.Windows.Forms.Panel();
             this.tabContainer = new System.Windows.Forms.TabControl();
+            this.pnl_content_capped = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Sidebar = new System.Windows.Forms.TreeView();
             this.statusStrip1.SuspendLayout();
             this.panel5.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.pnl_content_capped.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -264,10 +266,14 @@ namespace smpc_engineering_app
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(313, 1);
             this.panel3.TabIndex = 3;
-            // 
+            //
             // tabContainer
-            // 
-            this.tabContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            //
+            // Phase 4.6 (UI uniformity): no longer Dock=Fill - pnl_content_capped now
+            // owns that, and sizes/centers this manually (see Layout.cs's
+            // RecalculateContentWidth) so the work area caps at 1280px on wide/ultrawide
+            // monitors instead of stretching edge to edge, matching all 6 apps' new
+            // standard.
             this.tabContainer.Location = new System.Drawing.Point(200, 0);
             this.tabContainer.Name = "tabContainer";
             this.tabContainer.SelectedIndex = 0;
@@ -275,7 +281,18 @@ namespace smpc_engineering_app
             this.tabContainer.TabIndex = 11;
             this.tabContainer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabContainer_DrawItem);
             this.tabContainer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tabContainer_MouseDown);
-            // 
+            //
+            // pnl_content_capped
+            //
+            this.pnl_content_capped.Controls.Add(this.tabContainer);
+            this.pnl_content_capped.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pnl_content_capped.AutoScroll = true;
+            this.pnl_content_capped.Location = new System.Drawing.Point(200, 0);
+            this.pnl_content_capped.Name = "pnl_content_capped";
+            this.pnl_content_capped.Size = new System.Drawing.Size(765, 615);
+            this.pnl_content_capped.TabIndex = 12;
+            this.pnl_content_capped.Resize += new System.EventHandler(this.pnl_content_capped_Resize);
+            //
             // panel1
             // 
             this.panel1.Controls.Add(this.Sidebar);
@@ -322,7 +339,7 @@ namespace smpc_engineering_app
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1288, 637);
-            this.Controls.Add(this.tabContainer);
+            this.Controls.Add(this.pnl_content_capped);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.panel5);
             this.Controls.Add(this.statusStrip1);
@@ -338,6 +355,7 @@ namespace smpc_engineering_app
             this.panel4.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.pnl_content_capped.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -369,6 +387,7 @@ namespace smpc_engineering_app
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Panel panel3;
         public System.Windows.Forms.TabControl tabContainer;
+        private System.Windows.Forms.Panel pnl_content_capped;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TreeView Sidebar;
     }
