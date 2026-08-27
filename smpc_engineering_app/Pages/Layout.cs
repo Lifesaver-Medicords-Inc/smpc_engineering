@@ -88,36 +88,51 @@ namespace smpc_engineering_app
 
         private Control GetActiveTabPageControl()
         {
-            if (tabContainer == null) return null;
+            // Live crash: NullReferenceException on tabContainer.SelectedTab, with
+            // tabContainer itself confirmed non-null (found in smpc_inventory_app,
+            // same class of code). TabControl.SelectedTab's getter indexes
+            // TabPages[SelectedIndex] - the Designer sets SelectedIndex=0 at design
+            // time with zero TabPages actually behind it (true at every fresh app
+            // launch, before anything's been opened), and querying SelectedTab in that
+            // state can throw internally rather than returning null the way an
+            // out-of-range SelectedIndex would suggest. Checking TabPages.Count first
+            // avoids the property entirely when there's nothing to select anyway.
+            if (tabContainer == null || tabContainer.TabPages.Count == 0) return null;
             TabPage selected = tabContainer.SelectedTab;
             return selected != null && selected.Controls.Count > 0 ? selected.Controls[0] : null;
         }
 
-        // Live crash found in smpc_sales_system: NullReferenceException on
-        // tabContainer.SelectedTab. pnl_content_capped's Resize event can fire mid-
-        // InitializeComponent() - e.g. the moment it's docked into its own parent -
-        // which is *before* every field this method touches is necessarily assigned
-        // yet, regardless of how early each one's own "new" line appears in the
-        // Designer file. Guard against both being null rather than relying on Designer
-        // code-generation order to save us.
+        // Guards both pnl_content_capped/tabContainer being null (a Resize event can
+        // fire mid-InitializeComponent(), before every field this method touches is
+        // necessarily assigned) and, as a last-resort safety net, any other WinForms
+        // internal-timing surprise this hasn't anticipated - this is a purely cosmetic
+        // sizing pass, so silently skipping one recalculation is far preferable to
+        // crashing the app over it.
         private void RecalculateContentWidth()
         {
             if (pnl_content_capped == null || tabContainer == null) return;
 
-            int availableWidth = pnl_content_capped.ClientSize.Width;
-            int cappedWidth = Math.Min(MaxContentWidth, availableWidth);
+            try
+            {
+                int availableWidth = pnl_content_capped.ClientSize.Width;
+                int cappedWidth = Math.Min(MaxContentWidth, availableWidth);
 
-            Control activePage = GetActiveTabPageControl();
-            int neededWidth = activePage != null ? Math.Max(cappedWidth, activePage.Width) : cappedWidth;
+                Control activePage = GetActiveTabPageControl();
+                int neededWidth = activePage != null ? Math.Max(cappedWidth, activePage.Width) : cappedWidth;
 
-            tabContainer.Width = neededWidth;
-            tabContainer.Height = pnl_content_capped.ClientSize.Height;
-            // Centers only when everything actually fits (neededWidth == cappedWidth);
-            // once the active page needs more room than's available, flush-left is the
-            // only position that makes sense for something you're about to scroll to
-            // see the rest of.
-            tabContainer.Left = neededWidth <= availableWidth ? (availableWidth - neededWidth) / 2 : 0;
-            tabContainer.Top = 0;
+                tabContainer.Width = neededWidth;
+                tabContainer.Height = pnl_content_capped.ClientSize.Height;
+                // Centers only when everything actually fits (neededWidth == cappedWidth);
+                // once the active page needs more room than's available, flush-left is
+                // the only position that makes sense for something you're about to
+                // scroll to see the rest of.
+                tabContainer.Left = neededWidth <= availableWidth ? (availableWidth - neededWidth) / 2 : 0;
+                tabContainer.Top = 0;
+            }
+            catch (Exception)
+            {
+                // Cosmetic only - never let a sizing quirk take the app down.
+            }
         }
 
         private void BuildRedBoxSideLabels()
