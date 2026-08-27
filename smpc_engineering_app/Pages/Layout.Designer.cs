@@ -33,6 +33,15 @@ namespace smpc_engineering_app
             System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Sales Order");
             System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Item Request");
             System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Pick Activity");
+            // Sales Quotation List was registered in RoutesService.cs (Phase 4 item 4.1)
+            // but never actually given a sidebar node - engineers had no way to reach it
+            // at all. Found and fixed alongside adding BOM/BOQ below.
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Sales Quotation List");
+            // BOM/BOQ (Phase 4 item 4.3-adjacent) - already fully built in the Inventory
+            // app (Pages/Engineering/Bom, Pages/Engineering/Boq); reused here rather than
+            // rebuilt, same "one implementation, two entry points" precedent as BPI.
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("BOM");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("BOQ");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SMPC));
             this.container = new System.Windows.Forms.Panel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -290,11 +299,20 @@ namespace smpc_engineering_app
             treeNode3.Text = "Item Request";
             treeNode4.Name = "Pick Activity";
             treeNode4.Text = "Pick Activity";
+            treeNode5.Name = "Sales Quotation List";
+            treeNode5.Text = "Sales Quotation List";
+            treeNode6.Name = "BOM";
+            treeNode6.Text = "BOM";
+            treeNode7.Name = "BOQ";
+            treeNode7.Text = "BOQ";
             this.Sidebar.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
             treeNode3,
-            treeNode4});
+            treeNode4,
+            treeNode5,
+            treeNode6,
+            treeNode7});
             this.Sidebar.Size = new System.Drawing.Size(200, 615);
             this.Sidebar.TabIndex = 0;
             this.Sidebar.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Sidebar_NodeMouseClick);

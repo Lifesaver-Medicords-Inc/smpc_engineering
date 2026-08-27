@@ -13,6 +13,7 @@ using smpc_engineering_app.Pages.PickActivity2;
 using smpc_engineering_app.Pages.JobOrder;
 using smpc_engineering_app.Pages.SalesOrderEngineering;
 using smpc_engineering_app.Pages.SalesQuotationEngineering;
+using smpc_inventory_app.Pages;
 
 namespace smpc_engineering_app.Services
 {
@@ -32,6 +33,11 @@ namespace smpc_engineering_app.Services
             // OpenRoute, same pattern JobOrderPage already uses for "Sales Order"/
             // "Item Request".
             { "Sales Quotation Detail", new SalesQuotationEngPage() },
+            // BOM/BOQ - reused directly from the Inventory app (Phase 4 item 4.3-adjacent,
+            // "one implementation, two entry points" per CLAUDE.md's own BPI precedent).
+            // Full access, same as Inventory - confirmed with user, not a cut-down copy.
+            { "BOM", new bom() },
+            { "BOQ", new boq_wiring() },
         };
 
         private string _selectedRoute;
