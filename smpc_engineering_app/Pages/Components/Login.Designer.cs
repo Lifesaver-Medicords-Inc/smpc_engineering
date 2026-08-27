@@ -124,10 +124,12 @@ namespace smpc_engineering_app.Pages
             this.Controls.Add(this.pnl_auth);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(312, 145);
-            this.MinimumSize = new System.Drawing.Size(312, 145);
+            // Phase 4.6 (UI uniformity): dropped the explicit Min/MaximumSize lock -
+            // FixedSingle + MaximizeBox=false already prevents resizing on its own (same as
+            // Accounting's identical Login, which never had this redundant lock), and the
+            // (312,145) values didn't even match this form's own (296,106) ClientSize.
             this.Name = "Login";
-            this.Text = "Login";
+            this.Text = "Lightspeed ERP - Engineering Login";
             this.Load += new System.EventHandler(this.Login_Load);
             this.pnl_auth.ResumeLayout(false);
             this.pnl_auth.PerformLayout();
