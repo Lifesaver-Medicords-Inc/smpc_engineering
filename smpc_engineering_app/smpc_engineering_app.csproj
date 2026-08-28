@@ -15,10 +15,10 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>D:\LEM\Publish\Engineering\</PublishUrl>
+    <PublishUrl>D:\Gids\Publish\Engineering\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateEnabled>true</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -271,6 +271,7 @@
     <Compile Include="Services\GeneralService.cs" />
     <Compile Include="Services\Helpers\ApiService.cs" />
     <Compile Include="Services\Helpers\BinLocationComboOverlay.cs" />
+    <Compile Include="Services\Helpers\DateCellPickerOverlay.cs" />
     <Compile Include="Services\Helpers\WebsocketServices.cs" />
     <Compile Include="Services\ServiceBase.cs" />
     <Compile Include="Services\Setup\BinLocationListService.cs" />

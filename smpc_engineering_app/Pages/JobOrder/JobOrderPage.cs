@@ -32,6 +32,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private bool _finishedLoaded = false;
         private HashSet<int> _editedRowIndices = new HashSet<int>();
         private string placeHolderText = "Job Order Search...";
+        private DateCellPickerOverlay _duePickerOverlay;
 
         public JobOrderPage()
         {
@@ -43,6 +44,12 @@ namespace smpc_engineering_app.Pages.JobOrder
             dgv_pl_pending.CellEndEdit += Dgv_CellEndEdit;
             dgv_pl_ongoing.CellEndEdit += Dgv_CellEndEdit;
             dgv_pl_finished.CellEndEdit += Dgv_CellEndEdit;
+
+            // DataGridView has no built-in date-picker column - floats a real
+            // DateTimePicker over due_pending's active cell instead of relying on
+            // free-typed text (see DateCellPickerOverlay's own comment for why that
+            // was also silently contributing to the "Due date is required" confusion).
+            _duePickerOverlay = new DateCellPickerOverlay(dgv_pl_pending, "due_pending");
 
             Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_pending, "sales_order_pending", "SO");
             Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_ongoing, "sales_order_ongoing", "SO");
@@ -66,11 +73,32 @@ namespace smpc_engineering_app.Pages.JobOrder
         {
             _isEditing = enable;
 
-            if (enable) _editedRowIndices.Clear();
+            if (enable)
+            {
+                _editedRowIndices.Clear();
+
+                // Each grid is normally bound to a live DataView whose RowFilter reads the
+                // very columns this mode lets the user edit (Pending: a_engr/due; Ongoing:
+                // status - see BindPendingData/BindOngoingData). Editing one of those fields
+                // re-evaluates the filter immediately, so the row jumps position or vanishes
+                // out from under the user mid-edit, before Save is ever clicked - and since
+                // _editedRowIndices tracks plain row *positions*, a reshuffle silently makes
+                // it point at the wrong row too (this is what produced "Row 1: Due date is
+                // required" against a row the user never touched). Freezing each grid onto a
+                // detached snapshot for the duration of the edit keeps every row exactly
+                // where the user left it; Save and Cancel both end by reloading fresh data
+                // (LoadJobOrder), which naturally re-buckets rows into the right tab under a
+                // live view again.
+                FreezeForEdit(dgv_pl_pending);
+                FreezeForEdit(dgv_pl_ongoing);
+                FreezeForEdit(dgv_pl_finished);
+            }
 
             SetEditableColumns(dgv_pl_pending, enable, "due_pending", "cmb_a_engr_pending");
             SetEditableColumns(dgv_pl_ongoing, enable, "status_ongoing");
             SetEditableColumns(dgv_pl_finished, enable, "serial_no_finished");
+
+            _duePickerOverlay.SetEditingMode(enable);
 
             // buttons
             string[] editButtons = { "btn_save", "btn_cancel" };
@@ -81,6 +109,14 @@ namespace smpc_engineering_app.Pages.JobOrder
                 visibleButtons: enable ? editButtons : navButtons,
                 hiddenButtons: enable ? navButtons : editButtons
             );
+        }
+
+        private void FreezeForEdit(DataGridView dgv)
+        {
+            if (dgv.DataSource is DataView view)
+            {
+                dgv.DataSource = view.ToTable();
+            }
         }
 
         private void btn_edit_Click(object sender, EventArgs e)
@@ -685,6 +721,14 @@ namespace smpc_engineering_app.Pages.JobOrder
                             aEngrCell.Value = engineer.full_name;
                     }
                 }
+            }
+            else if (changedCol.Name == "due_pending")
+            {
+                // DateCellPickerOverlay writes the cell's Value directly rather than
+                // driving a normal BeginEdit/EndEdit session, so Dgv_CellEndEdit never
+                // fires for it - mark the row edited here instead, or a picked due date
+                // would silently get left out of what Save sends.
+                _editedRowIndices.Add(e.RowIndex);
             }
         }
 
