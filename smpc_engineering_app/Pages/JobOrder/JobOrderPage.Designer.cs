@@ -588,6 +588,11 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.sales_order_ongoing.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.sales_order_ongoing.DataPropertyName = "sales_order";
             dataGridViewCellStyle68.BackColor = System.Drawing.Color.Gainsboro;
+            // Bug #278 (Trello): PENDING's own SALES ORDER column already gets this
+            // link styling (dataGridViewCellStyle59) so users know it's clickable -
+            // ONGOING and FINISHED were missing it, looking like plain read-only text.
+            dataGridViewCellStyle68.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle68.ForeColor = System.Drawing.Color.DodgerBlue;
             this.sales_order_ongoing.DefaultCellStyle = dataGridViewCellStyle68;
             this.sales_order_ongoing.HeaderText = "SALES ORDER";
             this.sales_order_ongoing.MinimumWidth = 80;
@@ -843,6 +848,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.sales_order_finished.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
             this.sales_order_finished.DataPropertyName = "sales_order";
             dataGridViewCellStyle78.BackColor = System.Drawing.Color.Gainsboro;
+            // Bug #278 (Trello): see sales_order_ongoing above - same missing link styling.
+            dataGridViewCellStyle78.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle78.ForeColor = System.Drawing.Color.DodgerBlue;
             this.sales_order_finished.DefaultCellStyle = dataGridViewCellStyle78;
             this.sales_order_finished.FillWeight = 478.6325F;
             this.sales_order_finished.HeaderText = "SALES ORDER";
