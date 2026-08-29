@@ -273,6 +273,12 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_pending.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pl_pending_CellEndEdit);
             this.dgv_pl_pending.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pl_pending_CellValueChanged);
             this.dgv_pl_pending.CurrentCellDirtyStateChanged += new System.EventHandler(this.dgv_pl_pending_CurrentCellDirtyStateChanged);
+            // Bugs #198/#199 (Trello): no grid on this page had a DataError handler,
+            // so a cell formatting/type-conversion error (e.g. a blank Assigned Engr.
+            // cell) fell through to WinForms' own default error dialog loop - which
+            // can stack multiple dialogs and cascade into an unhandled exception once
+            // dismissed. Suppress it and no-op instead.
+            this.dgv_pl_pending.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgv_pl_DataError);
             // 
             // id_pending
             // 
@@ -355,7 +361,10 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_desc_pending.DataPropertyName = "item_desc";
             dataGridViewCellStyle61.BackColor = System.Drawing.Color.Gainsboro;
             this.item_desc_pending.DefaultCellStyle = dataGridViewCellStyle61;
-            this.item_desc_pending.HeaderText = "ITEM DESCRIPTION";
+            // Bug #200 (Trello): matches the spec's own terminology - Item Entry's
+            // "the item's complete information" field is called LONG DESCRIPTION,
+            // not ITEM DESCRIPTION.
+            this.item_desc_pending.HeaderText = "LONG DESCRIPTION";
             this.item_desc_pending.MinimumWidth = 110;
             this.item_desc_pending.Name = "item_desc_pending";
             this.item_desc_pending.ReadOnly = true;
@@ -531,6 +540,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_ongoing.Size = new System.Drawing.Size(1386, 736);
             this.dgv_pl_ongoing.TabIndex = 79;
             this.dgv_pl_ongoing.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pl_ongoing_CellClick);
+            // Bugs #198/#199 (Trello): see dgv_pl_pending above.
+            this.dgv_pl_ongoing.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgv_pl_DataError);
             // 
             // id_ongoing
             // 
@@ -616,7 +627,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_desc_ongoing.DataPropertyName = "item_desc";
             dataGridViewCellStyle70.BackColor = System.Drawing.Color.Gainsboro;
             this.item_desc_ongoing.DefaultCellStyle = dataGridViewCellStyle70;
-            this.item_desc_ongoing.HeaderText = "ITEM DESCRIPTION";
+            // Bug #200 (Trello): see item_desc_pending above.
+            this.item_desc_ongoing.HeaderText = "LONG DESCRIPTION";
             this.item_desc_ongoing.MinimumWidth = 120;
             this.item_desc_ongoing.Name = "item_desc_ongoing";
             this.item_desc_ongoing.ReadOnly = true;
@@ -791,6 +803,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_finished.Size = new System.Drawing.Size(1386, 736);
             this.dgv_pl_finished.TabIndex = 79;
             this.dgv_pl_finished.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pl_finished_CellClick);
+            // Bugs #198/#199 (Trello): see dgv_pl_pending above.
+            this.dgv_pl_finished.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgv_pl_DataError);
             // 
             // id_finished
             // 
@@ -878,7 +892,8 @@ namespace smpc_engineering_app.Pages.JobOrder
             dataGridViewCellStyle80.BackColor = System.Drawing.Color.Gainsboro;
             this.item_desc_finished.DefaultCellStyle = dataGridViewCellStyle80;
             this.item_desc_finished.FillWeight = 36.89459F;
-            this.item_desc_finished.HeaderText = "ITEM DESCRIPTION";
+            // Bug #200 (Trello): see item_desc_pending above.
+            this.item_desc_finished.HeaderText = "LONG DESCRIPTION";
             this.item_desc_finished.MinimumWidth = 110;
             this.item_desc_finished.Name = "item_desc_finished";
             this.item_desc_finished.ReadOnly = true;

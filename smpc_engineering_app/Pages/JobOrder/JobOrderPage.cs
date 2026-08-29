@@ -27,6 +27,18 @@ namespace smpc_engineering_app.Pages.JobOrder
         private List<EngineerUserModel> _engrdata;
         private DataTable _plTable;
         private bool _isEditing;
+
+        // Bugs #198/#199 (Trello): shared by all three tabs' grids - a cell
+        // formatting/type-conversion error (e.g. a blank Assigned Engr. cell)
+        // used to fall through to WinForms' own default error dialog, which
+        // can stack multiple copies and cascade into an unhandled exception
+        // once dismissed. Suppress the dialog and swallow the error instead -
+        // the cell just keeps showing whatever it already had.
+        private void dgv_pl_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            e.ThrowException = false;
+            e.Cancel = true;
+        }
         private bool _pendingLoaded = false;
         private bool _ongoingLoaded = false;
         private bool _finishedLoaded = false;
