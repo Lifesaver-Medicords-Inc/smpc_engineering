@@ -46,6 +46,12 @@ namespace smpc_engineering_app.Pages
             // 
             this.dgv_components.AllowUserToAddRows = false;
             this.dgv_components.AllowUserToResizeColumns = false;
+            // Bug #196 (Trello): AutoGenerateColumns defaults to true, and setting
+            // DataSource under that default doesn't merge with the manually-declared
+            // columns below (id_pending is already Visible = false) - it appends a
+            // brand new "id" column of its own, visible, which is what actually showed
+            // up when a user clicked Materials.
+            this.dgv_components.AutoGenerateColumns = false;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
