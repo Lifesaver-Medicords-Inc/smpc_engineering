@@ -72,6 +72,7 @@ namespace smpc_engineering_app.Services.Helpers
                             if (!string.IsNullOrEmpty(token))
                             {
                                 CacheData.SessionToken = token;
+                                MirrorTokenToSalesAssembly(token);
                             }
                         }
 
@@ -110,6 +111,35 @@ namespace smpc_engineering_app.Services.Helpers
         // looks like "Authorization=<jwt>; Path=/; Expires=...", so this pulls out
         // just the token value between "Authorization=" and the first semicolon (or
         // to the end of the string if there's no trailing attribute).
+        // This app reuses ItemSetUC from the smpc_sales_system assembly, and that control
+        // calls back into Sales's OWN service layer (RequestToApi), which reads Sales's
+        // own smpc_sales_app.Data.CacheData.SessionToken - a completely separate static
+        // from this app's CacheData.SessionToken. Inside the Engineering process that
+        // Sales-side store was never populated, so every call ItemSetUC made went out with
+        // no Authorization header and came back 401. That is why ASSIGNED ENGR. and
+        // TEMPLATE were empty dropdowns and the stock indicators never resolved - the data
+        // was fine, the requests were simply unauthenticated:
+        //
+        //   401 GET /api/engineering/job_order/engr_list      (ASSIGNED ENGR.)
+        //   401 GET /api/setup/templates                      (TEMPLATE)
+        //   401 GET /api/inventory/item_stocks/available      (INV. indicators)
+        //   401 GET /api/inventory/item_stocks/reservations
+        //
+        // Mirroring the token across at capture keeps both stores in step. Wrapped because
+        // it reaches into another assembly's static state - a failure here must not take
+        // down the request that just succeeded.
+        private static void MirrorTokenToSalesAssembly(string token)
+        {
+            try
+            {
+                smpc_sales_app.Data.CacheData.SessionToken = token;
+            }
+            catch
+            {
+                // Non-fatal: the Engineering app's own calls still work without it.
+            }
+        }
+
         private static string ExtractToken(string cookieString)
         {
             const string marker = "Authorization=";

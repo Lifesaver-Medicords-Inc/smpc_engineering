@@ -37,6 +37,9 @@ namespace smpc_engineering_app
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, args) =>
             {
+                // Log the full stack (was only shown, never recorded) so the root cause of a
+                // caught UI-thread error is still diagnosable from the log file.
+                try { Log.Error(args.Exception, "Unhandled UI-thread exception"); } catch { }
                 MessageBox.Show($"UI Thread Exception:\n\n{args.Exception.Message}",
                                 "Unhandled UI Exception",
                                 MessageBoxButtons.OK,
@@ -46,6 +49,7 @@ namespace smpc_engineering_app
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 var ex = args.ExceptionObject as Exception;
+                try { Log.Error(ex, "Unhandled non-UI exception"); } catch { }
                 MessageBox.Show($"Non-UI Exception:\n\n{ex?.Message}",
                                 "Unhandled Exception",
                                 MessageBoxButtons.OK,

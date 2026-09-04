@@ -16,6 +16,9 @@ namespace smpc_engineering_app.Models
         public string sales_executive { get; set; }
         public string remark { get; set; }
         public int requested_engr_id { get; set; }
+        // DATE REQUESTED column (grid col_date_requested binds this) + requester name.
+        public string requested_for_engr_date { get; set; }
+        public string requested_engr_name { get; set; }
     }
 
     class RedboxQuotationList

@@ -32,8 +32,12 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             this.lbl_client_caption = new System.Windows.Forms.Label();
             this.txt_client = new System.Windows.Forms.TextBox();
             this.lbl_saving_status = new System.Windows.Forms.Label();
+            this.pnl_multiplier_history = new System.Windows.Forms.Panel();
+            this.grp_multiplier = new System.Windows.Forms.GroupBox();
+            this.grp_history = new System.Windows.Forms.GroupBox();
             this.tab_container = new System.Windows.Forms.TabControl();
             this.panel_header.SuspendLayout();
+            this.pnl_multiplier_history.SuspendLayout();
             this.SuspendLayout();
             //
             // panel_header
@@ -183,13 +187,49 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             this.lbl_saving_status.Size = new System.Drawing.Size(0, 13);
             this.lbl_saving_status.TabIndex = 13;
             //
+            // grp_multiplier
+            //
+            this.grp_multiplier.Dock = System.Windows.Forms.DockStyle.Left;
+            this.grp_multiplier.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grp_multiplier.Location = new System.Drawing.Point(0, 0);
+            this.grp_multiplier.Name = "grp_multiplier";
+            this.grp_multiplier.Size = new System.Drawing.Size(690, 210);
+            this.grp_multiplier.TabIndex = 0;
+            this.grp_multiplier.TabStop = false;
+            this.grp_multiplier.Text = "MULTIPLIER";
+            //
+            // grp_history
+            //
+            this.grp_history.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.grp_history.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.grp_history.Location = new System.Drawing.Point(690, 0);
+            this.grp_history.Name = "grp_history";
+            this.grp_history.Size = new System.Drawing.Size(710, 210);
+            this.grp_history.TabIndex = 1;
+            this.grp_history.TabStop = false;
+            this.grp_history.Text = "CHANGE HISTORY";
+            //
+            // pnl_multiplier_history
+            //
+            // Sits above tab_container, same idea as Sales's Quotation.cs which keeps
+            // dgv_project_multiplier at the quotation level (a sibling of tabControl2),
+            // always visible regardless of which item-set tab is active - not one more
+            // tab to click into. Per user decision, 2026-09-03.
+            this.pnl_multiplier_history.Controls.Add(this.grp_history);
+            this.pnl_multiplier_history.Controls.Add(this.grp_multiplier);
+            this.pnl_multiplier_history.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnl_multiplier_history.Location = new System.Drawing.Point(0, 120);
+            this.pnl_multiplier_history.Name = "pnl_multiplier_history";
+            this.pnl_multiplier_history.Size = new System.Drawing.Size(1400, 210);
+            this.pnl_multiplier_history.TabIndex = 2;
+            //
             // tab_container
             //
             this.tab_container.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tab_container.Location = new System.Drawing.Point(0, 120);
+            this.tab_container.Location = new System.Drawing.Point(0, 330);
             this.tab_container.Name = "tab_container";
             this.tab_container.SelectedIndex = 0;
-            this.tab_container.Size = new System.Drawing.Size(1400, 830);
+            this.tab_container.Size = new System.Drawing.Size(1400, 620);
             this.tab_container.TabIndex = 1;
             //
             // SalesQuotationEngPage
@@ -197,12 +237,14 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tab_container);
+            this.Controls.Add(this.pnl_multiplier_history);
             this.Controls.Add(this.panel_header);
             this.Name = "SalesQuotationEngPage";
             this.Size = new System.Drawing.Size(1400, 950);
             this.Load += new System.EventHandler(this.SalesQuotationEngPage_Load);
             this.panel_header.ResumeLayout(false);
             this.panel_header.PerformLayout();
+            this.pnl_multiplier_history.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -224,6 +266,9 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
         private System.Windows.Forms.Label lbl_status_caption;
         private System.Windows.Forms.TextBox txt_status;
         private System.Windows.Forms.Label lbl_saving_status;
+        private System.Windows.Forms.Panel pnl_multiplier_history;
+        private System.Windows.Forms.GroupBox grp_multiplier;
+        private System.Windows.Forms.GroupBox grp_history;
         private System.Windows.Forms.TabControl tab_container;
     }
 }
