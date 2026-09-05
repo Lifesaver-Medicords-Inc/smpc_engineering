@@ -119,6 +119,12 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                 if (!string.IsNullOrEmpty(CacheData.SessionToken))
                     smpc_sales_app.Data.CacheData.SessionToken = CacheData.SessionToken;
 
+                // Same reasoning for the signed-in user: saving from this page runs
+                // Quotation.GetFullDiff -> BuildAutoHistoryEntries, which stamps the
+                // CHANGE HISTORY rows from the SALES assembly's CacheData.CurrentUser.
+                // Without this, every history row written here saves with a blank USER.
+                CacheData.MirrorCurrentUserToSalesAssembly();
+
                 // Item + BOM catalogs for the add-item picker. Loaded through the Sales
                 // assembly because ItemService/ProjectService/CompanyService are internal
                 // to it. Deliberately not fatal: if this fails the quotation still opens
@@ -246,7 +252,6 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                 uc.SetFinalData(Helpers.ToDataTable((content?.sales_project_content_final ?? new SalesProjectContentFinal[0]).ToList()));
 
                 uc.SetTemplateName(content != null ? content.template_project_id.ToString() : "0");
-                uc.SetWiring(content != null ? content.is_wiring.ToString() : "false");
 
                 newTab.Controls.Add(uc);
                 tab_container.TabPages.Add(newTab);
@@ -260,6 +265,17 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 
                 uc.SetFetchedItemData(itemsTable);
                 uc.SetProjectWiring(wiringTable);
+
+                // SetWiring moved to AFTER SetFetchedItemData - same fix and same reason
+                // as Sales's own fetchSalesProject (2026-09-05, user-reported: "wiring is
+                // not working, it didn't add [to] the item gridview"). Calling it before
+                // the items grid has any data bound fires checkBox_Wiring_CheckedChanged
+                // -> AddWiringRowsComponent against a null DataSource, which silently
+                // does nothing - no exception, the wiring block just never appears. Now
+                // it fires against the real, just-loaded items, so it correctly finds no
+                // existing wiring block and adds one (or correctly finds one and leaves
+                // it alone, on a record this bug didn't affect).
+                uc.SetWiring(content != null ? content.is_wiring.ToString() : "false");
 
                 // Per the type-level comment above: fully interactive, not gated to just
                 // the 3 areas - the save path is what actually restricts what takes effect.

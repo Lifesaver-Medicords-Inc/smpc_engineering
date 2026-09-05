@@ -140,6 +140,11 @@ namespace smpc_engineering_app.Services.Helpers
             }
         }
 
+        // The signed-in user is mirrored the same way and for the same reason, but lives
+        // on CacheData itself (CacheData.MirrorCurrentUserToSalesAssembly) rather than
+        // here - this class is generic (ApiService<T>), so a helper callers need to reach
+        // from outside can't sit on it without an irrelevant type argument.
+
         private static string ExtractToken(string cookieString)
         {
             const string marker = "Authorization=";

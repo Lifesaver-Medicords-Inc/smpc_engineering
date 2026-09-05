@@ -30,7 +30,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
             this.StartPosition = FormStartPosition.CenterParent;
 
             dgv_so_search.AutoGenerateColumns = false;
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_so_search, "doc_no", "SO");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_so_search, "doc_no", "SO#");
             InitializeSearchBox();
         }
 

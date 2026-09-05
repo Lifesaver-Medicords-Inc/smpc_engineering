@@ -32,7 +32,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
             dgv_pa_search.AutoGenerateColumns = false;
             InitializeSearchBox();
 
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pa_search, "doc_no", "PA");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pa_search, "doc_no", "PA#");
         }
 
         private void InitializeSearchBox()

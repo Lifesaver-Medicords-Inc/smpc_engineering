@@ -36,7 +36,10 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
             dgv_ir_search.AutoGenerateColumns = false;
             InitializeSearchBox();
 
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_ir_search, "doc_no", "IR");
+            Helpers.DataGridViewDocumentFormatter.// §2.5/§16: this is the Item Request, which is IREQ#. "IR#" is the Invoice
+            // Receipt - a different document entirely - so this search grid was
+            // labelling every item request with another document type's prefix.
+            DataGridViewDocumentFormat(dgv_ir_search, "doc_no", "IREQ#");
         }
 
         private void InitializeSearchBox()

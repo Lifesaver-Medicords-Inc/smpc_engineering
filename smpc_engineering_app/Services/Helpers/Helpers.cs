@@ -23,14 +23,37 @@ namespace smpc_engineering_app.Services.Helpers
     {
         public static class DataGridViewDocumentFormatter
         {
-            private static readonly Dictionary<DataGridView, Tuple<string, string, int>> _docConfigs
-                = new Dictionary<DataGridView, Tuple<string, string, int>>();
+            private class DocFormat
+            {
+                public string Column;
+                public string Prefix;
+                public int Digits;
+            }
 
-            public static void DataGridViewDocumentFormat(DataGridView dgv, string columnName, string prefix, int digits = 8)
+            // One entry PER COLUMN, not per grid. This used to hold a single
+            // Tuple<column, prefix, digits> keyed by DataGridView, so calling
+            // DataGridViewDocumentFormat twice on the same grid silently discarded the
+            // first - which is why the Job Order grids could format SALES ORDER or
+            // ITEM REQUEST #, but never both.
+            private static readonly Dictionary<DataGridView, List<DocFormat>> _docConfigs
+                = new Dictionary<DataGridView, List<DocFormat>>();
+
+            // digits defaults to 4 (user decision, 2026-09-05): documents are stored
+            // zero-padded to 4 - tbl_trans_sales_order.doc holds "0007" - so D8 was
+            // inventing four leading zeros that exist nowhere in the data. Renders
+            // SO#0007, matching the agreed mock-up.
+            public static void DataGridViewDocumentFormat(DataGridView dgv, string columnName, string prefix, int digits = 4)
             {
                 if (dgv == null) return;
 
-                _docConfigs[dgv] = new Tuple<string, string, int>(columnName, prefix, digits);
+                if (!_docConfigs.TryGetValue(dgv, out var formats))
+                {
+                    formats = new List<DocFormat>();
+                    _docConfigs[dgv] = formats;
+                }
+
+                formats.RemoveAll(f => f.Column == columnName);
+                formats.Add(new DocFormat { Column = columnName, Prefix = prefix, Digits = digits });
 
                 dgv.DataBindingComplete -= Dgv_DataBindingComplete;
                 dgv.DataBindingComplete += Dgv_DataBindingComplete;
@@ -44,11 +67,12 @@ namespace smpc_engineering_app.Services.Helpers
                 var dgv = sender as DataGridView;
                 if (dgv == null || !_docConfigs.ContainsKey(dgv)) return;
 
-                var tag = _docConfigs[dgv];
+                foreach (var tag in _docConfigs[dgv])
+                {
+                    if (!dgv.Columns.Contains(tag.Column)) continue;
 
-                if (!dgv.Columns.Contains(tag.Item1)) return;
-
-                dgv.Columns[tag.Item1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                    dgv.Columns[tag.Column].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+                }
             }
 
             private static void Dgv_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -56,18 +80,25 @@ namespace smpc_engineering_app.Services.Helpers
                 var dgv = sender as DataGridView;
                 if (dgv == null || !_docConfigs.ContainsKey(dgv)) return;
 
-                var tag = _docConfigs[dgv];
+                string thisColumn = dgv.Columns[e.ColumnIndex].Name;
+                var tag = _docConfigs[dgv].FirstOrDefault(f => f.Column == thisColumn);
 
-                string columnName = tag.Item1;
-                string prefix = tag.Item2;
-                int digits = tag.Item3;
-
-                if (dgv.Columns[e.ColumnIndex].Name != columnName) return;
+                if (tag == null) return;
                 if (e.Value == null) return;
 
                 if (int.TryParse(e.Value.ToString(), out int number))
                 {
-                    e.Value = prefix + number.ToString($"D{digits}");
+                    // 0 means "no document yet" - an unassigned ITEM REQUEST # column,
+                    // for one. Leave the cell blank rather than rendering IREQ#0000,
+                    // which reads like a real document that does not exist.
+                    if (number == 0)
+                    {
+                        e.Value = string.Empty;
+                        e.FormattingApplied = true;
+                        return;
+                    }
+
+                    e.Value = tag.Prefix + number.ToString($"D{tag.Digits}");
                     e.FormattingApplied = true;
                 }
             }
@@ -699,6 +730,11 @@ namespace smpc_engineering_app.Services.Helpers
                 dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
             }
 
+            // Same null-guard as JsonHelper.ToDataTable - see the note there. An empty
+            // table with the right columns beats a NullReferenceException when the API
+            // is unreachable.
+            if (items == null) return dataTable;
+
             foreach (var item in items)
             {
                 var values = new object[props.Length];
@@ -835,6 +871,38 @@ namespace smpc_engineering_app.Services.Helpers
         /// <summary>
         /// Show loading overlay inside a DataGridView
         /// </summary>
+        /// <summary>
+        /// Runs an API call, retrying a few times before giving up. Added 2026-09-05:
+        /// a single transient failure (API restarting, connection dropped) used to fall
+        /// straight through as a crash - see the ToDataTable null-guards. Callers show
+        /// their own loading indicator around this and report the failure in words.
+        /// </summary>
+        public static async Task<T> RetryAsync<T>(Func<Task<T>> action, int attempts = 3, int delayMs = 800)
+        {
+            Exception last = null;
+
+            for (int attempt = 1; attempt <= attempts; attempt++)
+            {
+                try
+                {
+                    return await action();
+                }
+                catch (Exception ex)
+                {
+                    last = ex;
+                    // No point pausing after the final attempt - nothing follows it.
+                    if (attempt < attempts)
+                        await Task.Delay(delayMs);
+                }
+            }
+
+            throw last ?? new Exception("The request failed.");
+        }
+
+        /// <summary>The message shown once RetryAsync has exhausted its attempts.</summary>
+        public const string ServiceBusyMessage =
+            "The service is busy right now. Please try again in a moment.";
+
         public static class Loading
         {
             private static UserControl overlayPanel;

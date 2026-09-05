@@ -354,16 +354,26 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 return;
             }
 
-            if (dtp_issue_date.Value.Date > DateTime.Now.Date)
+            // Both checks were inverted (user decision, 2026-09-05). They rejected any
+            // date LATER than today, but §5.9 makes both fields forward-looking:
+            // REQUIRED DATE is when the requestor needs the items, and ISSUE DATE is
+            // "the date someone will receive" them. Entering a real required date - a
+            // job order's due date, say - was refused, so the only way to save was to
+            // leave both at today's default. tbl_inv_item_request had never received a
+            // single row.
+            //
+            // Now the opposite, which is what those fields actually mean: today is fine,
+            // the future is fine, the past is not.
+            if (dtp_issue_date.Value.Date < DateTime.Now.Date)
             {
-                Helpers.ShowDialogMessage("error", "Issue Date cannot be later than today.");
+                Helpers.ShowDialogMessage("error", "Issue Date cannot be in the past.");
                 dtp_issue_date.Focus();
                 return;
             }
 
-            if (dtp_required_date.Value.Date > DateTime.Now.Date)
+            if (dtp_required_date.Value.Date < DateTime.Now.Date)
             {
-                Helpers.ShowDialogMessage("error", "Required Date cannot be later than today.");
+                Helpers.ShowDialogMessage("error", "Required Date cannot be in the past.");
                 dtp_required_date.Focus();
                 return;
             }
@@ -534,14 +544,97 @@ namespace smpc_engineering_app.Pages.ItemRequest
             }
         }
 
+        // Entry point from the Job Order screen's ITEM REQUEST # column, for a job that
+        // has no Item Request yet. Opens a blank request with the job's Sales Order
+        // already chosen, which is what fills the item grid - cmb_ref_doc's
+        // SelectedIndexChanged filters the SO's outstanding lines into dgv_main.
+        // §5.9 step 1: the item list may be "copied from the SO for Production".
+        //
+        // Matching is on so_id rather than the displayed document text, so nothing
+        // depends on the "SO00000003" formatting the Job Order grid happens to render.
+        public async void StartNewForSalesOrder(string soId)
+        {
+            // Warehouse receives requests, it does not raise them - btn_new is hidden
+            // for them on this page, so this jump must not become a way around that.
+            if (_isWarehouseUser)
+            {
+                Helpers.ShowDialogMessage("error",
+                    "Item Requests are raised by the requesting department, not by Warehouse.");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(soId) || soId == "0")
+            {
+                Helpers.ShowDialogMessage("error", "This job order has no Sales Order to request items against.");
+                return;
+            }
+
+            if (_sotable == null || _sotable.Rows.Count == 0)
+                await LoadItemRequests();
+
+            string refDoc = null;
+            if (_sotable != null && _sotable.Columns.Contains("so_id") && _sotable.Columns.Contains("ref_doc"))
+            {
+                refDoc = _sotable.AsEnumerable()
+                    .Where(r => r["so_id"] != null && r["so_id"].ToString() == soId)
+                    .Select(r => r.Field<string>("ref_doc"))
+                    .FirstOrDefault(d => !string.IsNullOrWhiteSpace(d));
+            }
+
+            if (string.IsNullOrWhiteSpace(refDoc))
+            {
+                // vw_get_sales_order_ir only returns lines with outstanding balance, and
+                // that balance is reduced when a request is CREATED, not when the
+                // warehouse approves it - so an SO whose items are all on an existing,
+                // still-unapproved request drops out of this list entirely.
+                Helpers.ShowDialogMessage("error",
+                    "Every item on this Sales Order is already covered by an existing Item Request, " +
+                    "so there is nothing left to request. If that request is still waiting on the " +
+                    "warehouse, follow it up there rather than raising a second one.");
+                return;
+            }
+
+            // Same sequence as btn_new_Click - reset first, then choose the Ref Doc, or
+            // ResetControls would clear the selection again.
+            btn_cancel.Visible = false;
+            btn_forward.Visible = true;
+            _previousIRIndex = _currentIRIndex;
+            SetEditMode(true, isNewMode: true);
+            dgv_main.DataSource = null;
+            dgv_main.Rows.Clear();
+            Helpers.ResetControls(_panels);
+
+            // Force the change to fire even if this Ref Doc was already the selection.
+            cmb_ref_doc.SelectedIndex = -1;
+            cmb_ref_doc.SelectedItem = refDoc;
+        }
+
         private async Task LoadItemRequests()
         {
             // save current index before reload
             int oldIndex = _currentIRIndex;
 
-            //fill this declared value by the item requests data
-            _irdata = await itemRequestService.GetAsModel();
-            _userdata = await userListService.GetAsList();
+            // Loading + retry, 2026-09-05: opening this page (including from the Job Order
+            // grid's ITEM REQUEST # column) used to fire these calls bare. A stopped or
+            // restarting API returned no payload, which reached ToDataTable as a null list
+            // and crashed with a NullReferenceException. Three attempts, then say so in
+            // plain words and leave the page empty but usable.
+            Helpers.Loading.ShowLoading(dgv_main, "Loading item requests...");
+            try
+            {
+                _irdata = await Helpers.RetryAsync(() => itemRequestService.GetAsModel());
+                _userdata = await Helpers.RetryAsync(() => userListService.GetAsList());
+            }
+            catch (Exception)
+            {
+                Helpers.ShowDialogMessage("error", Helpers.ServiceBusyMessage);
+                ClearItemRequestsUI();
+                return;
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(dgv_main);
+            }
 
             // Populate user combo box
             if (_userdata != null && _userdata.Count > 0)
@@ -561,10 +654,24 @@ namespace smpc_engineering_app.Pages.ItemRequest
                 cmb_received_by.EndUpdate();
             }
 
-            // Reverse order so newest records appear first
-            _irdata.item_request.Reverse();
+            // Reverse order so newest records appear first. Guarded: a response that
+            // parsed but carried no item_request list would NRE here.
+            if (_irdata?.item_request != null)
+                _irdata.item_request.Reverse();
 
-            _sotable = await salesOrderViewService.GetAsDatatable();
+            // Same retry treatment - this is the fetch that feeds cmb_ref_doc, which is
+            // what StartNewForSalesOrder needs to pre-select a job order's Sales Order.
+            // A failure here is not fatal to the rest of the page, so it warns and
+            // continues with an empty table rather than abandoning the load.
+            try
+            {
+                _sotable = await Helpers.RetryAsync(() => salesOrderViewService.GetAsDatatable());
+            }
+            catch (Exception)
+            {
+                Helpers.ShowDialogMessage("error", Helpers.ServiceBusyMessage);
+                _sotable = null;
+            }
 
             if (_sotable != null && _sotable.Rows.Count > 0 && _sotable.Columns.Contains("ref_doc"))
             {

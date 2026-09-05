@@ -367,10 +367,23 @@ namespace smpc_engineering_app.Pages.ItemRequest2
                     return;
                 }
 
-                //Validate Datagridview columns
-                string[] columnsToValidate = { "item_description" };
-                if (await Helpers.ValidateDataGridViewCells(dgv_main, columnsToValidate))
-                    return;
+                // ITEM DESCRIPTION is no longer required (user decision, 2026-09-05).
+                //
+                // This used to run Helpers.ValidateDataGridViewCells(dgv_main,
+                // { "item_description" }) and refuse to save with "Please ensure all
+                // required fields are filled", painting every blank description cell red.
+                // A request built from a BOM legitimately has rows whose description
+                // hasn't been filled in - they are identified by the item behind them, not
+                // by typed text - so that blocked a perfectly valid request.
+                //
+                // item_description was the ONLY column in that list, so the whole call is
+                // gone rather than left with an empty array. If a column ever does need
+                // per-cell validation on this grid, this is where it goes back.
+                //
+                // The rest of the save's validation is untouched: ValidateControlsValues
+                // above still requires the header fields (REQUESTING DEPT, PURPOSE, the
+                // dates), and ValidateItemReqDetails below still enforces the quantity
+                // rules - at least one required qty, and required not exceeding remaining.
 
                 // Validate item request detail quantities
                 if (!ValidateItemReqDetails())

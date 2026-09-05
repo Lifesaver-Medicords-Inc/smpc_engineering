@@ -19,12 +19,20 @@ namespace smpc_engineering_app.Pages
     {
         GeneralService<ComponentModel> generalgetComponents;
         private readonly string _bomId;
-        public MaterialsForm(string bomId)
+        private readonly string _soId;
+
+        // soId is optional (defaults "0") for any existing caller that doesn't have
+        // it handy - the API still returns a real stock figure without it, just
+        // without the carve-out for this job's own SO's own approved reservation
+        // (see sp_GetComponents.sql's header). JobOrderPage always has it and
+        // always passes it.
+        public MaterialsForm(string bomId, string soId = "0")
         {
             InitializeComponent();
             this.StartPosition = FormStartPosition.CenterScreen;
 
             _bomId = bomId;
+            _soId = string.IsNullOrWhiteSpace(soId) ? "0" : soId;
         }
 
         private async void MaterialsForm_Load(object sender, EventArgs e)
@@ -33,7 +41,8 @@ namespace smpc_engineering_app.Pages
             {
                 Helpers.Loading.ShowLoading(dgv_components, "Fetching components...");
 
-                generalgetComponents = new GeneralService<ComponentModel>(ApiEndPoints.COMPONENTS + "/" + _bomId);
+                generalgetComponents = new GeneralService<ComponentModel>(
+                    ApiEndPoints.COMPONENTS + "/" + _bomId + "?so_id=" + _soId);
                 DataTable dt = await generalgetComponents.GetAsDatatable();
 
                 dgv_components.DataSource = dt;

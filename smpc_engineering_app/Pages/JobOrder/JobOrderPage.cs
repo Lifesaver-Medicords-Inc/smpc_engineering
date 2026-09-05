@@ -63,9 +63,29 @@ namespace smpc_engineering_app.Pages.JobOrder
             // was also silently contributing to the "Due date is required" confusion).
             _duePickerOverlay = new DateCellPickerOverlay(dgv_pl_pending, "due_pending");
 
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_pending, "sales_order_pending", "SO");
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_ongoing, "sales_order_ongoing", "SO");
-            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_finished, "sales_order_finished", "SO");
+            // §2.5 assigns the prefix per document type and it carries the "#":
+            // SO#, IREQ#. These passed "SO" with no "#", so the grid rendered
+            // SO00000007 for a document the spec calls SO#0007.
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_pending, "sales_order_pending", "SO#");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_ongoing, "sales_order_ongoing", "SO#");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_finished, "sales_order_finished", "SO#");
+
+            // ITEM REQUEST # was never formatted at all - it rendered ir.doc_no raw, so
+            // an assigned request showed as "8750" rather than "IREQ#8750". A row with
+            // no request yet formats to blank (see Dgv_CellFormatting), which is what
+            // makes the empty cell mean "none raised" rather than "IREQ#0000".
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_pending, "item_rqst_pending", "IREQ#");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_ongoing, "item_rqst_ongoing", "IREQ#");
+            Helpers.DataGridViewDocumentFormatter.DataGridViewDocumentFormat(dgv_pl_finished, "item_rqst_finished", "IREQ#");
+
+            // Render ITEM REQUEST # the same way SALES ORDER already renders - underlined
+            // DodgerBlue - so an assigned request reads as the link it is. A job order with
+            // no request yet formats to blank (Dgv_CellFormatting returns empty for 0), so
+            // the styling shows nothing and the cell stays empty; clicking it still opens
+            // Item Request so the user can raise one for that job order.
+            StyleAsDocumentLink(dgv_pl_pending, "item_rqst_pending");
+            StyleAsDocumentLink(dgv_pl_ongoing, "item_rqst_ongoing");
+            StyleAsDocumentLink(dgv_pl_finished, "item_rqst_finished");
         }
 
         private void SetEditableColumns(DataGridView dgv, bool isEdit, params string[] editableColumns)
@@ -472,7 +492,14 @@ namespace smpc_engineering_app.Pages.JobOrder
                     return;
                 }
 
-                using (var form = new MaterialsForm(bomIdCell.Value.ToString()))
+                // so_id, so the API can carve this job's own SO's own approved
+                // reservation out of "stock held by others" (see sp_GetComponents.sql).
+                // Same cell name pattern OpenUserControls' own sales_order branch
+                // below already reads from this same row.
+                var soIdCell = row.Cells[$"so_id_{postfix}"];
+                string soId = soIdCell?.Value != null ? soIdCell.Value.ToString() : "0";
+
+                using (var form = new MaterialsForm(bomIdCell.Value.ToString(), soId))
                 {
                     form.ShowDialog();
                 }
@@ -505,13 +532,9 @@ namespace smpc_engineering_app.Pages.JobOrder
             else if (hasItemRqst && clickedColumn == $"item_rqst_{postfix}")
             {
                 var irIdCell = row.Cells[$"ir_id_{postfix}"];
-                if (irIdCell?.Value == null ||
-                    string.IsNullOrWhiteSpace(irIdCell.Value.ToString()) ||
-                    irIdCell.Value.ToString() == "0")
-                {
-                    Helpers.ShowDialogMessage("error", "No Sales Order ID found for this record.");
-                    return;
-                }
+                bool hasItemRequest = irIdCell?.Value != null &&
+                    !string.IsNullOrWhiteSpace(irIdCell.Value.ToString()) &&
+                    irIdCell.Value.ToString() != "0";
 
                 var mainForm = this.FindForm() as SMPC;
                 if (mainForm == null) return;
@@ -522,11 +545,43 @@ namespace smpc_engineering_app.Pages.JobOrder
                 {
                     if (ctrl is Pages.ItemRequest.ItemRequestPage uc)
                     {
-                        uc.SetItemRequest(irIdCell.Value.ToString());
+                        if (hasItemRequest)
+                        {
+                            // An Item Request already exists - open it to view.
+                            uc.SetItemRequest(irIdCell.Value.ToString());
+                        }
+                        else
+                        {
+                            // No Item Request yet, which is the normal state for an
+                            // ONGOING job whose materials are INCOMPLETE - the exact
+                            // moment the user wants to raise one.
+                            //
+                            // This used to stop here with "No Sales Order ID found for
+                            // this record." - a message copied from the SALES ORDER
+                            // branch above, which was wrong twice over: it names the
+                            // wrong field (the check is on ir_id, not so_id), and an
+                            // absent Item Request is not an error condition at all.
+                            // Open a new request with this job's Sales Order already
+                            // selected instead (§5.9 step 1).
+                            var soIdCell = row.Cells[$"so_id_{postfix}"];
+                            uc.StartNewForSalesOrder(soIdCell?.Value?.ToString());
+                        }
                         break;
                     }
                 }
             }
+        }
+
+        // Matches sales_order_*'s DefaultCellStyle from the Designer (Underline +
+        // DodgerBlue) rather than duplicating that styling into the Designer three more
+        // times. Applied in code so the two link columns can never drift apart.
+        private static void StyleAsDocumentLink(DataGridView dgv, string columnName)
+        {
+            if (dgv == null || !dgv.Columns.Contains(columnName)) return;
+
+            var style = dgv.Columns[columnName].DefaultCellStyle;
+            style.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Underline);
+            style.ForeColor = Color.DodgerBlue;
         }
 
         private void HandleReportFileUpload(int rowIndex)

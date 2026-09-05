@@ -61,6 +61,15 @@ namespace smpc_engineering_app.Services.Helpers
                 dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
             }
 
+            // Null-guard, 2026-09-05: this threw NullReferenceException whenever the API
+            // call behind it came back with no payload - a stopped or restarting API, a
+            // dropped connection, or any non-success response. ServiceBase.GetAsDatatable
+            // hands the response body straight in, so "service unreachable" surfaced as a
+            // hard crash in a formatting helper rather than as a handled error. An empty
+            // table keeps the COLUMNS (already built above from T), so callers that check
+            // Columns.Contains(...) still behave correctly - they just see zero rows.
+            if (items == null) return dataTable;
+
             // Add rows to the DataTable
             foreach (var item in items)
             {
