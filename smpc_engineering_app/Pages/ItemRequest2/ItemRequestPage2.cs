@@ -177,12 +177,20 @@ namespace smpc_engineering_app.Pages.ItemRequest2
                     cmb_ref_doc.DataSource = _salesDocdata;
                     cmb_ref_doc.DisplayMember = "so_doc_no";
                     cmb_ref_doc.ValueMember = "sales_order_id";
+
+                    // §2.5: a Sales Order reads SO#0001 everywhere it is shown. Display only -
+                    // SelectedItem/SelectedValue still hand back the raw so_doc_no and
+                    // sales_order_id that cmb_ref_doc_SelectedIndexChanged reads.
+                    Helpers.ComboBoxDocumentFormatter.ComboBoxDocumentFormat(cmb_ref_doc, "SO#");
                 }
 
                 if (_isEditMode)
                 {
                     cmb_ref_doc.SelectedIndex = -1;
-                    cmb_ref_doc.Text = txt_ref_doc.Text;
+
+                    // txt_ref_doc holds the raw stored value, so prefix it here too - without
+                    // this the closed box reads 0001 while the open dropdown reads SO#0001.
+                    cmb_ref_doc.Text = Helpers.ComboBoxDocumentFormatter.FormatDocumentNo("SO#", txt_ref_doc.Text);
                 }
 
                 if (_userdata != null)

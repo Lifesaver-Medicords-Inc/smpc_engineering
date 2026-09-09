@@ -104,6 +104,75 @@ namespace smpc_engineering_app.Services.Helpers
             }
         }
 
+        // The ComboBox counterpart to DataGridViewDocumentFormatter above.
+        //
+        // §2.5 assigns a prefix per document type and the prefix carries the "#". Grids
+        // already render SO#0001 through that formatter, but every ComboBox that picks a
+        // Sales Order showed the bare stored value ("0001", or "1") - so the same document
+        // read differently depending on which control you were looking at, in the same app
+        // (user-reported 2026-09-05: "make it uniform that all that select the sales order in
+        // any apps will display in combobox as SO#0001").
+        //
+        // Uses the ListControl.Format event rather than rewriting the bound data, which is
+        // the whole point: SelectedItem, SelectedValue, DisplayMember and every equality test
+        // downstream keep seeing the raw value. Only the rendered text changes.
+        public static class ComboBoxDocumentFormatter
+        {
+            // Keyed by control so a second call replaces the first handler instead of
+            // stacking another one - the same reason DataGridViewDocumentFormatter keeps its
+            // own registry. Rebinding a combo's DataSource is common on these screens.
+            private static readonly Dictionary<ComboBox, ListControlConvertEventHandler> _handlers
+                = new Dictionary<ComboBox, ListControlConvertEventHandler>();
+
+            public static void ComboBoxDocumentFormat(ComboBox combo, string prefix, int digits = 4)
+            {
+                if (combo == null || string.IsNullOrWhiteSpace(prefix)) return;
+
+                if (_handlers.TryGetValue(combo, out var existing))
+                {
+                    combo.Format -= existing;
+                    _handlers.Remove(combo);
+                }
+
+                ListControlConvertEventHandler handler = (s, e) =>
+                {
+                    e.Value = FormatDocumentNo(prefix, e.Value?.ToString(), digits);
+                };
+
+                // Format is only raised when this is on.
+                combo.FormattingEnabled = true;
+                combo.Format += handler;
+                _handlers[combo] = handler;
+            }
+
+            // Also used directly wherever a combo's Text is assigned from a raw stored value
+            // (the edit-mode "cmb.Text = txt_ref_doc.Text" lines), so the closed box and the
+            // open dropdown agree instead of showing 0001 against SO#0001.
+            public static string FormatDocumentNo(string prefix, string raw, int digits = 4)
+            {
+                if (string.IsNullOrWhiteSpace(raw)) return raw;
+
+                string trimmed = raw.Trim();
+
+                // Already prefixed - a second pass must not produce SO#SO#0001. Formatting
+                // runs on every repaint, so this is reached constantly.
+                if (trimmed.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) return trimmed;
+
+                // Documents are stored zero-padded to 4 ("0001"), but some views hand back an
+                // unpadded id. Pad only when the value is purely numeric - anything else is
+                // passed through untouched rather than mangled.
+                if (int.TryParse(trimmed, out int number))
+                {
+                    // 0 is "no document", same rule the grid formatter applies - do not
+                    // render SO#0000, which reads like a real document that does not exist.
+                    if (number == 0) return string.Empty;
+                    return prefix + number.ToString($"D{digits}");
+                }
+
+                return prefix + trimmed;
+            }
+        }
+
         /// <summary>
         /// Restricts specified DataGridView columns to numeric input only.
         /// </summary>
@@ -2090,9 +2159,21 @@ namespace smpc_engineering_app.Services.Helpers
                 case "error":
                     MessageBox.Show(message, "SMPC SOFTWARE", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
+                // A plain notice - neither the outcome of an action nor a failure. "No report
+                // is attached", "no serial numbers recorded": nothing has gone wrong and
+                // nothing has succeeded, the user is simply being told where things stand.
+                // Without this case those fell to the default below and the user saw the
+                // literal text "Unknown status: info" instead of the message
+                // (user-reported 2026-09-05).
+                case "info":
+                    MessageBox.Show(message, "SMPC SOFTWARE", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
                 default:
-                    // Handle unexpected status values
-                    MessageBox.Show("Unknown status: " + status, "SMPC SOFTWARE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Genuinely unexpected status - a typo at the call site. Still shows the
+                    // message rather than swallowing it: the user needs to know what the code
+                    // was trying to tell them far more than they need the status name, which
+                    // is a developer detail. The icon is what flags it as miscategorised.
+                    MessageBox.Show(message, "SMPC SOFTWARE", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     break;
             }
         }

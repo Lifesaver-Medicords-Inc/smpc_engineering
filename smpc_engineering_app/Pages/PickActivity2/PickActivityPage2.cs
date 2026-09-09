@@ -207,12 +207,19 @@ namespace smpc_engineering_app.Pages.PickActivity2
                     cmb_reference_so.DataSource = _salesDocdata;
                     cmb_reference_so.DisplayMember = "so_doc_no";
                     cmb_reference_so.ValueMember = "sales_order_id";
+
+                    // §2.5: a Sales Order reads SO#0001 everywhere it is shown. Display only -
+                    // SelectedItem/SelectedValue are untouched.
+                    Helpers.ComboBoxDocumentFormatter.ComboBoxDocumentFormat(cmb_reference_so, "SO#");
                 }
 
                 if (_isEditMode)
                 {
                     cmb_reference_so.SelectedIndex = -1;
-                    cmb_reference_so.Text = txt_reference_so.Text;
+
+                    // txt_reference_so holds the raw stored value - prefix it so the closed
+                    // box and the open dropdown agree.
+                    cmb_reference_so.Text = Helpers.ComboBoxDocumentFormatter.FormatDocumentNo("SO#", txt_reference_so.Text);
                 }
 
                 cmb_reference_so.SelectedIndexChanged += cmb_reference_so_SelectedIndexChanged;
