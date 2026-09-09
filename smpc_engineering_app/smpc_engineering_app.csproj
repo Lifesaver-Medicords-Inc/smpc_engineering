@@ -26,7 +26,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/smpc_engineering_app/</UpdateUrl>
-    <ApplicationRevision>1002</ApplicationRevision>
+    <ApplicationRevision>1004</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -219,6 +219,12 @@
     </Compile>
     <Compile Include="Pages\ItemRequest\ItemRequestPage.Designer.cs">
       <DependentUpon>ItemRequestPage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\JobOrder\SerialNumberEntryModal.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Pages\JobOrder\SerialNumberEntryModal.Designer.cs">
+      <DependentUpon>SerialNumberEntryModal.cs</DependentUpon>
     </Compile>
     <Compile Include="Pages\JobOrder\JobOrderPage.cs">
       <SubType>UserControl</SubType>

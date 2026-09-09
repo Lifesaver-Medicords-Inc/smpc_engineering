@@ -105,7 +105,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.quantity_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.item_rqst_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.due_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.status_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.status_ongoing = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.so_item_status_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.engr_id_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.a_engr_ongoing = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -128,7 +128,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.item_rqst_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.serial_no_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.report_base_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.report_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.report_finished = new System.Windows.Forms.DataGridViewButtonColumn();
             this.material_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.due_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.engr_id_finished = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -701,10 +701,14 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.status_ongoing.DataPropertyName = "status";
             dataGridViewCellStyle19.BackColor = System.Drawing.Color.Gainsboro;
             this.status_ongoing.DefaultCellStyle = dataGridViewCellStyle19;
+            this.status_ongoing.DisplayStyle = System.Windows.Forms.DataGridViewComboBoxDisplayStyle.ComboBox;
+            this.status_ongoing.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.status_ongoing.HeaderText = "STATUS";
+            this.status_ongoing.Items.AddRange(new object[] {
+            "ONGOING",
+            "FINISHED"});
             this.status_ongoing.MinimumWidth = 90;
             this.status_ongoing.Name = "status_ongoing";
-            this.status_ongoing.ReadOnly = true;
             // 
             // so_item_status_ongoing
             // 
@@ -819,6 +823,7 @@ namespace smpc_engineering_app.Pages.JobOrder
             this.dgv_pl_finished.Size = new System.Drawing.Size(1386, 736);
             this.dgv_pl_finished.TabIndex = 79;
             this.dgv_pl_finished.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_pl_finished_CellClick);
+            this.dgv_pl_finished.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgv_pl_finished_CellFormatting);
             this.dgv_pl_finished.DataError += new System.Windows.Forms.DataGridViewDataErrorEventHandler(this.dgv_pl_DataError);
             // 
             // id_finished
@@ -1082,7 +1087,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewTextBoxColumn quantity_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn item_rqst_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn due_ongoing;
-        private System.Windows.Forms.DataGridViewTextBoxColumn status_ongoing;
+        private System.Windows.Forms.DataGridViewComboBoxColumn status_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn so_item_status_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn engr_id_ongoing;
         private System.Windows.Forms.DataGridViewTextBoxColumn a_engr_ongoing;
@@ -1124,7 +1129,7 @@ namespace smpc_engineering_app.Pages.JobOrder
         private System.Windows.Forms.DataGridViewTextBoxColumn item_rqst_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn serial_no_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn report_base_finished;
-        private System.Windows.Forms.DataGridViewTextBoxColumn report_finished;
+        private System.Windows.Forms.DataGridViewButtonColumn report_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn material_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn due_finished;
         private System.Windows.Forms.DataGridViewTextBoxColumn engr_id_finished;
