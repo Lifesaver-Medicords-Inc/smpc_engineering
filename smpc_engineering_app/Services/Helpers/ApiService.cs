@@ -73,6 +73,7 @@ namespace smpc_engineering_app.Services.Helpers
                             {
                                 CacheData.SessionToken = token;
                                 MirrorTokenToSalesAssembly(token);
+                                MirrorTokenToInventoryAssembly(token);
                             }
                         }
 
@@ -133,6 +134,30 @@ namespace smpc_engineering_app.Services.Helpers
             try
             {
                 smpc_sales_app.Data.CacheData.SessionToken = token;
+            }
+            catch
+            {
+                // Non-fatal: the Engineering app's own calls still work without it.
+            }
+        }
+
+        // Added 2026-09-05. The mirror above covers smpc_sales_app.Data.CacheData, but
+        // BOM and BOQ are the INVENTORY app's controls reused here (RoutesService maps
+        // "BOM" -> new bom(), "BOQ" -> new boq_wiring()), and those read
+        // smpc_inventory_app.Data.CacheData.SessionToken - a third, separate static that
+        // nothing was populating.
+        //
+        // With no token, smpc_inventory_app's RequestToApi sent no Authorization header,
+        // the API answered 401, SendRequestAsync swallowed it and returned default(T) -
+        // null - and the BOM screen reported "The service is busy right now". The service
+        // was fine; the request was simply unauthenticated.
+        //
+        // Same shape and the same non-fatal wrapping as the Sales mirror.
+        private static void MirrorTokenToInventoryAssembly(string token)
+        {
+            try
+            {
+                smpc_inventory_app.Data.CacheData.SessionToken = token;
             }
             catch
             {
