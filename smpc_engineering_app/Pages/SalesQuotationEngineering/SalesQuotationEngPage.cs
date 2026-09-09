@@ -205,11 +205,14 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 
                 // Every tab this page builds is an EXISTING quote, never a blank one, so
                 // say so before anything else touches the control. ItemSetUC_Load is async
-                // and re-applies the saved template as soon as its fetches return - which
-                // clears the items grid and appends another wiring block - unless this
-                // flag is already set. Setting it here rather than relying on
-                // SetFetchedItemData (called further down, after Controls.Add has already
-                // started the load) is what makes that deterministic instead of a race.
+                // and clears the items grid as soon as its fetches return unless this flag
+                // is already set. Setting it here rather than relying on SetFetchedItemData
+                // (called further down, after Controls.Add has already started the load) is
+                // what makes that deterministic instead of a race.
+                //
+                // This no longer freezes the TEMPLATE dropdown - the load-time restore has
+                // its own transient flag inside ItemSetUC now, so an engineer picking a
+                // different template on a saved quote actually gets it (2026-09-05).
                 uc.MarkAsExistingRecord();
 
                 uc.SizeUpClicked += async (s, e) => await OnSizeUpClicked(uc);
@@ -433,7 +436,40 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             _itemGridEditor.HandleItemSelectionClick(uc.GetIndex(), uc.DgvProjectItems);
         }
 
+        // One pump picker at a time, across BOTH grids (user-reported 2026-09-05: rapid
+        // clicking stacked several, and SIZE UP's picker could open on top of FINAL's).
+        //
+        // Both handlers await GetPumpItemsAsync() before reaching ShowDialog, and the page
+        // stays live during that await, so clicks queue up behind it. ShowDialog then runs
+        // its own message loop, which lets a pending continuation resume while the first
+        // modal is already up and open a second one over it - being modal does not stop it.
+        // The flag is claimed before the await for exactly that reason, and is shared by
+        // SIZE UP and FINAL so that while either is open the other stays shut.
+        private bool _pumpPickerOpen = false;
+
         private async Task OnSizeUpClicked(ItemSetUC uc)
+        {
+            if (_pumpPickerOpen) return;
+            _pumpPickerOpen = true;
+
+            // The flag stops two pickers being open together; it cannot stop a click that
+            // queued up while this one was being fetched from opening another as soon as
+            // this one closes. Disabling the grids discards those clicks instead of
+            // queueing them. See ItemSetUC.SetPumpPickerBusy.
+            uc?.SetPumpPickerBusy(true);
+
+            try
+            {
+                await OnSizeUpClickedCore(uc);
+            }
+            finally
+            {
+                uc?.SetPumpPickerBusy(false);
+                _pumpPickerOpen = false;
+            }
+        }
+
+        private async Task OnSizeUpClickedCore(ItemSetUC uc)
         {
             var pumpItems = await GetPumpItemsAsync();
             if (pumpItems.Rows.Count == 0)
@@ -466,6 +502,27 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
         }
 
         private async Task OnFinalClicked(ItemSetUC uc)
+        {
+            if (_pumpPickerOpen) return;
+            _pumpPickerOpen = true;
+
+            // Same reasoning as OnSizeUpClicked, and this is the path the report was about:
+            // FINAL fetches the pump list before it can show anything, so the wait between
+            // the click and the modal is the one people click through.
+            uc?.SetPumpPickerBusy(true);
+
+            try
+            {
+                await OnFinalClickedCore(uc);
+            }
+            finally
+            {
+                uc?.SetPumpPickerBusy(false);
+                _pumpPickerOpen = false;
+            }
+        }
+
+        private async Task OnFinalClickedCore(ItemSetUC uc)
         {
             var pumpItems = await GetPumpItemsAsync();
             var sizeUpIds = uc.GetSizeUpItemIds();
