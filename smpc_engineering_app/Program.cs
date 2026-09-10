@@ -27,11 +27,14 @@ namespace smpc_engineering_app
             string env = System.Configuration.ConfigurationManager.AppSettings["Environment"] ?? "Production";
 
             // Resolve the correct API URL
-            ApiBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"ApiBaseUrl.{env}"]
+            // smpc.endpoints.xml wins when present; App.config is the fallback.
+            ApiBaseUrl = SmpcEndpoints.Api(
+                System.Configuration.ConfigurationManager.AppSettings[$"ApiBaseUrl.{env}"])
                          ?? throw new ConfigurationErrorsException($"No API URL configured for environment: {env}");
 
             // Resolve the correct API URL
-            WssBaseUrl = System.Configuration.ConfigurationManager.AppSettings[$"WssBaseUrl.{env}"]
+            WssBaseUrl = SmpcEndpoints.Ws(
+                System.Configuration.ConfigurationManager.AppSettings[$"WssBaseUrl.{env}"])
                          ?? throw new ConfigurationErrorsException($"No API URL configured for environment: {env}");
 
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);

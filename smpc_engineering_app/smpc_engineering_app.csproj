@@ -304,6 +304,7 @@
       <DependentUpon>Layout.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="SmpcEndpoints.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Helpers\ApiResponseModel.cs" />
     <Compile Include="Services\Helpers\AppService.cs" />
