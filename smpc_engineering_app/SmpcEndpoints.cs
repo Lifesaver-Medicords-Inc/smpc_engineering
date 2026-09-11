@@ -23,6 +23,14 @@ namespace smpc_engineering_app
     /// (2) exists so one app can be pointed somewhere else for testing without
     /// disturbing the other five. (3) is the normal case: one file, six apps.
     ///
+    /// DEVELOPMENT OPTS OUT. When the app is configured for the Development
+    /// environment the file is ignored completely and the app's own localhost
+    /// settings are used. This file is a DEPLOYMENT mechanism - a developer who
+    /// has explicitly selected Development means "talk to my local API", and
+    /// silently redirecting them to whatever backend the server last published
+    /// would make local debugging impossible to trust. To aim a dev build at
+    /// the deployed backend on purpose, set Environment to Production.
+    ///
     /// If no file is found, or it is malformed, the app's own built-in
     /// configuration is used exactly as before. This never throws and never
     /// blocks startup - a broken override must not be able to take down an app
@@ -118,12 +126,39 @@ namespace smpc_engineering_app
             return null;
         }
 
+        // Mirrors the precedence each app's own Program.cs uses to pick its
+        // environment - DOTNET_ENVIRONMENT first, then App.config's
+        // "Environment" key - so this can never disagree with the environment
+        // the rest of the app believes it is running in.
+        private static bool IsDevelopment()
+        {
+            string env = null;
+
+            try { env = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT"); }
+            catch { }
+
+            if (string.IsNullOrWhiteSpace(env))
+            {
+                try { env = System.Configuration.ConfigurationManager.AppSettings["Environment"]; }
+                catch { }
+            }
+
+            return !string.IsNullOrWhiteSpace(env)
+                && env.Trim().Equals("Development", StringComparison.OrdinalIgnoreCase);
+        }
+
         private static void Load()
         {
             if (_loaded)
                 return;
 
             _loaded = true;
+
+            if (IsDevelopment())
+            {
+                _source = "built-in config (Development - override file ignored)";
+                return;
+            }
 
             foreach (string path in CandidatePaths())
             {
