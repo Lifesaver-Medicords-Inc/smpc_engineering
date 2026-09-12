@@ -141,11 +141,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.cmb_req_dept.Items.AddRange(new object[] {
             "Management",
             "Sales",
-            "Logistics",
             "Engineering",
-            "Accounting",
+            "Warehouse",
             "Purchasing",
-            "Warehouse"});
+            "Dispatching",
+            "A/R",
+            "A/P",
+            "A/R\u2013A/P Cashier",
+            "Admin"});
             this.cmb_req_dept.Location = new System.Drawing.Point(139, 87);
             this.cmb_req_dept.MaxLength = 50;
             this.cmb_req_dept.MinimumSize = new System.Drawing.Size(200, 0);
@@ -452,11 +455,14 @@ namespace smpc_engineering_app.Pages.ItemRequest
             this.cmb_received_by.Items.AddRange(new object[] {
             "Management",
             "Sales",
-            "Logistics",
             "Engineering",
-            "Accounting",
+            "Warehouse",
             "Purchasing",
-            "Warehouse"});
+            "Dispatching",
+            "A/R",
+            "A/P",
+            "A/R\u2013A/P Cashier",
+            "Admin"});
             this.cmb_received_by.Location = new System.Drawing.Point(139, 78);
             this.cmb_received_by.Name = "cmb_received_by";
             this.cmb_received_by.Size = new System.Drawing.Size(200, 21);

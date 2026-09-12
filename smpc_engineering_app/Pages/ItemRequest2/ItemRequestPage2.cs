@@ -493,6 +493,7 @@ namespace smpc_engineering_app.Pages.ItemRequest2
 
             bool hasAtLeastOneRequired = false;
             bool hasAtLeastOneIssued = false;
+            bool serialsIncomplete = false;
 
             for (int i = 0; i < dgv_main.Rows.Count; i++)
             {
@@ -547,19 +548,21 @@ namespace smpc_engineering_app.Pages.ItemRequest2
                     return false;
                 }
 
-                // Validate: issued qty requires serial no
-                if (issuedQty > 0)
+                // 10.7: a missing serial PROMPTS, it does not block.
+                //
+                // This used to reject the save outright - "serial number is required
+                // when a issued quantity is entered" - which is the one thing 10.7
+                // says must not happen: the intent was a serial per unit, but most
+                // items do not have one, there is no per-item "serialised" flag, and
+                // "the user may always continue past an incomplete serial column".
+                // Blocking here did not produce serials that do not exist; it pushed
+                // the issue out of the system, or got a "-" typed into the cell.
+                //
+                // Noted rather than rejected, and asked once after the loop.
+                if (issuedQty > 0
+                    && (serialVal == null || string.IsNullOrWhiteSpace(serialVal.ToString())))
                 {
-                    bool hasSerial = serialVal != null
-                        && !string.IsNullOrWhiteSpace(serialVal.ToString());
-
-                    if (!hasSerial)
-                    {
-                        string itemDesc = row.Cells["item_description"].Value?.ToString() ?? $"Row {i + 1}";
-                        Helpers.ShowDialogMessage("error",
-                            $"Row {i + 1} ({itemDesc}): serial number is required when a issued quantity is entered.");
-                        return false;
-                    }
+                    serialsIncomplete = true;
                 }
             }
 
@@ -579,6 +582,22 @@ namespace smpc_engineering_app.Pages.ItemRequest2
                     return false;
                 }
 
+            }
+
+            // 10.7's prompt, asked last so it is the only question left standing once
+            // the real errors above have passed. One question for the whole document
+            // rather than one per row - issuing twenty unserialised couplings should
+            // cost the warehouse one keystroke. "No" simply returns to the form so the
+            // serials can be filled in; nothing is rejected either way.
+            if (serialsIncomplete
+                && MessageBox.Show(
+                       "Serial number column incomplete. Proceed?",
+                       "Item Request",
+                       MessageBoxButtons.YesNo,
+                       MessageBoxIcon.Question,
+                       MessageBoxDefaultButton.Button1) != DialogResult.Yes)
+            {
+                return false;
             }
 
             return true;
