@@ -384,7 +384,9 @@ namespace smpc_engineering_app
             if (DialogResult.OK == login.ShowDialog())
             {
                 lbl_name.Text = CacheData.CurrentUser.first_name + " " + CacheData.CurrentUser.last_name;
-                lbl_position.Text = CacheData.CurrentUser.position_id;
+                // The position's NAME, as inventory and dispatching show it - the id
+                // alone read as "Position: 1".
+                lbl_position.Text = CacheData.CurrentUser.position?.name ?? CacheData.CurrentUser.position_id;
                 lbl_department.Text = CacheData.CurrentUser.department;
                 this.Enabled = true;
 
