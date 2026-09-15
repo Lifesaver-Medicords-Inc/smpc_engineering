@@ -26,8 +26,8 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/smpc_engineering_app/</UpdateUrl>
-    <ApplicationRevision>1004</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -430,4 +430,24 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Serilog.4.3.0\build\Serilog.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Serilog.4.3.0\build\Serilog.targets'))" />
   </Target>
+  <ItemGroup>
+    <Compile Include="Printing\PrintText.cs" />
+    <Compile Include="Printing\ItemRequestPrint.cs" />
+    <Compile Include="Printing\PickActivityPrint.cs" />
+    <Compile Include="Pages\ItemRequest2\ItemRequestPage2.Print.cs">
+      <DependentUpon>ItemRequestPage2.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Pages\PickActivity2\PickActivityPage2.Print.cs">
+      <DependentUpon>PickActivityPage2.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
+    <!-- The house print layout belongs to the Inventory app (spec 2.10.3: reuse the one
+         layout). HouseTemplateReport loads it from the running app's own folder, so it is
+         copied into this app's output as well rather than duplicated. -->
+    <Content Include="..\..\smpc_inventory\smpc_inventory_app\Printing\HouseTemplate.rdlc">
+      <Link>Printing\HouseTemplate.rdlc</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

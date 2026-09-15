@@ -63,7 +63,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngineering
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_so_search, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_so_search);
                 await SalesOrders();
             }
             catch (Exception ex)

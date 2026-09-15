@@ -237,20 +237,28 @@ namespace smpc_engineering_app.Pages.ItemRequest2
 
         private async void btn_close_Click(object sender, EventArgs e)
         {
-            await SetEditMode(false);
-
-            // If no records exist, clear everything
-            if (_itemRequests == null || !_itemRequests.Any())
+            Helpers.Loading.ShowLoading(this);
+            try
             {
-                ClearItemRequestUI();
-                return;
+                await SetEditMode(false);
+
+                // If no records exist, clear everything
+                if (_itemRequests == null || !_itemRequests.Any())
+                {
+                    ClearItemRequestUI();
+                    return;
+                }
+
+                // Return to the previous record index if available
+                if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
+                {
+                    _currentIRIndex = _previousIRIndex;
+                    await LoadItemRequests();
+                }
             }
-
-            // Return to the previous record index if available
-            if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
+            finally
             {
-                _currentIRIndex = _previousIRIndex;
-                await LoadItemRequests();
+                Helpers.Loading.HideLoading(this);
             }
         }
 
@@ -609,7 +617,7 @@ namespace smpc_engineering_app.Pages.ItemRequest2
             {
                 _isWarehouse = _userDepartment == "warehouse";
 
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadItemRequests();
 
                 ApplyWarehouseRestrictions();

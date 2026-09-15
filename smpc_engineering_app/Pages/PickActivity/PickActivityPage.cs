@@ -257,14 +257,22 @@ namespace smpc_engineering_app.Pages.PickActivity
 
         private async void btn_close_Click(object sender, EventArgs e)
         {
-            SetEditMode(false);
-
-
-            // Return to the previous record index if available
-            if (_previousPAIndex >= 0 && _pickActivities != null && _pickActivities.Count > 0)
+            Helpers.Loading.ShowLoading(this);
+            try
             {
-                _currentPAIndex = _previousPAIndex;
-                await LoadPickActivities();
+                SetEditMode(false);
+
+
+                // Return to the previous record index if available
+                if (_previousPAIndex >= 0 && _pickActivities != null && _pickActivities.Count > 0)
+                {
+                    _currentPAIndex = _previousPAIndex;
+                    await LoadPickActivities();
+                }
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(this);
             }
         }
 
@@ -516,7 +524,7 @@ namespace smpc_engineering_app.Pages.PickActivity
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadPickActivities();
             }
             catch (Exception ex)

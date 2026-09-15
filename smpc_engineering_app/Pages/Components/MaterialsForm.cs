@@ -39,7 +39,7 @@ namespace smpc_engineering_app.Pages
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_components, "Fetching components...");
+                Helpers.Loading.ShowLoading(dgv_components);
 
                 generalgetComponents = new GeneralService<ComponentModel>(
                     ApiEndPoints.COMPONENTS + "/" + _bomId + "?so_id=" + _soId);

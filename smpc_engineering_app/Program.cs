@@ -12,6 +12,28 @@ namespace smpc_engineering_app
     {
         public static string ApiBaseUrl { get; private set; }
         public static string WssBaseUrl { get; private set; }
+
+        // Ends this session on the server as the app closes. The API revokes a token on
+        // /logout; no app ever called it, so a closed app's token stayed usable for the rest
+        // of its 24 hours. Best effort - a slow or unreachable API must not hold up closing.
+        private static void EndServerSession(string apiBaseUrl, string token)
+        {
+            if (string.IsNullOrWhiteSpace(apiBaseUrl) || string.IsNullOrWhiteSpace(token)) return;
+            try
+            {
+                using (var client = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromSeconds(3) })
+                {
+                    client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", token);
+                    // Task.Run keeps the blocking wait off the UI synchronization context.
+                    Task.Run(() => client.PostAsync(apiBaseUrl.TrimEnd('/') + "/logout", null))
+                        .Wait(TimeSpan.FromSeconds(3));
+                }
+            }
+            catch
+            {
+                // Closing the app matters more than telling the server.
+            }
+        }
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -64,6 +86,8 @@ namespace smpc_engineering_app
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new SMPC());
+                // Engineering's pages from sales and inventory use this same token.
+                EndServerSession(ApiBaseUrl, smpc_engineering_app.Shared.CacheData.SessionToken);
 
             }
             catch (Exception ex)

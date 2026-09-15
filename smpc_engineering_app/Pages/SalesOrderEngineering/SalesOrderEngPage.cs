@@ -126,7 +126,7 @@ namespace smpc_engineering_app.Pages.SalesOrderEngineering
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadSalesOrders();
             }
             catch (Exception ex)

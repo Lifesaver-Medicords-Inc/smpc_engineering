@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -53,18 +53,34 @@ namespace smpc_engineering_app.Pages
             data.Add("motherboard_serial_no", Helpers.GetSerialNumber());
             data.Add("machine_name", Environment.MachineName);
 
-            var currentUser = await AuthServices.Login(data);
-
-
-            if (currentUser.success)
+            // The standard loading screen (spec 2.1) stays over the login until signing in
+            // finishes. It also blocks a second click from signing in twice.
+            Helpers.Loading.ShowLoading(this);
+            try
             {
-                CacheData.CurrentUser = currentUser.data;
-                this.DialogResult = DialogResult.OK;
+                var currentUser = await AuthServices.Login(data);
+
+                // Null-checked: an unreachable API comes back with no response at all, which
+                // used to throw here instead of saying the login failed.
+                if (currentUser != null && currentUser.success)
+                {
+                    CacheData.CurrentUser = currentUser.data;
+                    this.DialogResult = DialogResult.OK;
+                }
+                else
+                {
+                    string serverMessage = currentUser?.message;
+                    Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(serverMessage) ? "Invalid Credentials" : serverMessage);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                string serverMessage = currentUser?.message;
-                Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(serverMessage) ? "Invalid Credentials" : serverMessage);
+                Serilog.Log.Error(ex, "Login failed");
+                Helpers.ShowDialogMessage("error", "Something went wrong. Please try again.");
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(this);
             }
         }
     }

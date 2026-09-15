@@ -558,129 +558,137 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
         {
             if (_fetchedData == null || _quotation == null) return;
 
+            Helpers.Loading.ShowLoading(this);
             try
             {
-                btn_save.Enabled = false;
-                lbl_saving_status.Text = "Saving...";
-
-                var pnlQuotation = JObject.FromObject(_quotation).ToObject<Dictionary<string, object>>();
-
-                pnlQuotation["sales_project_multiplier"] = (_fetchedData.sales_project_multiplier ?? new List<SalesProjectMultiplier>())
-                    .Where(m => m.based_id == _quotationId)
-                    .ToList();
-
-                var allTabsData = new List<Dictionary<string, object>>();
-
-                foreach (TabPage tabPage in tab_container.TabPages)
+                try
                 {
-                    if (!(tabPage.Controls.Count > 0 && tabPage.Controls[0] is ItemSetUC uc)) continue;
+                    btn_save.Enabled = false;
+                    lbl_saving_status.Text = "Saving...";
 
-                    int itemSetId = Convert.ToInt32(tabPage.Tag);
+                    var pnlQuotation = JObject.FromObject(_quotation).ToObject<Dictionary<string, object>>();
 
-                    // Built exactly the way Sales's own project save builds it
-                    // (Quotation.cs, IsProject): every tab collection is read from the
-                    // tab's own controls. Only the HEADER differs - quotation fields and
-                    // multipliers still ride back as fetched, since this screen has no UI
-                    // for them.
-                    //
-                    // User decision, 2026-09-04: an engineer may edit ALL of it, not just
-                    // Size Up / item table / wiring. The reason is practical - sales
-                    // regularly hands the quote over with client-needs fields left blank,
-                    // and the engineer is the one who knows them. Spec §3.2/§5.1 updated to
-                    // match; this is a deliberate override, not a drift.
-                    //
-                    // The previous version reverted every non-editable scalar to its
-                    // fetched value to enforce §3.2. That is what made a save look like it
-                    // worked while changing nothing: the diff compared identical before and
-                    // after, found no changes, sent no tab, and the API answered 200
-                    // without a single write.
-                    var contentForSave = uc.GetProjectContentsData();
-                    var conditionsForSave = uc.GetAdvancedConditionsData();
+                    pnlQuotation["sales_project_multiplier"] = (_fetchedData.sales_project_multiplier ?? new List<SalesProjectMultiplier>())
+                        .Where(m => m.based_id == _quotationId)
+                        .ToList();
 
-                    // Identity safety net, kept from the FK-error fix: these two ids decide
-                    // whether the server UPDATES the existing row or treats it as a new one,
-                    // and an id-keyed diff reads a 0 as "delete the real row, insert a
-                    // blank". If the panel didn't supply one, fall back to the record that
-                    // actually exists rather than letting that happen.
-                    var fetchedContent = _fetchedData.sales_project_content?
-                        .FirstOrDefault(c => c.based_id == itemSetId);
-                    if (fetchedContent != null && contentForSave != null
-                        && ToId(contentForSave, "content_id") == 0)
-                        contentForSave["content_id"] = fetchedContent.content_id;
+                    var allTabsData = new List<Dictionary<string, object>>();
 
-                    var fetchedCondition = _fetchedData.sales_project_content_advanced_condition?
-                        .FirstOrDefault(c => c.based_id == itemSetId);
-                    if (fetchedCondition != null && conditionsForSave != null
-                        && ToId(conditionsForSave, "conditions_id") == 0)
-                        conditionsForSave["conditions_id"] = fetchedCondition.conditions_id;
-
-                    var tabData = new Dictionary<string, object>
+                    foreach (TabPage tabPage in tab_container.TabPages)
                     {
-                        ["sales_project_item_set"] = new Dictionary<string, object>
+                        if (!(tabPage.Controls.Count > 0 && tabPage.Controls[0] is ItemSetUC uc)) continue;
+
+                        int itemSetId = Convert.ToInt32(tabPage.Tag);
+
+                        // Built exactly the way Sales's own project save builds it
+                        // (Quotation.cs, IsProject): every tab collection is read from the
+                        // tab's own controls. Only the HEADER differs - quotation fields and
+                        // multipliers still ride back as fetched, since this screen has no UI
+                        // for them.
+                        //
+                        // User decision, 2026-09-04: an engineer may edit ALL of it, not just
+                        // Size Up / item table / wiring. The reason is practical - sales
+                        // regularly hands the quote over with client-needs fields left blank,
+                        // and the engineer is the one who knows them. Spec §3.2/§5.1 updated to
+                        // match; this is a deliberate override, not a drift.
+                        //
+                        // The previous version reverted every non-editable scalar to its
+                        // fetched value to enforce §3.2. That is what made a save look like it
+                        // worked while changing nothing: the diff compared identical before and
+                        // after, found no changes, sent no tab, and the API answered 200
+                        // without a single write.
+                        var contentForSave = uc.GetProjectContentsData();
+                        var conditionsForSave = uc.GetAdvancedConditionsData();
+
+                        // Identity safety net, kept from the FK-error fix: these two ids decide
+                        // whether the server UPDATES the existing row or treats it as a new one,
+                        // and an id-keyed diff reads a 0 as "delete the real row, insert a
+                        // blank". If the panel didn't supply one, fall back to the record that
+                        // actually exists rather than letting that happen.
+                        var fetchedContent = _fetchedData.sales_project_content?
+                            .FirstOrDefault(c => c.based_id == itemSetId);
+                        if (fetchedContent != null && contentForSave != null
+                            && ToId(contentForSave, "content_id") == 0)
+                            contentForSave["content_id"] = fetchedContent.content_id;
+
+                        var fetchedCondition = _fetchedData.sales_project_content_advanced_condition?
+                            .FirstOrDefault(c => c.based_id == itemSetId);
+                        if (fetchedCondition != null && conditionsForSave != null
+                            && ToId(conditionsForSave, "conditions_id") == 0)
+                            conditionsForSave["conditions_id"] = fetchedCondition.conditions_id;
+
+                        var tabData = new Dictionary<string, object>
                         {
-                            { "based_id", _quotationId },
-                            { "tab_number", tabPage.Text },
-                            { "itemset_id", itemSetId },
-                            { "is_new_tab", false }
-                        },
-                        // History is the one thing still echoed back untouched - it is an
-                        // audit trail, generated from the diff itself, never typed.
-                        ["sales_project_history"] = (_fetchedData.sales_project_history ?? new List<SalesProjectHistory>())
-                            .Where(h => h.based_id == itemSetId)
-                            .ToList(),
-                        ["sales_project_content"] = contentForSave,
-                        ["sales_project_content_advanced_condition"] = conditionsForSave,
-                        // These two are the real, intended edits - read from the UI.
-                        ["sales_project_items"] = uc.GetProjectItems()["sales_project_items"],
-                        ["sales_project_wiring"] = uc.GetProjectWiringData()["sales_project_wiring"]
-                    };
+                            ["sales_project_item_set"] = new Dictionary<string, object>
+                            {
+                                { "based_id", _quotationId },
+                                { "tab_number", tabPage.Text },
+                                { "itemset_id", itemSetId },
+                                { "is_new_tab", false }
+                            },
+                            // History is the one thing still echoed back untouched - it is an
+                            // audit trail, generated from the diff itself, never typed.
+                            ["sales_project_history"] = (_fetchedData.sales_project_history ?? new List<SalesProjectHistory>())
+                                .Where(h => h.based_id == itemSetId)
+                                .ToList(),
+                            ["sales_project_content"] = contentForSave,
+                            ["sales_project_content_advanced_condition"] = conditionsForSave,
+                            // These two are the real, intended edits - read from the UI.
+                            ["sales_project_items"] = uc.GetProjectItems()["sales_project_items"],
+                            ["sales_project_wiring"] = uc.GetProjectWiringData()["sales_project_wiring"]
+                        };
 
-                    allTabsData.Add(tabData);
+                        allTabsData.Add(tabData);
+                    }
+
+                    pnlQuotation["sales_project_all_tabs"] = allTabsData;
+                    pnlQuotation["id"] = _quotationId;
+
+                    // Reuses Quotation.cs's own diff engine rather than re-implementing it -
+                    // GetFullDiff is a public method with no dependency beyond its two
+                    // parameters (confirmed by reading its body and every helper it calls
+                    // before relying on this), so a throwaway, immediately-disposed instance
+                    // is the safest way to guarantee this page's save produces byte-for-byte
+                    // the same diff shape Sales's own save would for an identical before/after
+                    // state - not a hand-rolled approximation of it.
+                    Dictionary<string, dynamic> changes;
+                    using (var diffEngine = new Quotation())
+                    {
+                        changes = diffEngine.GetFullDiff(_fetchedData, pnlQuotation);
+                    }
+
+                    changes["id"] = _quotationId;
+
+                    var service = new GeneralService<SalesProjectList>(ApiEndPoints.SALES_PROJECTS);
+                    var response = await service.Update(changes);
+
+                    if (response != null && response.success)
+                    {
+                        lbl_saving_status.Text = "Saved.";
+                        Helpers.ShowDialogMessage("success", "Quotation updated successfully.");
+                        await LoadQuotationAsync();
+                    }
+                    else
+                    {
+                        lbl_saving_status.Text = "Save failed.";
+                        Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(response?.message)
+                            ? "Failed to save the quotation."
+                            : response.message);
+                    }
                 }
-
-                pnlQuotation["sales_project_all_tabs"] = allTabsData;
-                pnlQuotation["id"] = _quotationId;
-
-                // Reuses Quotation.cs's own diff engine rather than re-implementing it -
-                // GetFullDiff is a public method with no dependency beyond its two
-                // parameters (confirmed by reading its body and every helper it calls
-                // before relying on this), so a throwaway, immediately-disposed instance
-                // is the safest way to guarantee this page's save produces byte-for-byte
-                // the same diff shape Sales's own save would for an identical before/after
-                // state - not a hand-rolled approximation of it.
-                Dictionary<string, dynamic> changes;
-                using (var diffEngine = new Quotation())
-                {
-                    changes = diffEngine.GetFullDiff(_fetchedData, pnlQuotation);
-                }
-
-                changes["id"] = _quotationId;
-
-                var service = new GeneralService<SalesProjectList>(ApiEndPoints.SALES_PROJECTS);
-                var response = await service.Update(changes);
-
-                if (response != null && response.success)
-                {
-                    lbl_saving_status.Text = "Saved.";
-                    Helpers.ShowDialogMessage("success", "Quotation updated successfully.");
-                    await LoadQuotationAsync();
-                }
-                else
+                catch (Exception ex)
                 {
                     lbl_saving_status.Text = "Save failed.";
-                    Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(response?.message)
-                        ? "Failed to save the quotation."
-                        : response.message);
+                    Helpers.ShowDialogMessage("error", $"Failed to save: {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                lbl_saving_status.Text = "Save failed.";
-                Helpers.ShowDialogMessage("error", $"Failed to save: {ex.Message}");
+                finally
+                {
+                    btn_save.Enabled = true;
+                }
             }
             finally
             {
-                btn_save.Enabled = true;
+                Helpers.Loading.HideLoading(this);
             }
         }
     }

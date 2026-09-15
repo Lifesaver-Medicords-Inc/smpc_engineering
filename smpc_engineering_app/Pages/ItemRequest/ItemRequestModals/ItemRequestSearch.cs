@@ -70,7 +70,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_ir_search, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_ir_search);
                 await LoadItemRequests();
             }
             catch (Exception ex)

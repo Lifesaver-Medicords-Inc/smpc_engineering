@@ -276,20 +276,28 @@ namespace smpc_engineering_app.Pages.PickActivity2
 
         private async void btn_cancel_Click(object sender, EventArgs e)
         {
-            await SetEditMode(false);
-
-            // If no records exist, clear everything
-            if (_pickActivities == null || !_pickActivities.Any())
+            Helpers.Loading.ShowLoading(this);
+            try
             {
-                ClearPickActivityUI();
-                return;
+                await SetEditMode(false);
+
+                // If no records exist, clear everything
+                if (_pickActivities == null || !_pickActivities.Any())
+                {
+                    ClearPickActivityUI();
+                    return;
+                }
+
+                // Return to the previous record index if available
+                if (_previousPAIndex >= 0 && _pickActivities != null && _pickActivities.Count > 0)
+                {
+                    _currentPAIndex = _previousPAIndex;
+                    await LoadPickActivities();
+                }
             }
-
-            // Return to the previous record index if available
-            if (_previousPAIndex >= 0 && _pickActivities != null && _pickActivities.Count > 0)
+            finally
             {
-                _currentPAIndex = _previousPAIndex;
-                await LoadPickActivities();
+                Helpers.Loading.HideLoading(this);
             }
         }
 
@@ -658,7 +666,7 @@ namespace smpc_engineering_app.Pages.PickActivity2
             {
                 _isWarehouse = _userDepartment == "warehouse";
 
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadPickActivities();
 
                 ApplyWarehouseRestrictions();

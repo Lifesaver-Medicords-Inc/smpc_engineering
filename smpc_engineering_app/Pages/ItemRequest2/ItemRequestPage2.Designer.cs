@@ -189,6 +189,7 @@ namespace smpc_engineering_app.Pages.ItemRequest2
             this.btn_print.Name = "btn_print";
             this.btn_print.Size = new System.Drawing.Size(52, 22);
             this.btn_print.Text = "Print";
+            this.btn_print.Click += new System.EventHandler(this.btn_print_Click);
             // 
             // btn_save
             // 

@@ -63,7 +63,7 @@ namespace smpc_engineering_app.Pages.ItemRequest.ItemRequestModals
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_all_item, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_all_item);
                 await LoadItemLists();
             }
             catch (NullReferenceException)

@@ -63,7 +63,7 @@ namespace smpc_engineering_app.Pages.PickActivity.PickActivityModals
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_pa_search, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_pa_search);
                 await PickActivities();
             }
             catch (Exception ex)

@@ -260,13 +260,21 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
         private async void btn_close_Click(object sender, EventArgs e)
         {
-            SetEditMode(false);
-
-            // Return to the previous record index if available
-            if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
+            Helpers.Loading.ShowLoading(this);
+            try
             {
-                _currentIRIndex = _previousIRIndex;
-                await LoadItemRequests();
+                SetEditMode(false);
+
+                // Return to the previous record index if available
+                if (_previousIRIndex >= 0 && _itemRequests != null && _itemRequests.Count > 0)
+                {
+                    _currentIRIndex = _previousIRIndex;
+                    await LoadItemRequests();
+                }
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(this);
             }
         }
 
@@ -507,7 +515,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
 
             try
             {
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadItemRequests();
             }
             catch (Exception ex)
@@ -619,7 +627,7 @@ namespace smpc_engineering_app.Pages.ItemRequest
             // restarting API returned no payload, which reached ToDataTable as a null list
             // and crashed with a NullReferenceException. Three attempts, then say so in
             // plain words and leave the page empty but usable.
-            Helpers.Loading.ShowLoading(dgv_main, "Loading item requests...");
+            Helpers.Loading.ShowLoading(dgv_main);
             try
             {
                 _irdata = await Helpers.RetryAsync(() => itemRequestService.GetAsModel());

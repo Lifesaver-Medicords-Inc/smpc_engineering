@@ -49,7 +49,7 @@ namespace smpc_engineering_app.Pages.Components
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_main, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_main);
                 await LoadBinLocations();
             }
             catch (Exception ex)

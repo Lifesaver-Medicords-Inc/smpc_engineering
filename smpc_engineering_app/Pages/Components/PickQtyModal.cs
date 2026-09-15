@@ -42,7 +42,7 @@ namespace smpc_engineering_app.Pages.Components
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_pick_qty, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_pick_qty);
 
                 await LoadBinLocations();
             }

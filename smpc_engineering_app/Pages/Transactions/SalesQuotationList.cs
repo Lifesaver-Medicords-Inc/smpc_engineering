@@ -43,7 +43,7 @@ namespace smpc_engineering_app.Pages.Transactions
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_quotation_list, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_quotation_list);
 
                 int engrId = CacheData.CurrentUser?.id ?? 0;
                 if (engrId <= 0)

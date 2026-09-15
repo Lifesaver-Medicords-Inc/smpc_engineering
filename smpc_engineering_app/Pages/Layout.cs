@@ -70,37 +70,15 @@ namespace smpc_engineering_app
         // space, no left/right margin. RedBox's own panel (panel5) is untouched either
         // way - it's persistent utility chrome, not the "page" being viewed.
         //
-        // Individual pages hardcode their own size in their own code and are never
-        // resized to fit whatever tabContainer happens to be (same as
-        // smpc_sales_system's Quotation.cs - see that app's Layout.cs for the full
-        // history of what was tried, including a 1280px capped/centered version that
-        // was reverted after live-testing found it left a dead gray margin next to a
-        // narrower page, and separately broke vertical scrolling for a page taller
-        // than the window). tabContainer grows past the available space (both width
-        // and height) whenever the ACTIVE tab's own page needs more than that;
-        // pnl_content_capped's own AutoScroll (Designer) scrolls the whole work area -
-        // tab strip included - into view when it doesn't fit, rather than the page
-        // clipping inside a too-small TabPage.
+        // The page in the active tab fills its tab as well. On a screen too small for it,
+        // it keeps its natural size (its Designer size, or the size its own code gives it),
+        // tabContainer grows past the available space, and pnl_content_capped (AutoScroll,
+        // Designer) scrolls the whole work area, tab strip included. Helpers.PageFit does
+        // both - see smpc_sales_system's Layout.cs for what was tried and reverted before it.
 
         private void pnl_content_capped_Resize(object sender, EventArgs e)
         {
             RecalculateContentWidth();
-        }
-
-        private Control GetActiveTabPageControl()
-        {
-            // Live crash: NullReferenceException on tabContainer.SelectedTab, with
-            // tabContainer itself confirmed non-null (found in smpc_inventory_app,
-            // same class of code). TabControl.SelectedTab's getter indexes
-            // TabPages[SelectedIndex] - the Designer sets SelectedIndex=0 at design
-            // time with zero TabPages actually behind it (true at every fresh app
-            // launch, before anything's been opened), and querying SelectedTab in that
-            // state can throw internally rather than returning null the way an
-            // out-of-range SelectedIndex would suggest. Checking TabPages.Count first
-            // avoids the property entirely when there's nothing to select anyway.
-            if (tabContainer == null || tabContainer.TabPages.Count == 0) return null;
-            TabPage selected = tabContainer.SelectedTab;
-            return selected != null && selected.Controls.Count > 0 ? selected.Controls[0] : null;
         }
 
         // Guards both pnl_content_capped/tabContainer being null (a Resize event can
@@ -115,28 +93,7 @@ namespace smpc_engineering_app
 
             try
             {
-                int availableWidth = pnl_content_capped.ClientSize.Width;
-                int availableHeight = pnl_content_capped.ClientSize.Height;
-
-                Control activePage = GetActiveTabPageControl();
-                int neededWidth = availableWidth;
-                int neededHeight = availableHeight;
-
-                if (activePage != null)
-                {
-                    // chromeHeight accounts for the tab strip itself
-                    // (DisplayRectangle.Top) plus tabContainer's own border (Height -
-                    // DisplayRectangle.Bottom), measured against tabContainer's
-                    // current bounds before this call changes them.
-                    int chromeHeight = tabContainer.DisplayRectangle.Top + (tabContainer.Height - tabContainer.DisplayRectangle.Bottom);
-                    neededWidth = Math.Max(availableWidth, activePage.Width);
-                    neededHeight = Math.Max(availableHeight, activePage.Height + chromeHeight);
-                }
-
-                tabContainer.Width = neededWidth;
-                tabContainer.Height = neededHeight;
-                tabContainer.Left = 0;
-                tabContainer.Top = 0;
+                Helpers.PageFit.Fit(pnl_content_capped, tabContainer, RecalculateContentWidth);
             }
             catch (Exception)
             {
@@ -282,12 +239,13 @@ namespace smpc_engineering_app
                 //control.Width = this.Width - 235;
                 container.Height = this.Height * 2;
                 //control.Height = this.Height;
-                // Phase 4.6 (UI uniformity): was "control.Width = this.Width - 570" (a
-                // magic-number approximation of the available content width) - removed
-                // entirely, along with newTab.AutoScroll. The page keeps its own
-                // Designer-authored/hardcoded size; pnl_content_capped's own AutoScroll
-                // (Designer) and RecalculateContentWidth (above) handle showing all of
-                // it, scrolled if needed, instead of clipping it to a forced width.
+                // The page's size is Helpers.PageFit's job: it fills the tab, is never
+                // made smaller than the size it was built at, and follows the page when its
+                // own code resizes it. A page that swaps itself for another inside this tab
+                // is re-fitted as the new one arrives.
+                Helpers.PageFit.Track(control, RecalculateContentWidth);
+                newTab.ControlAdded += (s, e) => RecalculateContentWidth();
+                newTab.ControlRemoved += (s, e) => RecalculateContentWidth();
                 newTab.Controls.Add(control);
                 tabContainer.TabPages.Add(newTab);
                 tabContainer.SelectTab(newTab);
@@ -549,9 +507,11 @@ namespace smpc_engineering_app
                 salesOrderTab.Name = "SalesOrderEng";
 
                 var page = new smpc_engineering_app.Pages.SalesOrderEngineering.SalesOrderEngPage();
-                page.Dock = DockStyle.Fill;
+                // Sized like every other tab's page (Helpers.PageFit): it fills the tab, and on
+                // a small window keeps its size and scrolls with the work area. It used to dock
+                // Fill with the tab's own AutoScroll, which squeezed it instead of scrolling.
+                Helpers.PageFit.Track(page, RecalculateContentWidth);
                 salesOrderTab.Controls.Add(page);
-                salesOrderTab.AutoScroll = true;
 
                 tabContainer.TabPages.Add(salesOrderTab);
             }
@@ -568,6 +528,7 @@ namespace smpc_engineering_app
 
             // Switch to the tab
             tabContainer.SelectedTab = salesOrderTab;
+            RecalculateContentWidth();
         }
     }
 }

@@ -176,9 +176,17 @@ namespace smpc_engineering_app.Pages.JobOrder
 
         private async void btn_cancel_Click(object sender, EventArgs e)
         {
-            SetEditMode(false);
+            Helpers.Loading.ShowLoading(this);
+            try
+            {
+                SetEditMode(false);
 
-            await LoadJobOrder();
+                await LoadJobOrder();
+            }
+            finally
+            {
+                Helpers.Loading.HideLoading(this);
+            }
         }
 
         private async void btn_save_Click(object sender, EventArgs e)
@@ -379,9 +387,9 @@ namespace smpc_engineering_app.Pages.JobOrder
         {
             try
             {
-                Helpers.Loading.ShowLoading(dgv_pl_pending, "Fetching data...");
-                Helpers.Loading.ShowLoading(dgv_pl_ongoing, "Fetching data...");
-                Helpers.Loading.ShowLoading(dgv_pl_finished, "Fetching data...");
+                Helpers.Loading.ShowLoading(dgv_pl_pending);
+                Helpers.Loading.ShowLoading(dgv_pl_ongoing);
+                Helpers.Loading.ShowLoading(dgv_pl_finished);
                 await LoadJobOrder();
             }
             catch (Exception ex)
@@ -692,6 +700,12 @@ namespace smpc_engineering_app.Pages.JobOrder
                     // ngrok's browser-warning interstitial returns HTML instead of the file
                     // unless this header is present - the same reason ApiService sets it.
                     client.DefaultRequestHeaders.Add("ngrok-skip-browser-warning", "true");
+
+                    // /files is served only to a logged-in session once the API sets
+                    // FILES_REQUIRE_AUTH.
+                    string token = smpc_engineering_app.Shared.CacheData.SessionToken;
+                    if (!string.IsNullOrEmpty(token))
+                        client.DefaultRequestHeaders.Add("Authorization", token);
 
                     var bytes = await client.GetByteArrayAsync(ReportFileUrl(storedFilename));
                     File.WriteAllBytes(targetPath, bytes);
