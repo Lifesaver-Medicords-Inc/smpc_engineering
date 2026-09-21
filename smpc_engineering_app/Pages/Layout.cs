@@ -346,6 +346,10 @@ namespace smpc_engineering_app
                 // alone read as "Position: 1".
                 lbl_position.Text = CacheData.CurrentUser.position?.name ?? CacheData.CurrentUser.position_id;
                 lbl_department.Text = CacheData.CurrentUser.department;
+
+                // Only the screens this position has access to (see NavigationAccess).
+                Models.NavigationAccess.Apply(Sidebar);
+
                 this.Enabled = true;
 
                 try
