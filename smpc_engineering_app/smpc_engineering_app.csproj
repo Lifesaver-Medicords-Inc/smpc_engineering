@@ -27,7 +27,7 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/smpc_engineering_app/</UpdateUrl>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.3.0.0</ApplicationVersion>
+    <ApplicationVersion>1.4.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -450,5 +450,24 @@
       <Link>Printing\HouseTemplate.rdlc</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <!-- This app and the sales app reference each other: engineering reuses ItemSetUC from
+         smpc_sales_system, and sales opens this app's Login and Item Request pages. So when
+         ClickOnce walks the references it reaches smpc_engineering_app.exe again, as a
+         dependency of smpc_sales_system.exe, and resolves it to this project's build output
+         - a different file from the copy the publish itself produces.
+
+         The manifest then declares the same assembly identity twice, which the manifest
+         parser rejects: installing dies on "the application is improperly formatted",
+         HRESULT 0x80070C81. The sales project carries the same exclusion for the same
+         reason. Only that second, transitively-resolved copy is dropped; this app still
+         ships as the entry point. -->
+    <PublishFile Include="smpc_engineering_app">
+      <Visible>False</Visible>
+      <PublishState>Exclude</PublishState>
+      <IncludeHash>True</IncludeHash>
+      <FileType>Assembly</FileType>
+    </PublishFile>
   </ItemGroup>
 </Project>
