@@ -58,20 +58,7 @@ namespace smpc_engineering_app.Pages
             Helpers.Loading.ShowLoading(this);
             try
             {
-                var currentUser = await AuthServices.Login(data);
-
-                // Null-checked: an unreachable API comes back with no response at all, which
-                // used to throw here instead of saying the login failed.
-                if (currentUser != null && currentUser.success)
-                {
-                    CacheData.CurrentUser = currentUser.data;
-                    this.DialogResult = DialogResult.OK;
-                }
-                else
-                {
-                    string serverMessage = currentUser?.message;
-                    Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(serverMessage) ? "Invalid Credentials" : serverMessage);
-                }
+                LoginFromEngineerAsync(data);
             }
             catch (Exception ex)
             {
@@ -81,6 +68,22 @@ namespace smpc_engineering_app.Pages
             finally
             {
                 Helpers.Loading.HideLoading(this);
+            }
+        }
+
+        public async Task LoginFromEngineerAsync(Dictionary<string, dynamic> data)
+        {
+            var currentUser = await AuthServices.Login(data);
+
+            if (currentUser != null && currentUser.success)
+            {
+                CacheData.CurrentUser = currentUser.data;
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                string serverMessage = currentUser?.message;
+                Helpers.ShowDialogMessage("error", string.IsNullOrWhiteSpace(serverMessage) ? "Invalid Credentials" : serverMessage);
             }
         }
     }

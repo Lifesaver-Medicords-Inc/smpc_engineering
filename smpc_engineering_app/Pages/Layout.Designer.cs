@@ -29,19 +29,15 @@ namespace smpc_engineering_app
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Job Order");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Sales Order");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Item Request");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Pick Activity");
-            // Sales Quotation List was registered in RoutesService.cs (Phase 4 item 4.1)
-            // but never actually given a sidebar node - engineers had no way to reach it
-            // at all. Found and fixed alongside adding BOM/BOQ below.
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Sales Quotation List");
-            // BOM/BOQ (Phase 4 item 4.3-adjacent) - already fully built in the Inventory
-            // app (Pages/Engineering/Bom, Pages/Engineering/Boq); reused here rather than
-            // rebuilt, same "one implementation, two entry points" precedent as BPI.
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("BOM");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("BOQ");
+            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Sales Quotation List");
+            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Production List");
+            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Service Requests");
+            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Bill of Materials");
+            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Bill of Quantity");
+            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Engineering Calendar");
+            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Sales Order");
+            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Item Request");
+            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Pick Activity");
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SMPC));
             this.container = new System.Windows.Forms.Panel();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -266,14 +262,9 @@ namespace smpc_engineering_app
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(313, 1);
             this.panel3.TabIndex = 3;
-            //
+            // 
             // tabContainer
-            //
-            // Phase 4.6 (UI uniformity): no longer Dock=Fill - pnl_content_capped now
-            // owns that, and sizes/centers this manually (see Layout.cs's
-            // RecalculateContentWidth) so the work area caps at 1280px on wide/ultrawide
-            // monitors instead of stretching edge to edge, matching all 6 apps' new
-            // standard.
+            // 
             this.tabContainer.Location = new System.Drawing.Point(200, 0);
             this.tabContainer.Name = "tabContainer";
             this.tabContainer.SelectedIndex = 0;
@@ -281,18 +272,18 @@ namespace smpc_engineering_app
             this.tabContainer.TabIndex = 11;
             this.tabContainer.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.tabContainer_DrawItem);
             this.tabContainer.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tabContainer_MouseDown);
-            //
+            // 
             // pnl_content_capped
-            //
+            // 
+            this.pnl_content_capped.AutoScroll = true;
             this.pnl_content_capped.Controls.Add(this.tabContainer);
             this.pnl_content_capped.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnl_content_capped.AutoScroll = true;
             this.pnl_content_capped.Location = new System.Drawing.Point(200, 0);
             this.pnl_content_capped.Name = "pnl_content_capped";
             this.pnl_content_capped.Size = new System.Drawing.Size(765, 615);
             this.pnl_content_capped.TabIndex = 12;
             this.pnl_content_capped.Resize += new System.EventHandler(this.pnl_content_capped_Resize);
-            //
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.Sidebar);
@@ -308,20 +299,24 @@ namespace smpc_engineering_app
             this.Sidebar.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Sidebar.Location = new System.Drawing.Point(0, 0);
             this.Sidebar.Name = "Sidebar";
-            treeNode1.Name = "Job Order";
-            treeNode1.Text = "Job Order";
-            treeNode2.Name = "Sales Order";
-            treeNode2.Text = "Sales Order";
-            treeNode3.Name = "Item Request";
-            treeNode3.Text = "Item Request";
-            treeNode4.Name = "Pick Activity";
-            treeNode4.Text = "Pick Activity";
-            treeNode5.Name = "Sales Quotation List";
-            treeNode5.Text = "Sales Quotation List";
-            treeNode6.Name = "BOM";
-            treeNode6.Text = "BOM";
-            treeNode7.Name = "BOQ";
-            treeNode7.Text = "BOQ";
+            treeNode1.Name = "Sales Quotation List";
+            treeNode1.Text = "Sales Quotation List";
+            treeNode2.Name = "Job Order";
+            treeNode2.Text = "Production List";
+            treeNode3.Name = "parent";
+            treeNode3.Text = "Service Requests";
+            treeNode4.Name = "BOM";
+            treeNode4.Text = "Bill of Materials";
+            treeNode5.Name = "BOQ";
+            treeNode5.Text = "Bill of Quantity";
+            treeNode6.Name = "Node1";
+            treeNode6.Text = "Engineering Calendar";
+            treeNode7.Name = "Sales Order";
+            treeNode7.Text = "Sales Order";
+            treeNode8.Name = "Item Request";
+            treeNode8.Text = "Item Request";
+            treeNode9.Name = "Pick Activity";
+            treeNode9.Text = "Pick Activity";
             this.Sidebar.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
             treeNode1,
             treeNode2,
@@ -329,7 +324,9 @@ namespace smpc_engineering_app
             treeNode4,
             treeNode5,
             treeNode6,
-            treeNode7});
+            treeNode7,
+            treeNode8,
+            treeNode9});
             this.Sidebar.Size = new System.Drawing.Size(200, 615);
             this.Sidebar.TabIndex = 0;
             this.Sidebar.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.Sidebar_NodeMouseClick);

@@ -8,7 +8,7 @@ using smpc_engineering_app.Models;
 
 namespace smpc_engineering_app.Shared
 {
-    static class CacheData
+    public static class CacheData
     {
         //Setup
         public static DataTable ChartOfAccountClass { get; set; } = new DataTable();
