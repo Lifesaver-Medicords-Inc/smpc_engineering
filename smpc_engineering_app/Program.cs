@@ -8,10 +8,30 @@ using Serilog;
 
 namespace smpc_engineering_app
 {
-    static class Program
+    // Public so a host process can point this assembly at the real API (see
+    // Configure): Sales hosts this assembly in-process for the shared ItemSetUC
+    // and the engineering sub-login at sign-in, and only ever references it,
+    // so it must be visible across the assembly boundary.
+    public static class Program
     {
         public static string ApiBaseUrl { get; private set; }
         public static string WssBaseUrl { get; private set; }
+
+        // Called once by a host process at its own startup with its already-
+        // resolved URLs. Without this, Main below never runs in the host, both
+        // URLs stay null, and every engineering call - including the sales
+        // login's engineering sub-login - falls back to the localhost
+        // ApiService default (http://127.0.0.1:3000/api). Any PC without a
+        // local API (e.g. a VPN-only machine) then fails sign-in with a bare
+        // "Something went wrong". Blank values are ignored so a host that only
+        // knows one URL cannot wipe the other.
+        public static void Configure(string apiBaseUrl, string wssBaseUrl = null)
+        {
+            if (!string.IsNullOrWhiteSpace(apiBaseUrl))
+                ApiBaseUrl = apiBaseUrl;
+            if (!string.IsNullOrWhiteSpace(wssBaseUrl))
+                WssBaseUrl = wssBaseUrl;
+        }
 
         // Ends this session on the server as the app closes. The API revokes a token on
         // /logout; no app ever called it, so a closed app's token stayed usable for the rest
