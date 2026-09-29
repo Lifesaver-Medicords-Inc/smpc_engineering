@@ -390,9 +390,16 @@ namespace smpc_engineering_app
                 Invoke((Action)(() => lbl_status.Text = "Quotation Disconnected"));
             };
 
+            // The same list feeds the red box and any open Sales Quotation List page - the
+            // page has no socket of its own, so this is how a quotation Sales just requested
+            // reaches an engineer who already has the list open.
             await quotationSocket.ConnectAndDeserialize<RedboxQuotationList>(
                 ApiEndPoints.WSQUOTATIONREDBOXLIST,
-                (data) => Invoke((Action)(() => LoadQuotationRedBox(data)))
+                (data) => Invoke((Action)(() =>
+                {
+                    LoadQuotationRedBox(data);
+                    smpc_engineering_app.Pages.Transactions.SalesQuotationList.PublishPushedList(data);
+                }))
             );
 
             // --- Production List Socket ---

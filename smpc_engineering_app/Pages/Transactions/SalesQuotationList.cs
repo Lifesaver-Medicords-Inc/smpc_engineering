@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,9 +29,79 @@ namespace smpc_engineering_app.Pages.Transactions
             InitializeComponent();
             Helpers.Placeholder.SetPlaceholder(txt_search, "SEARCH BAR");
 
+            // Show the designer's columns and nothing else. Every one of them names its
+            // DataPropertyName, so auto-generation adds only what the designer chose NOT to
+            // show - requested_engr_id and requested_engr_name turned up as two raw columns
+            // at the end of the grid (user-reported 2026-09-24). Neither is populated any
+            // more (REQUEST FOR ENGR. no longer names an engineer), and anything the API adds
+            // to this list later stays off screen until someone gives it a column on purpose.
+            dgv_quotation_list.AutoGenerateColumns = false;
+
             this.Load += SalesQuotationList_Load;
             txt_search.TextChanged += txt_search_TextChanged;
             dgv_quotation_list.CellDoubleClick += dgv_quotation_list_CellDoubleClick;
+
+            QuotationListPushed += OnQuotationListPushed;
+            this.Disposed += (s, e) => QuotationListPushed -= OnQuotationListPushed;
+        }
+
+        // ---- Live list ------------------------------------------------------------
+        //
+        // This page used to read the list once, on open, and never again - so a quotation
+        // Sales requested while an engineer had the list open simply never appeared until
+        // they closed the page and came back (user-reported 2026-09-24: "it will always
+        // appear when updating on the end of the sales app").
+        //
+        // The engineering app already holds a socket that receives exactly this list - the
+        // red box's (/ws/engineering/redboxlist/quotation, same view, same shape) - and
+        // the API now sends on it after every project quotation save. Layout owns that
+        // socket and republishes what arrives here, so this page needs no connection of
+        // its own. Static because Layout has no reference to however many copies of this
+        // page happen to be open; each subscribes for as long as it exists.
+        internal static event Action<RedboxQuotationList> QuotationListPushed;
+
+        internal static void PublishPushedList(RedboxQuotationList data)
+        {
+            QuotationListPushed?.Invoke(data);
+        }
+
+        // Arrives on the UI thread (Layout marshals it). Rebinds in place: no loading
+        // overlay, and the engineer keeps their search text, their selected row and their
+        // scroll position - a list updating under you must not also move you.
+        private void OnQuotationListPushed(RedboxQuotationList data)
+        {
+            if (IsDisposed || data == null) return;
+
+            int? selectedId = null;
+            if (dgv_quotation_list.CurrentRow != null && dgv_quotation_list.Columns.Contains("col_id"))
+            {
+                object v = dgv_quotation_list.CurrentRow.Cells["col_id"].Value;
+                if (v != null && int.TryParse(v.ToString(), out int id)) selectedId = id;
+            }
+
+            int firstRow = dgv_quotation_list.FirstDisplayedScrollingRowIndex;
+
+            _quotationTable = Helpers.ToDataTable(data.quotationlist ?? new List<QuotationRedboxListModel>());
+            ApplySearch();
+
+            if (selectedId.HasValue)
+            {
+                foreach (DataGridViewRow row in dgv_quotation_list.Rows)
+                {
+                    object v = row.Cells["col_id"].Value;
+                    if (v != null && v.ToString() == selectedId.Value.ToString())
+                    {
+                        dgv_quotation_list.CurrentCell = row.Cells["col_client_name"];
+                        break;
+                    }
+                }
+            }
+
+            if (firstRow >= 0 && firstRow < dgv_quotation_list.Rows.Count)
+            {
+                try { dgv_quotation_list.FirstDisplayedScrollingRowIndex = firstRow; }
+                catch (InvalidOperationException) { /* no rows displayed yet */ }
+            }
         }
 
         private async void SalesQuotationList_Load(object sender, EventArgs e)
@@ -72,10 +142,23 @@ namespace smpc_engineering_app.Pages.Transactions
 
         private void txt_search_TextChanged(object sender, EventArgs e)
         {
-            if (_quotationTable == null || _quotationTable.Rows.Count == 0)
-                return;
+            ApplySearch();
+        }
 
+        // The search filter, applied to whatever _quotationTable currently holds - so a
+        // pushed list keeps the engineer's search rather than dropping back to everything.
+        private void ApplySearch()
+        {
+            if (_quotationTable == null || _quotationTable.Rows.Count == 0)
+            {
+                dgv_quotation_list.DataSource = _quotationTable;
+                return;
+            }
+
+            // The placeholder text is not a search.
             string searchText = txt_search.Text.Trim();
+            if (string.Equals(searchText, "SEARCH BAR", StringComparison.OrdinalIgnoreCase))
+                searchText = string.Empty;
 
             if (string.IsNullOrEmpty(searchText))
             {
