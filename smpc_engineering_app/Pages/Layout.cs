@@ -27,6 +27,47 @@ namespace smpc_engineering_app
 
         // Red Box section sidebar (QUOTATIONS / PRODUCTION labels + divider)
         private Label lblQuotationsSide;
+        // A project quotation autosaves a second or so after the last edit. Closing the app inside
+        // that second, or while a failed save waited for its retry, dropped the edit: it never
+        // reached the database or the Sales screen (2026-09-29 sync audit). The close waits for
+        // those saves once, then goes ahead whatever they return.
+        private bool _savedBeforeClose;
+
+        private async void SMPC_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (_savedBeforeClose) return;
+
+            var pending = new List<smpc_engineering_app.Pages.SalesQuotationEngineering.SalesQuotationEngPage>();
+            void Collect(Control parent)
+            {
+                foreach (Control child in parent.Controls)
+                {
+                    if (child is smpc_engineering_app.Pages.SalesQuotationEngineering.SalesQuotationEngPage page
+                        && !page.IsDisposed && page.HasUnsavedEdits)
+                        pending.Add(page);
+                    else
+                        Collect(child);
+                }
+            }
+            Collect(tabContainer);
+            if (pending.Count == 0) return;
+
+            e.Cancel = true;
+            _savedBeforeClose = true;
+            try
+            {
+                foreach (var page in pending)
+                {
+                    try { await page.FlushAutoSaveAsync(); }
+                    catch (Exception ex) { Console.WriteLine("Save before closing failed: " + ex.Message); }
+                }
+            }
+            finally
+            {
+                Close();
+            }
+        }
+
         private Label lblProductionSide;
         private Panel pnlRedBoxDivider;
         private const int RedBoxSideLabelWidth = 24;
@@ -35,6 +76,8 @@ namespace smpc_engineering_app
         public SMPC()
         {
             InitializeComponent();
+
+            this.FormClosing += SMPC_FormClosing;
 
             tabContainer.DrawMode = TabDrawMode.OwnerDrawFixed;
             tabContainer.SizeMode = TabSizeMode.Fixed;

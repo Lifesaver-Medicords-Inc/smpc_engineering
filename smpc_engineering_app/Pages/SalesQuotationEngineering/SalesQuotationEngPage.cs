@@ -71,7 +71,16 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             InitializeComponent();
             BuildHeaderDetails();
             BuildTabMenu();
+
+            // The safety net behind the live socket, as Sales has: every five minutes, whatever
+            // was saved meanwhile is merged in (quietly, and only when there is something).
+            _pollTimer = new System.Windows.Forms.Timer { Interval = 5 * 60 * 1000 };
+            _pollTimer.Tick += (s, e) => { if (_quotationId > 0 && !_loadingQuotation) QueueRemoteRefresh(); };
+            _pollTimer.Start();
+            Disposed += (s, e) => _pollTimer.Dispose();
         }
+
+        private readonly System.Windows.Forms.Timer _pollTimer;
 
         private void SalesQuotationEngPage_Load(object sender, EventArgs e)
         {
@@ -1329,7 +1338,8 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                     }
                 }
 
-                lbl_saving_status.Text = "Updated by Sales " + DateTime.Now.ToString("HH:mm");
+                if (_lastMergeChangedScreen)
+                    lbl_saving_status.Text = "Updated by Sales " + DateTime.Now.ToString("HH:mm");
             }
             catch (Exception ex)
             {
@@ -1617,14 +1627,20 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
         // screen keeps working the way it did before, on Refresh.
         private async void EnsureSaveNotifyConnected(int projectId)
         {
-            if (projectId <= 0) return;
+            await ConnectSaveNotifyAsync(projectId);
+        }
+
+        // True when the channel for this quotation is open afterwards.
+        private async Task<bool> ConnectSaveNotifyAsync(int projectId)
+        {
+            if (projectId <= 0) return false;
             if (_saveNotifyProjectId == projectId
-                && _saveNotifyWebSocket?.State == System.Net.WebSockets.WebSocketState.Open) return;
+                && _saveNotifyWebSocket?.State == System.Net.WebSockets.WebSocketState.Open) return true;
 
             DisconnectSaveNotify();
 
             string wsBase = GetWebSocketBaseUrl();
-            if (string.IsNullOrWhiteSpace(wsBase)) return;
+            if (string.IsNullOrWhiteSpace(wsBase)) return false;
 
             _saveNotifyProjectId = projectId;
             var cts = new System.Threading.CancellationTokenSource();
@@ -1640,10 +1656,12 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                 var uri = new Uri(wsBase + "/ws/setup/test?branch=Sales&projectid=" + projectId + "&Authorization=" + token);
                 await socket.ConnectAsync(uri, cts.Token);
                 _ = ListenForSaveNotificationsAsync(socket, cts, projectId);
+                return true;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Live update channel unavailable: " + ex.Message);
+                return false;
             }
         }
 
@@ -1690,7 +1708,43 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
             }
             catch (Exception)
             {
-                // Dropped connection - Refresh still works, and the next load reconnects.
+                // Dropped connection - reconnected below.
+            }
+
+            // Closed or dropped, but not by this page (DisconnectSaveNotify cancels cts when the
+            // quotation changes or the page goes): get it back.
+            if (!cts.IsCancellationRequested && !IsDisposed)
+                ReconnectSaveNotifyLater(projectId);
+        }
+
+        // The channel dropped on its own - the API restarted, the network blinked, a proxy closed
+        // a connection it took for idle. It used to stay down until this page loaded again - on
+        // Refresh, or after one of its own saves - so an engineer only looking at a quotation
+        // stopped seeing Sales's changes without being told (2026-09-29 sync audit). Reconnects
+        // with a growing pause (2 s up to 30 s) while this quotation stays open, then catches up
+        // on what was saved meanwhile.
+        private bool _saveNotifyReconnecting;
+
+        private async void ReconnectSaveNotifyLater(int projectId)
+        {
+            if (_saveNotifyReconnecting) return;
+            _saveNotifyReconnecting = true;
+            try
+            {
+                for (int attempt = 1; ; attempt++)
+                {
+                    await Task.Delay(Math.Min(30000, 2000 * attempt));
+                    if (IsDisposed || _quotationId != projectId) return;
+                    if (await ConnectSaveNotifyAsync(projectId))
+                    {
+                        QueueRemoteRefresh();
+                        return;
+                    }
+                }
+            }
+            finally
+            {
+                _saveNotifyReconnecting = false;
             }
         }
 
@@ -1849,7 +1903,29 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 
         private async void AutoSaveTimer_Tick(object sender, EventArgs e)
         {
-            _autoSaveTimer.Stop();
+            await RunAutoSaveAsync();
+        }
+
+        // Whether this page holds edits not saved yet: a save queued, running or waiting to be
+        // retried, or a change still inside an Item/Set control's short debounce. The main
+        // window asks before it closes (FlushAutoSaveAsync).
+        public bool HasUnsavedEdits =>
+            CanAutoSave() && ((_autoSaveTimer?.Enabled ?? false) || _autoSaving || _autoSaveRetries > 0
+                || _tabControls.Any(uc => uc != null && !uc.IsDisposed && uc.HasPendingChangeEvents));
+
+        // Saves what is waiting, now, and returns once it is done. Closing the app used to drop
+        // the last second or two of edits and any save waiting to be retried (2026-09-29).
+        public async Task FlushAutoSaveAsync()
+        {
+            for (int i = 0; i < 100 && _autoSaving; i++)
+                await Task.Delay(100);
+            if (!CanAutoSave()) return;
+            await RunAutoSaveAsync();
+        }
+
+        private async Task RunAutoSaveAsync()
+        {
+            _autoSaveTimer?.Stop();
 
             if (_autoSaving) return;
             if (!CanAutoSave())
@@ -1904,6 +1980,7 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                 if (response != null && response.success)
                 {
                     lbl_saving_status.Text = "Saved " + DateTime.Now.ToString("HH:mm");
+                    _autoSaveRetries = 0;
 
                     // Written; nothing left to request.
                     _removedItemSetIds.Clear();
@@ -1933,6 +2010,8 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                     // Refused for good: Sales made a newer copy. Retrying would fail every time.
                     if (TryParseReplacement(response?.message, out int newerId, out string newerCode))
                         await FollowNewerCopyAsync(newerId, newerCode);
+                    else
+                        ScheduleAutoSaveRetry();
                 }
             }
             catch (Exception ex)
@@ -1940,11 +2019,27 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
                 ForgetOwnSave();
                 lbl_saving_status.Text = "Not saved - it will try again";
                 Console.WriteLine("Autosave failed: " + ex.Message);
+                ScheduleAutoSaveRetry();
             }
             finally
             {
                 _autoSaving = false;
             }
+        }
+
+        // A failed autosave is tried again on its own, sooner at first and then every minute
+        // (2026-09-29 sync audit). It used to wait for the engineer's next edit, so the last
+        // change made stayed unsaved and never reached Sales while the status said "it will try
+        // again". Each retry sends everything still unsaved: the baseline only moves on success.
+        private int _autoSaveRetries;
+
+        private async void ScheduleAutoSaveRetry()
+        {
+            int attempt = ++_autoSaveRetries;
+            await Task.Delay(Math.Min(60000, 5000 * attempt));
+            // Superseded by a newer failure's retry, or a save has since gone through.
+            if (IsDisposed || attempt != _autoSaveRetries) return;
+            QueueAutoSave();
         }
 
         // The save payload, built once and used by both the Save button and the autosave.
@@ -2102,8 +2197,13 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
         // `baseline` as what the screen was built from: what Sales changed lands field by field
         // and row by row, around whatever the engineer is doing, with no reload. False when the
         // shape changed (a tab added, removed or renamed) and the page has to be rebuilt.
+        // Whether the last in-place merge put anything on screen - a poll or a catch-up after a
+        // reconnect usually finds nothing, and "Updated by Sales" then is false.
+        private bool _lastMergeChangedScreen;
+
         private async Task<bool> MergeRemoteChangesAsync(SalesProjectList baseline, bool adoptNewRowIds = false)
         {
+            _lastMergeChangedScreen = false;
             int id = _quotationId;
             if (id <= 0 || baseline == null || _quotation == null) return false;
 
@@ -2185,6 +2285,9 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 
             // Item lines changed there: this screen's own totals, if it is working them out.
             if (outcome.Applied > 0 && _totalsEdited) RecomputeTotals();
+
+            _lastMergeChangedScreen = outcome.Applied > 0 || outcome.HeaderChanged
+                || (outcome.MultipliersChanged && multipliersUntouched);
 
             RefreshHistoryGrid(CurrentItemSets());
 
