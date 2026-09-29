@@ -1,4 +1,4 @@
-namespace smpc_engineering_app.Pages.SalesQuotationEngineering
+﻿namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 {
     partial class SalesQuotationEngPage
     {
@@ -6,9 +6,18 @@ namespace smpc_engineering_app.Pages.SalesQuotationEngineering
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+                // The live-update socket and the autosave timer outlive the control unless
+                // they are let go here - a closed tab would keep a socket open and keep
+                // firing saves against a page nobody is looking at.
+                DisconnectSaveNotify();
+                _autoSaveTimer?.Dispose();
+                _remoteRefreshTimer?.Stop();
+                _remoteRefreshTimer?.Dispose();
+
+                if (components != null)
+                    components.Dispose();
             }
             base.Dispose(disposing);
         }
